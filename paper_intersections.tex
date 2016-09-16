@@ -1,0 +1,468 @@
+%% 
+%% Copyright 2007, 2008, 2009 Elsevier Ltd
+%% 
+%% This file is part of the 'Elsarticle Bundle'.
+%% ---------------------------------------------
+%% 
+%% It may be distributed under the conditions of the LaTeX Project Public
+%% License, either version 1.2 of this license or (at your option) any
+%% later version.  The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.2 or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%% 
+%% The list of all files belonging to the 'Elsarticle Bundle' is
+%% given in the file `manifest.txt'.
+%% 
+%% Template article for Elsevier's document class `elsarticle'
+%% with harvard style bibliographic references
+%% SP 2008/03/01
+
+%\documentclass[preprint,12pt]{elsarticle}
+ \documentclass{elsarticle}
+%\documentclass[3p,12pt,authoryear]{elsarticle}
+
+%% Use the option review to obtain double line spacing
+%% \documentclass[authoryear,preprint,review,12pt]{elsarticle}
+
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% for a journal layout:
+%% \documentclass[final,1p,times,authoryear]{elsarticle}
+%% \documentclass[final,1p,times,twocolumn,authoryear]{elsarticle}
+%% \documentclass[final,3p,times,authoryear]{elsarticle}
+%% \documentclass[final,3p,times,twocolumn,authoryear]{elsarticle}
+%% \documentclass[final,5p,times,authoryear]{elsarticle}
+%% \documentclass[final,5p,times,twocolumn,authoryear]{elsarticle}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks   = true, %Colours links instead of ugly boxes
+  urlcolor     = blue, %Colour for external hyperlinks
+  linkcolor    = blue, %Colour of internal links
+  citecolor   = red %Colour of citations
+}
+
+%% For including figures, graphicx.sty has been loaded in
+%% elsarticle.cls. If you prefer to use the old commands
+%% please give \usepackage{epsfig}
+\usepackage{subfig}
+
+%tables
+\usepackage{booktabs}
+
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{esint}
+
+%% The amsthm package provides extended theorem environments
+%% \usepackage{amsthm}
+
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers.
+%% \usepackage{lineno}
+
+% just for our notes
+\usepackage[usenames,dvipsnames]{color}   %colors
+
+
+\journal{Applied Mathematics and Computation}
+
+%commands:
+%\newcommand{\defref}[1]{\hyperref[#1]{Def.~\ref{#1}}}
+\newcommand{\prob}[1]{Problem~{#1}}
+\newcommand{\fig}[1]{\hyperref[#1]{Figure \ref{#1}}}
+\newcommand{\figpath}{figures/}
+
+%math:
+\def\vc#1{\mathbf{\boldsymbol{#1}}}     % vector
+\def\abs#1{\left|#1\right|}
+\def\avg#1{\langle#1\rangle}
+\def\d{\mathrm{d}}
+\def\norm#1{\| #1 \|}
+\def\abs#1{| #1 |}
+\def\prtl{\partial}
+\newcommand{\dd}{\; \mathrm{d}}
+\newcommand{\R}{\mathbf{R}}
+\newcommand{\bx}{\vc{x}}
+\newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}
+
+
+\newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
+\newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
+\newcommand{\plucker}{Pl\"{u}cker}
+
+\newdefinition{mdef}{Definition}%[section]
+
+\begin{document}
+
+\begin{frontmatter}
+
+%% Title, authors and addresses
+
+%% use the tnoteref command within \title for footnotes;
+%% use the tnotetext command for theassociated footnote;
+%% use the fnref command within \author or \address for footnotes;
+%% use the fntext command for theassociated footnote;
+%% use the corref command within \author for corresponding author footnotes;
+%% use the cortext command for theassociated footnote;
+%% use the ead command for the email address,
+%% and the form \ead[url] for the home page:
+%% \title{Title\tnoteref{label1}}
+%% \tnotetext[label1]{}
+%% \author{Name\corref{cor1}\fnref{label2}}
+%% \ead{email address}
+%% \ead[url]{home page}
+%% \fntext[label2]{}
+%% \cortext[cor1]{}
+%% \address{Address\fnref{label3}}
+%% \fntext[label3]{}
+
+\title{Intersection of non-matching grids of different dimensions}
+% Self-intersection of non-matching grid of mixed dimensions
+
+%% use optional labels to link authors explicitly to addresses:
+%% \author[label1,label2]{}
+%% \address[label1]{}
+%% \address[label2]{}
+
+\author[adr]{Jan B{\v r}ezina\corref{cor1}}
+\ead{jan.brezina@tul.cz}
+\cortext[cor1]{Corresponding author.}
+
+\author[adr]{Pavel Exner}
+\ead{pavel.exner@tul.cz}
+%\ead[url]{https://github.com/Paulie14/xfem\_project}
+
+\address[adr]{Technical University of Liberec, Studentsk{\' a} 1402/2, 461 17 Liberec 1, Czech Republic}
+
+
+\begin{abstract}
+TODO: An abstract.
+\end{abstract}
+
+\begin{keyword}
+%% keywords here, in the form: keyword \sep keyword
+non-matching gird \sep 
+intersections \sep
+mixed-dimensional mesh \sep
+\plucker coordinates
+
+
+%% PACS codes here, in the form: \PACS code \sep code
+%\PACS 02.60.Lj \sep        %Ordinary and partial differential equations; boundary value problems
+%\PACS 02.60.Jh             %Numerical differentiation and integration
+
+%% MSC codes here, in the form: \MSC code \sep code
+%% or \MSC[2008] code \sep code (2000 is the default)
+%\MSC[2010] 65N30 \sep %    Finite elements, Rayleigh-Ritz and Galerkin methods, finite methods
+%\MSC[2010] 35J05  %    Laplacian operator, reduced wave equation (Helmholtz equation), Poisson equation
+
+\end{keyword}
+
+\end{frontmatter}
+
+%% \linenumbers
+
+%% main text
+\section{Introduction}
+Structure of introduction:
+
+- motivation for computing mesh intersections, other applications
+- basic overview of existing work, approaches
+- our contribution
+    - new algorithms for element intersectins based on Pl\"ucker coordinates
+    - improvement of the front tracking algorithm
+
+\cite{sukumar_extended_2000} - Use {\emph geometric predicates} incircle and orientation. Use mesh of bounding boxes to search for intersection candidates. 
+Only use point queries for all vertices of triangle/tetrahedron. Use compatible partitioning of elements by the crack elements.
+
+\cite{massing_efficient_2013} - Implementation of the Nitche method in Fenics. They need 2d-3d intersections, but only for distribution od quadrature points. 
+So they do not store whole intersection data, but only the quad points. The boundary of one domain is partitioned into intersections with elements of the other domain.
+Use {\\emph collision relations} ( pairs of faces of boundary and elmements of the background mesh) and {\emph collision maps} 
+( map face to all intersections and background element to all intersections, can be constructed from the collision relation), They cite books from computer graphics ..
+Mention geometric predicates. Present algorithms for:  find intersection candidates, comput intersections, integrate over complex domains.
+
+\cite{elsheikh_reliable_2012} Claim to provide robust algorithm covering all tiangle-trinagle degenerate cases. Basic idea is the same as our: use some tree 
+(Binary SPace Tree) structure to find initial point on intersection curve and trace the curve in both directions. Quite clever data structure for the mesh. Adaptive precision 
+geometric predicates. Store topological information about the intersection points (point on triangle, edge, vertex). Resolve various degenerate cases, 
+dicuss mesh optimization after subdivision.
+
+
+\cite{gander_algorithm_2013} Full algorithm for 2d=3D called PANG. Implemented in DUNE in 2010 (Bastian). Other software (Hecht, MpCCI). 
+Triangle-Triangle and Tetra-Triangle intersections done similarly as in aur approach: set of points including vertices and then sort them countercolckwise.
+Local intersection algorithm do not provide neighbouring information so the traversal algorithm do not use it.
+
+Review of algorithms: \cite{gander_algorithm_2009}
+ 
+
+\cite{boon_robust_2016} Robust discretization of porous media. Complete error analysis with mortar non-compatible case. Seems they use normal fluxes accros
+fracture instead of pressure traces. This allows conforming discretization and error results.
+
+
+\cite{bournival_mesh-geometry_2008} Application of mixed-dimensional approach in mechanics. Beam and shell elements ...
+
+\cite{reichenberger_mixed-dimensional_2006} Finite volume method, fully implicit two phase flow. Cite usage of FRAC3D generator. 
+
+\cite{sladkova_bakalarka} Space-time DG with adaptive mesh, need integration of product of functions on different meshes (in 2D). An algorithm 
+for computing triangle-triangle intersections in 2D.
+
+\cite{pichot_generalized_2012} DFN + MHFEM. Mortar method for intersections. Focused on formulation not on intersections. 
+
+\cite{flemisch_non-matching_2012} (Barbara) Mortad, non=matching, acustics. Theory, structured gird case. No complex intersections.
+
+\cite{mustapha_hybrid_2014} Patent for curiosity.
+
+\cite{mittal_immersed_2005} Immersed boundary. ??
+
+\cite{owen_survey_1998} ??
+
+\cite{kuznetsov_overlapping_1998}
+
+\cite{platis_fast_2003} Original algorithm for line-thetrahedra intersections.
+
+\cite{haines_fast_1991} Line-convex Polyhedra intersections using generalisation of line-clipping algorithm
+
+
+
+The initial problem that occurs when working with incompatible meshes of combined dimensions is the efficient 
+computation of intersections of the mesh subdomains, in particular 1D-2D, 1D-3D, 2D-3D.
+There is a piece of code in Flow123d at the moment which uses means of analytic geometry. In particular, it computes 
+an intersection of a line and a plane in 3D by solving Gaussian elimination. However it is not effiecient
+and it does not provide barycentric coordinates explicitly.
+In this section, we present our latest work on this problematics.
+
+The topic is studied in the bachelor and master thesis of Viktor Fri{\v s} \cite{fris_dp_2015}, who was supervised by 
+Jan B{\v r}ezina.
+They suggested a solution, based on \cite{yuan_efficient_2003} for the two aspects of the problem: 
+\begin{enumerate}[itemsep=-3pt]
+\item an efficient identification of the intersecting pairs of elements,
+\item an efficient computation of the actual intersection for the single element pair.
+\end{enumerate}
+The algorithm is based on the methods used in the computer graphics, in particular for the task (b) \plucker
+coordinates are employed to efficiently compute 1D-2D intersection in three-dimensional space.
+
+\begin{figure}[!htb]
+  \centering
+  \setcounter{subfigure}{0}
+  \subfloat[1D-3D]{
+    \includegraphics[width=0.3\textwidth]{\figpath intersection_13.pdf} }
+  \hspace{10pt}
+  \subfloat[2D-3D]{
+    \includegraphics[width=0.3\textwidth]{\figpath intersection_23.pdf} }
+\end{figure}
+      
+For the 1D-3D and 2D-3D cases, the basic algorithm is applied on sides and edges of the simplices and 
+all the topological information coming from the performed \plucker products is carefully collected
+to obtain final intersecting object.
+Further in 2D-3D case, an optimized tracing algorithm is suggested to directly obtain the correct order and 
+orientation of the edges of the intersection polygon.
+
+
+\subsection{Element Intersections}
+\label{sec:elements_intersections}
+In this section, we present algorithms for computing intersection of a pair of simpicial elements of different dimension in the 3D ambient space.
+
+
+\subsection{\plucker coordinates}
+\plucker coordinates represent a line in 3D space.
+Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}$, 
+the \plucker coordinates of $p$ are defined as
+\[ \pi_p = (\vc{u}_p, \vc{v}_p) = (\vc{u}_p, \vc{u}_p\times A). \]
+Further we use a permuted inner product
+\[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
+
+The sign of the inner product product gives us the relative position of the two lines, 
+see \fig{fig:plucker_products}.
+
+\begin{figure}[!htb]
+  \begin{center}        
+    %\def\svgwidth{0.7\textwidth}
+    \includegraphics{\figpath plucker_products.pdf}
+  \end{center}
+  \caption{Sign of the \plucker product (from \cite{fris_dp_2015}). Dashed line symbolizes that the line 
+           is in the back. In the case (c), product is zero which means the lines intersect.}
+  \label{fig:plucker_products}
+\end{figure}
+
+
+%Notice the condition on the orientation of the triangle sides. To always satisfy it, we use a
+%reference simplex, in which the numbering of nodes and sides and also the orientation is fixed.
+%The barycentric coordinates of the intersection point can be computed directly from the \plucker products
+%and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
+
+\subsection{Intersection Line-Triangle (1D-2D)}
+Let us consider a line segment $p$ with end points $\vc A$ and $\vc A + \vc u$ and a triangle $(\vc V_0, \vc V_1, \vc V_2)$ with oriented sides 
+$s_i=(V_j, V_k)$, $j=(i+1) mod 3$, $k=(i+2) mod 3$. The inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
+is an intersection point inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
+In particular for the barycentric coordinate $w_i$ related to the vertex $V_i$ we have
+\[
+   w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum{j=0}^{2} \pi_p \odot \pi_{s_i} }
+\]
+Indeed, using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
+The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ (\plucker coordinates are invariant to change of initial point). Combining these two expressions we get
+\[
+   \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
+   =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
+\]
+Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2 \times s_0 = \vc s_0 \times \vc s_1$ and thus
+\[
+   \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc v_1 \times \vc v_2).
+\]
+Having the barycentric coordinates of the intersection on the triangle we can compute also its local coordinate on $p$ from its parametric form:
+\[
+   X_i  = A_i + t u_i, \text{ for } i=1,2,3
+\]
+In practical computation we consider $i$ with maximal $|u_i|$.
+
+Next, we shell discuss the case when some of the permuted inner products is zero. Various {\emph pathological} cases are detected and further topological 
+information is atached to the intersection data. In fact we test if a barycentric coordinate is under given tolerance 
+($\abs{w_i} \le \epsilon$). In the case of one zero coordinate (non-coplanar intersection on the edge)
+or two zero coordinates, we add the local edge index or the local vertex index to the intersection, respectively.
+When all coordinates are (close to) zero, the line and the triangle are (nearly) coplanar. For every edge $s_i$ we compute
+its intersection with the line segment $p$ in terms of the local coordinates $t_i$ and $t_p$. Only intersections with $t_i \in (-\epsilon, 1+\epsilon)$
+are accepted, for $t_i$ close to $0$ and $1$ we append the vertex index to the intersection. Edges parallel to $p$ are skipped. 
+Finally, we obtain zero, one, or two intersection points with additional topological information. Degenerated case of $p$ laying on the triangle edge is also detected....
+
+
+
+Starting with 1D-2D intersecting simplices, all the \plucker coordinates and products must be computed at first.
+In case that all \plucker products are nonzero and the intersection point exists, its barycentric coordinates 
+can be obtained directly. Otherwise one of the pathologic cases occurs
+%
+\begin{itemize}[itemsep=-3pt]
+\item 1 zero product: line intersects triangle side,
+\item 2 zero products: line intersects triangle at its vertex,
+\item 3 zero products: line intersects triangle at its vertex and:
+  \begin{enumerate}[ itemsep=-3pt]
+    \item intersects also the opposite side,
+    \item is parallel to the opposite side,
+    \item intersects also another triangle vertex.
+  \end{enumerate}
+\end{itemize}
+%
+Anyway, in the pathologic case, the intersection of a line and triangle side is solved analyticaly which leads
+to a system of two equations with three unknowns. This is then solved using Crammer's rule.
+
+So far, we considered the line and the triangle sides as bisectors. If the 1D-2D intersection is the final object,
+we check that the found intersection point lies on the abscissas. Otherwise all the computed data are used for 
+further computation. Apart from the coordinates of the intersection points, we also save temporarily its topology
+information (vertex, side or edge index).
+
+\paragraph{1D-3D (abscissa-tetrahedron)}
+Tetrahedron has six edges, so six \plucker coordinates and products are computed at most. These data are
+passed to 1D-2D algorithm described above, which is then run for each pair line -- tetrahedron side. 
+There might be two intersection points maximally, which are finally checked that they belong o abscissas.
+If the line has its boundary point inside the tetrahedron, the intersection line must be cut
+and coordinates of intersection point are interpolated.
+Pathologic cases are again carefully processed so we obtain the most extensive topology information we can.
+See \cite{fris_dp_2015} for detailed description of all possible cases.
+
+\paragraph{2D-3D (abscissa-tetrahedron)}
+The intersection of a triangle and a tetrahedron is a polygon with 7 vertices at maximum. The vertices
+are found as intersection points of either triangle side and tetrahedron or tetrahedron edge and triangle.
+Therefore we use both algorithms above for 1D-3D and 1D-2D, respectively. Data are again efficiently passed
+to lower dimensional problems, so 9 \plucker coordinates and 18 \plucker products are computed. 
+
+The array of intersection points is generally not sorted. We use two so called \emph{tracing} algorithms and we
+intend to orient the edges of the polygon in the same direction as the triangle is oriented.
+If one of the intersection point is pathologic, a general convex hull method is applied using the Monotone 
+chain\footnote{Wikibooks, [online 2016-03-01], 
+      \url{http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain}} 
+algorithm. The points are sorted using only their barycentric coordinates.
+
+An optimized algorithm has been suggested for non-pathologic cases. At this moment all the collected topology 
+data come into play. The algorithm takes advantage by using only the data already computed and also lowers
+the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N)$ 
+($N$ being number of intersection points).
+
+
+
+\subsection{Prolongation algorithm}
+Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
+elements of the same dimension (1D, 2D), in the space of 3D elements (tetrahedrons). 
+Obtaining of all the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
+Then we can prolongate the intersection by investigating neighbouring elements of the component.
+%
+\begin{figure}[!htb]
+%   \vspace{0pt}
+  \centering    
+    \includegraphics[width=\textwidth]{\figpath prolongation_scheme.pdf}
+  \caption{Prolongation algorithm for 1D-2D and 2D-3D intersections. }
+  \label{fig:prolongation}
+\end{figure}
+
+The prolongation algorithm is the same for both 1D and 2D components, see \fig{fig:prolongation}. 
+It can be seen as a \emph{breadth-first search}
+\footnote{Wiki, [online 2016-03-01], \url{https://en.wikipedia.org/wiki/Breadth-first_search}}
+algorithm on the graph of 1D and 2D elements, respectively.
+
+After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
+two queues with element pairs as candidates for further intersection. If the intersection edge 
+(point of line in 1D, edge of polygon in 2D) is inside the tetrahedron, not on its surface, we
+get a neighbouring element of the component and push it back together with the current tetrahedron into 
+\emph{component prolongation queue}. If the intersection edge is inside the \emph{slave} element 
+(line or triangle), i.e. is on the surface of tetrahedron, we get a neighbouring element of the tetrahedron
+and push it back together with the current slave element into \emph{3D prolongation queue}.
+
+Then we empty the prolongation queues -- the 3D prolongation queue at first, then the component prolongation queue.
+When both queues are empty, all intersections of a component have been found and we continue to look for
+another component.
+
+The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
+queue is emptied at first.
+
+
+\section{Front tracking algorithm}
+\section{Benchmarks}
+
+\section{Conclusions}
+TODO:
+- line intersection tracking for accelerate 2D-2D intersections
+- better handling of special cases in paarticular in relation to prolongations
+- better calculation reuse (pass with prolongations)
+- optimisation of element intersection - skip unnecessary calculations
+\section{Acknowledgement}
+The paper was supported in part by the Project OP
+VaVpI Centre for Nanomaterials, Advanced Technologies  and Innovations
+CZ.1.05/2.1.00/01.0005.
+
+
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+%% \appendix
+
+%% \section{}
+%% \label{}
+
+%% If you have bibdatabase file and want bibtex to generate the
+%% bibitems, please use
+%%
+%%  \bibliographystyle{elsarticle-harv} 
+%%  \bibliography{<your bibdatabase>}
+
+%% else use the following coding to input the bibitems directly in the
+%% TeX file.
+
+% \begin{thebibliography}{00}
+% 
+% %% \bibitem[Author(year)]{label}
+% %% Text of bibliographic item
+% 
+% \bibitem[ ()]{}
+% 
+% \end{thebibliography}
+ %\nocite{dip}
+ %\bibliographystyle{elsarticle-harv} 
+ %\bibliographystyle{elsarticle-num-names} 
+ \bibliographystyle{elsarticle-num} 
+ \bibliography{paper_intersections.bib}
+\end{document}
+
+
+%\endinput
+%%
+%% End of file `elsarticle-template-harv.tex'.
+
+-
