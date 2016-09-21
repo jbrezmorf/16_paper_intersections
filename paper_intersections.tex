@@ -438,20 +438,65 @@ queue is emptied at first.
 %     - check whether the candidate pair has not been computed yet
 %     (- if no new prolongation, push empty pair; same meaning as above)
 
-A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases:
+% A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases:
 
+% \begin{itemize}
+%     \item \textbf{IP lies at 1D element node and inside 3D element} \\
+%             We find the neighboring 1D element over the node and push a new candidate pair [1D neighbor -- current 3D element] into component queue.
+%     \item \textbf{IP lies at 1D element node and on the surface of 3D element} \\
+%             We find all the faces of 3D element in which the IP lies (1 face, or 2 faces (IP on an edge), 
+%             or 3 faces (IP at a node)). We find the corresponding neghboring 3D elements over the faces and
+%             push the following new candidates pairs into the bulk queue: [current 1D element -- 3D neighbor], [1D neighbor -- 3D neighbor].
+%             If the candidates pair has been investigated already, we skip it.
+%     \item \textbf{IP lies inside 1D element (therefore must be on the surface of 3D element)} \\
+%             The same as before, but we push only [current 1D element -- 3D neighbor] candidates pairs, since
+%             there is no 1D neighbor.
+% \end{itemize}
+
+A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases (applies both for 1D-3D and 2D-3D):
 \begin{itemize}
-    \item \textbf{IP lies at 1D element node and inside 3D element} \\
-            We find the neighboring 1D element over the node and push a new candidate pair [1D neighbor -- current 3D element] into component queue.
-    \item \textbf{IP lies at 1D element node and on the surface of 3D element} \\
-            We find all the faces of 3D element in which the IP lies (1 face, or 2 faces (IP on an edge), 
-            or 3 faces (IP at a node)). We find the corresponding neghboring 3D elements over the faces and
-            push the following new candidates pairs into the bulk queue: [current 1D element -- 3D neighbor], [1D neighbor -- 3D neighbor].
+    \item \textbf{IP lies on component element side and inside bulk element} \\
+            We find all the sides of component element in which the IP lies (IP can be at node and connect more sides).
+            We find the component neighboring elements over the sides and push a new candidate pair
+            [component neighbor -- current bulk element] into component queue.
+    \item \textbf{IP lies on component element side and on the surface of bulk element} \\
+            We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
+            or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
+            push the following new candidates pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
             If the candidates pair has been investigated already, we skip it.
-    \item \textbf{IP lies inside 1D element node (therefore must be on the surface of 3D element)} \\
-            The same as before, but we push only [current 1D element -- 3D neighbor] candidates pairs, since
-            there is no 1D neighbor.
+    \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
+            The same as before, but we push only [current component element -- bulk neighbor] candidates pairs, since
+            there is no component neighbor.
 \end{itemize}
+
+% 2d-3d prolongation logic CURRENT
+% IP is:
+% - inside 2D element side
+%     - inside 3D element
+%         - get the neighboring 2D elements over the side
+%         - push to component queue candidates pair [2D neigbor -- current 3D element]
+% - inside the face of 3D element
+%     - get the neighboring 3D element over the face
+%     - push to bulk queue candidate pair [2D neighbor -- 3D element]
+% 
+% 2d-3d prolongation logic WITH FUTURE CORRECTIONS
+% IP is:
+% - on 2D element side
+%     - find 2D element sides (if at node) and the corresponding neighbors
+%     - inside 3D element
+%         - push to component queue candidates pairs [2D neigbor -- current 3D element]
+%     - on the surface of 3D element
+%         - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%         - get the 3D neighbors over the faces
+%         - push to bulk queue new candidates pairs
+%             - [current 2D element -- 3D neighbor]
+%             - [2D neighbor -- 3D neighbor] (all combinations)
+%             - check whether the candidate pair has not been computed yet
+% - inside the 2D element (=> on the surface of 3D element)
+%     - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%     - get the 3D neighbors over the faces
+%     - push to bulk queue new candidates pairs [current 2D element -- 3D neighbor]
+%     - check whether the candidate pair has not been computed yet
 
 
 \section{Front tracking algorithm}
