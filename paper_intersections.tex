@@ -378,12 +378,27 @@ the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N
 ($N$ being number of intersection points).
 
 
+\notePE{I suggest to denote IP, IPs intersection point and its plural respectively.}
+
+\notePE{It seems to me, that we can really describe the prolongation in general, for 1D and 2D, 
+refering to them as components. I tried to do so..}
+
+\notePE{We need proper definitions of terms we use: \\
+\emph{component} is a set of connected elements of the same lower dimension (1D, 2D)\\
+\emph{bulk} is a set of 3D elements\\
+% or slave, master...
+\emph{candidates pair}  is a pair of a component element and a bulk element, that might intersect
+each other (due to intersection of their bounding boxes or prolongation result)
+\emph{pathologic, special, degenerate case ??}
+}
+
+\notePE{Do you want to use American 'neighbor' or all other English 'neighbour'? (I prefer non-american.. to be unified at the end..)}
 
 \subsection{Prolongation algorithm}
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
-elements of the same dimension (1D, 2D), in the space of 3D elements (tetrahedrons). 
-Obtaining of all the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
-Then we can prolongate the intersection by investigating neighbouring elements of the component.
+elements of the same lower dimension (1D, 2D), in the space of 3D elements. 
+Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
+Then we can prolongate the intersection by investigating neighbouring elements.
 %
 \begin{figure}[!htb]
 %   \vspace{0pt}
@@ -396,7 +411,27 @@ Then we can prolongate the intersection by investigating neighbouring elements o
 The prolongation algorithm is the same for both 1D and 2D components, see \fig{fig:prolongation}. 
 It can be seen as a \emph{breadth-first search}
 \footnote{Wiki, [online 2016-03-01], \url{https://en.wikipedia.org/wiki/Breadth-first_search}}
-algorithm on the graph of 1D and 2D elements, respectively.
+algorithm on the graph of component elements.
+
+\textbf{breadth first search} algorithm:
+  \begin{enumerate}
+    \item\label{en:first} Get next unprocessed component element $k$.
+    \item Find intersection candidates $\mathcal K$ in bulk mesh (3D elements).
+    \item \label{en:q2}For $K\in \mathcal K$ compute intersection $(k, K)$.  
+    \item Push the intersection neigbours into queues: $(k, L) \to Q_b$, $(l, K) \to Q_c$. 
+    \item While $(l, L) \in Q_b$ check intersection $(l, L)$. Append queues.
+    \item Pop pair from $Q_c$. (move to the next component element: go to \ref{en:q2}).
+    \item If $Q_c$ is empty, go to \ref{en:first}.
+  \end{enumerate}
+  Prerequisites:
+  \begin{itemize}
+   \item need information about element connectivity (mesh preprocessing)
+%   \item mark and check already inspected pairs. Marking elements + hashing.
+   \item find the starting intersection -- AABB (Axes Aligned Bounding Boxes) 
+   \item possibly create Bounding Interval Hierarchy (BIH)
+%   \item Pass already known information with pairs.
+%   \item Deal with degenerated cases.
+  \end{itemize}
 
 After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
 two queues with element pairs as candidates for further intersection. If the intersection edge 
@@ -413,9 +448,7 @@ another component.
 The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
 queue is emptied at first.
 
-\subsubsection{1D-3D prolongation}
-
-\notePE{I suggest to denote IP, IPs intersection point and its plural respectively.}
+% \subsubsection{1D-3D prolongation}
 % 1d-3d prolongation logic
 % IP is:
 % - 1D element node
