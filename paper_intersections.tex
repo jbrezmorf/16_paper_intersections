@@ -49,6 +49,9 @@
 
 %tables
 \usepackage{booktabs}
+\usepackage[vlined, linesnumbered, ruled]{algorithm2e}
+%\usepackage{float}
+%\newfloat{algorithm}{t}{lop}
 
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
@@ -91,7 +94,7 @@
 
 \newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
 \newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
-\newcommand{\plucker}{Pl\"{u}cker}
+\newcommand{\plucker}{Pl\"{u}cker }
 
 \newdefinition{mdef}{Definition}%[section]
 
@@ -260,12 +263,25 @@ Further in 2D-3D case, an optimized tracing algorithm is suggested to directly o
 orientation of the edges of the intersection polygon.
 
 
-\subsection{Element Intersections}
+\section{Element Intersections}
 \label{sec:elements_intersections}
 In this section, we present algorithms for computing intersection of a pair of simpicial elements of different dimension in the 3D ambient space.
+In particular we are interested in intersection of 1D-2D, 1D-3D, 2D-2D, 2D-3D simplices. In general the intersection can be a point, a line segment or a polygon.
+All these three objects are represented as a vector of the vertices called \emph{intersection points}. Basic idea is to compute 1D-2D case using the 
+\plucker coordinates and reduce all other cases to that case. 
+
+The intersection point data structure keeps for each of the two intersection simplices:
+\begin{itemize}
+ \item Barycentric coordinate of the intersection.
+ \item Dimenstion of the most specific subsimplex (face, edge, vertex) where the point lies.
+ \item Indice of the most specific subelement.
+\end{itemize}
+Further, keep sign of the permuted inner product  we store
+In order to catch various degenerate cases, the intersec
 
 
-\subsection{\plucker coordinates}
+
+\subsection{\plucker Coordinates}
 \plucker coordinates represent a line in 3D space.
 Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}$, 
 the \plucker coordinates of $p$ are defined as
@@ -276,13 +292,16 @@ Further we use a permuted inner product
 The sign of the inner product product gives us the relative position of the two lines, 
 see \fig{fig:plucker_products}.
 
+
+
 \begin{figure}[!htb]
   \begin{center}        
-    %\def\svgwidth{0.7\textwidth}
-    \includegraphics{\figpath plucker_products.pdf}
+    \def\svgwidth{0.7\textwidth}
+    \input{\figpath plucker_products.pdf_tex}
+%    \includegraphics{\figpath plucker_products.pdf}
   \end{center}
-  \caption{Sign of the \plucker product (from \cite{fris_dp_2015}). Dashed line symbolizes that the line 
-           is in the back. In the case (c), product is zero which means the lines intersect.}
+  \caption{Sign of the permuted inner product is related to the relative position of two oriented lines. Dashed line symbolizes that the line 
+           is in the back, the llines intersect in the last case.}
   \label{fig:plucker_products}
 \end{figure}
 
@@ -293,12 +312,12 @@ see \fig{fig:plucker_products}.
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
 \subsection{Intersection Line-Triangle (1D-2D)}
-Let us consider a line segment $p$ with end points $\vc A$ and $\vc A + \vc u$ and a triangle $(\vc V_0, \vc V_1, \vc V_2)$ with oriented sides 
-$s_i=(V_j, V_k)$, $j=(i+1) mod 3$, $k=(i+2) mod 3$. The inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
-is an intersection point inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
+Let us consider a line $p$, with parametric equation $\vc X = \vc A + t\vc u$, $t\in(0,1)$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+with oriented sides $s_i=(V_j, V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
+is an intersection point with the       line $p$ inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
 In particular for the barycentric coordinate $w_i$ related to the vertex $V_i$ we have
 \[
-   w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum{j=0}^{2} \pi_p \odot \pi_{s_i} }
+   w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }
 \]
 Indeed, using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
 The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ (\plucker coordinates are invariant to change of initial point). Combining these two expressions we get
@@ -306,7 +325,7 @@ The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ (\plucker c
    \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
    =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
 \]
-Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2 \times s_0 = \vc s_0 \times \vc s_1$ and thus
+Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2 \times \vc s_0 = \vc s_0 \times \vc s_1$ and thus
 \[
    \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc v_1 \times \vc v_2).
 \]
@@ -314,56 +333,189 @@ Having the barycentric coordinates of the intersection on the triangle we can co
 \[
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
 \]
-In practical computation we consider $i$ with maximal $|u_i|$.
+For practical computation we use $i$ with maximal $|u_i|$.
 
-Next, we shell discuss the case when some of the permuted inner products is zero. Various {\emph pathological} cases are detected and further topological 
-information is atached to the intersection data. In fact we test if a barycentric coordinate is under given tolerance 
-($\abs{w_i} \le \epsilon$). In the case of one zero coordinate (non-coplanar intersection on the edge)
-or two zero coordinates, we add the local edge index or the local vertex index to the intersection, respectively.
+Next, we shell discuss the case when some of the permuted inner products is zero. In fact we test if any barycentric coordinate is under given tolerance 
+($\abs{w_i} \le \epsilon$). Various \emph{pathological} cases are detected and further topological 
+information is atached to the intersection data.  In the case of one zero coordinate (non-coplanar intersection on the edge)
+or two zero coordinates (intersection in the vertex), we add the local edge index or the local vertex index to the intersection, respectively.
 When all coordinates are (close to) zero, the line and the triangle are (nearly) coplanar. For every edge $s_i$ we compute
 its intersection with the line segment $p$ in terms of the local coordinates $t_i$ and $t_p$. Only intersections with $t_i \in (-\epsilon, 1+\epsilon)$
-are accepted, for $t_i$ close to $0$ and $1$ we append the vertex index to the intersection. Edges parallel to $p$ are skipped. 
-Finally, we obtain zero, one, or two intersection points with additional topological information. Degenerated case of $p$ laying on the triangle edge is also detected....
+are accepted, for $t_i$ close to $0$ and $1$ we append the vertex index to the intersection. Edges parallel to $p$ or lying on the $p$ are skipped.
+Finally, we obtain zero, one, or two intersection points with additional topological information.
 
 
+TODO:
+We should distinguish "special" case and "degenerate" case. The later one is the case when line lies in the plane of the triangle. The first case should be
+treated as usual only set aditional topology info about vertex or edge. The degenerate case is not necessary to investigate in the case of auxiliary
+intersection only in the case of final intersection. Need to verify it since it is not the case in current code.
 
-Starting with 1D-2D intersecting simplices, all the \plucker coordinates and products must be computed at first.
-In case that all \plucker products are nonzero and the intersection point exists, its barycentric coordinates 
-can be obtained directly. Otherwise one of the pathologic cases occurs
-%
-\begin{itemize}[itemsep=-3pt]
-\item 1 zero product: line intersects triangle side,
-\item 2 zero products: line intersects triangle at its vertex,
-\item 3 zero products: line intersects triangle at its vertex and:
-  \begin{enumerate}[ itemsep=-3pt]
-    \item intersects also the opposite side,
-    \item is parallel to the opposite side,
-    \item intersects also another triangle vertex.
-  \end{enumerate}
-\end{itemize}
-%
-Anyway, in the pathologic case, the intersection of a line and triangle side is solved analyticaly which leads
-to a system of two equations with three unknowns. This is then solved using Crammer's rule.
 
-So far, we considered the line and the triangle sides as bisectors. If the 1D-2D intersection is the final object,
-we check that the found intersection point lies on the abscissas. Otherwise all the computed data are used for 
-further computation. Apart from the coordinates of the intersection points, we also save temporarily its topology
-information (vertex, side or edge index).
+We distinguis two variants of the desired result: the auxiliary intersection used as subprocedure of the other intersections and the final intersection.
+In the first case we just return the array of the intersection points with the line.
+ Degenerated case of $p$ laying on the triangle edge is also detected....
 
-\paragraph{1D-3D (abscissa-tetrahedron)}
-Tetrahedron has six edges, so six \plucker coordinates and products are computed at most. These data are
-passed to 1D-2D algorithm described above, which is then run for each pair line -- tetrahedron side. 
+Intersection with line segment ... (final 1D-2D intersection)
+
+\subsection{Intersection Line-Teraherdon (1D-3D)}
+We consider a line $p$ and a tetraherdon...
+Tetrahedron has six edges, so six \plucker coordinates and inner products are computed at most. These data are
+passed to the 1D-2D algorithm described above, which is applied to the every face of the tetrahedron face. 
+
 There might be two intersection points maximally, which are finally checked that they belong o abscissas.
 If the line has its boundary point inside the tetrahedron, the intersection line must be cut
 and coordinates of intersection point are interpolated.
 Pathologic cases are again carefully processed so we obtain the most extensive topology information we can.
 See \cite{fris_dp_2015} for detailed description of all possible cases.
 
-\paragraph{2D-3D (abscissa-tetrahedron)}
-The intersection of a triangle and a tetrahedron is a polygon with 7 vertices at maximum. The vertices
+\subsection{Intersection Triangle-Tetrahedron (2D-3D)}
+The intersection of a triangle $S_3$ and a tetrahedron $S_4$ is a polygon with 7 vertices at maximum. The sides of the polygon
+are coincident with either sides of $S_3$ or with faces of the $S_4$. So a vertex of the polygon
+can arise from intersection of a side with a face or an edge with $S_3$ or from a vertex of $S_3$.
+So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
+to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
+
+Computation of the intersection polygon consist of three parts. In the first part (Algorithm \ref{algo:colect_23_ip_triangle}), we compute intersection points
+on baundary if $S_3$ using the line-tetrahedron intersection algorithm for every side. There are 0,1, or 2 intersection points
+on every side and the points are already sorted according to the side orientation, which match orientation of the intersection polygon. So, passing
+through the all sides and appending the points into $I$ provides as with incomplete intersectionn polygon but in the correct order.
+Then we proceed to the second part (Algorithm \ref{algo:collect_23_ip_edges}). Using the line-triangle intersection algorithm for edges of $S_4$
+we obtain points from interior of $S_3$ and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
+with faces of $S_4$. Every point $p$ from the first part of the algorithm that is not a veertex of $S_3$ belongs to a face $f$ of $S_4$, we know from the order of the points
+if the face comes before or after the point in the intersection polygon, in the first case we set $F[0,f] =p$ inthe second case we set $F[1,f]=p$. 
+Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
+intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
+
+Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than allows us to modify array of successors $P$ and get $I$ in correct order as the list $K$.
+
+
+\begin{algorithm}
+  \SetKw{And}{And}
+  \DontPrintSemicolon
+  \KwIn{input data}
+  \KwOut{List of IPs sorted output data}  
+  $I =\emptyset$\tcp*{Intersection polygon.}
+  $F(:,:)=-1$\tcp*{Unset entries of the face connection table.}
+  \For{side $s$ of $S_3$}{ 
+    \nllabel{line:1_3}
+    $L$ = intersection($s, S_4$)  \tcp*{List of max.\ two points.}
+    process point($L[0]$, 0)\; 
+    process point($L[-1]$, 1)
+  }
+  \lIf{ $I[0] == I[-1]$ }{remove $I[-1]$}
+  \caption{2d-3d intersection, points on triangle boundary}
+  \label{algo:colect_23_ip_triangle}
+\end{algorithm}
+
+\begin{algorithm}
+  \SetKw{And}{And}
+  \DontPrintSemicolon
+  \KwIn{intersection point $p$, face relation indicator $i$}
+  \KwOut{update of $I$ and $F$}
+  \lIf{ $p \ne I[-1]$ }{append $p$ to $I$}
+  set $j$ to index of $p$ in $I$\;
+  \lIf{ $p$ is on face $f$}{ F[i,f]=j}
+  \uElseIf{ $p$ is on edge $e$}{
+    compute sign of intersection($e$, $S_3$)\;
+    sort faces $f_0$, $f_1$ coincident with $e$\;
+    F[i, $f_i$]=j
+  }
+  \ElseIf{ $p$ is on vertex $v$ of $S_4$}{
+      \For{face $f$ coincident with $v$}{
+         \lIf{ $F[i,f]==-1$}{F[i,f]=j}
+      }
+  }
+  mark all edges of $S_4$ the $p$ lies on
+
+  \caption{process point( $p$, $i$ )}
+  \label{algo:collect_23_ip_edges}
+\end{algorithm}
+
+
+\begin{algorithm}
+  \SetKw{And}{And}
+  \DontPrintSemicolon
+  \KwIn{input data}
+  \KwOut{List of IPs sorted output data}  
+  \For{unmarked edge $e$ of $S_4$}{
+    $p$ = intersection($e, S_3$)\;
+    append $p$ to $I$\;
+    set $j$ to index of $p$ in $I$\;
+    \uIf{ $p$ is inside of $e$}{ 
+        sort faces $f_0$, $f_1$ coincident with $e$\;
+        F[0, $f_0$]=j\;
+        F[1, $f_1$]=j
+    } %else
+    \Else($p$ on the vertex $v$ of $S_4$){       
+      \For{face $f$ coincident with $v$}{
+         \lIf{ $F[i,f]==-1$}{F[i,f]=j}
+      }
+    }
+  }
+  \caption{2d-3d intersection, points in triangle interior}
+  \label{algo:order_23}
+\end{algorithm}
+
+\begin{algorithm}
+  \SetKw{To}{To}
+  \DontPrintSemicolon
+  \KwIn{all points in $I$}
+  \KwOut{polygon in $J$ in correct order}  
+  $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
+  \lFor{ $f$ is face of $S_4$}{$P[ F[0,f] ] = F[1, f]$}
+  $i=0$  
+  \lFor{$n=0$ \To $\abs{I}-1$}{
+    $K[n]=I[i]$
+    $i=P[i]$
+  }    
+  \caption{2d-3d intersection, finish sort of points}
+\end{algorithm}
+
+
+
+  
+  
+ List $in[f]$ contains index of the intersection point that follows after $f$ on the boundary of traced polygon, 
+ similarly $out[f]$ stores index of the intersection point that preeceeds the face $f$.
+
+  
+Possible cases for processing $L$:
+\begin{enumerate}
+ \item Regular case, $L$ consists of two intersections $p$, $q$ sorted by orientation of $s$, laying inside of $s$.
+ 
+ If $p$ is on the edge $e$ of $S_4$ compute sign of intersection($e$, $S_3$), sort the faces $f_0$, $f_1$ coincident with $e$
+ and set $in[f_0]$ to index of $p$ in $L$. Similarly if $q$ is on the edge, set $out[f_1]$ to index of $q$ in $L$.
+ 
+ If $p$ is in vertex $v$ of $S_4$, for every face $f$ coincident with $v$ set
+ in[$f$] to index of $p$ unless there is some index already set. So, we do not over ride
+ entries comming from the edge intersections. Similarly set out[$f$] if $q$ is in vertex of $S_4$.
+ 
+ If $p$ is on face $f_0$ of $S_4$, set $in[f_0]$ to index of $p$. Similarly, if $q$ is on face $f_1$ of $S_4$, set $out[f_1]$ to index of $q$.
+ laying on faces $f_p$, $f_q$ of $S_4$.
+ 
+ \item $L$ consists of a single intersection point $p$ (touching $S_4$)
+ 
+ 
+ If $p$ is on edge, compute sign of intersection($e$, $S_3$), sort the faces $f_0$, $f_1$,
+ set $in[f_0]$ and $out[f_1]$ to index of $p$.
+ 
+ If $p$
+\end{enumerate}
+
+How tracing works.
+\begin{itemize}
+ \item If there are no intersections in vertex of $S_4$. 
+\end{itemize}
+
+  
+  
+
+
+
+intersection polygon
 are found as intersection points of either triangle side and tetrahedron or tetrahedron edge and triangle.
 Therefore we use both algorithms above for 1D-3D and 1D-2D, respectively. Data are again efficiently passed
-to lower dimensional problems, so 9 \plucker coordinates and 18 \plucker products are computed. 
+to lower dimensional problems, so 
 
 The array of intersection points is generally not sorted. We use two so called \emph{tracing} algorithms and we
 intend to orient the edges of the polygon in the same direction as the triangle is oriented.
@@ -378,6 +530,7 @@ the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N
 ($N$ being number of intersection points).
 
 
+\subsection{Tracking boundary of the intersection polygon}
 
 \subsection{Prolongation algorithm}
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
