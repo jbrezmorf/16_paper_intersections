@@ -296,12 +296,11 @@ see \fig{fig:plucker_products}.
 
 \begin{figure}[!htb]
   \begin{center}        
-    \def\svgwidth{0.7\textwidth}
-    \input{\figpath plucker_products.pdf_tex}
+    \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
 %    \includegraphics{\figpath plucker_products.pdf}
   \end{center}
   \caption{Sign of the permuted inner product is related to the relative position of two oriented lines. Dashed line symbolizes that the line 
-           is in the back, the llines intersect in the last case.}
+           is in the back, the lines intersect in the last case.}
   \label{fig:plucker_products}
 \end{figure}
 
@@ -531,12 +530,27 @@ the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N
 
 
 \subsection{Tracking boundary of the intersection polygon}
+\notePE{I suggest to denote IP, IPs intersection point and its plural respectively.}
+
+\notePE{It seems to me, that we can really describe the prolongation in general, for 1D and 2D, 
+refering to them as components. I tried to do so..}
+
+\notePE{We need proper definitions of terms we use: \\
+\emph{component} is a set of connected elements of the same lower dimension (1D, 2D)\\
+\emph{bulk} is a set of 3D elements\\
+% or slave, master...
+\emph{candidates pair}  is a pair of a component element and a bulk element, that might intersect
+each other (due to intersection of their bounding boxes or prolongation result)
+\emph{pathologic, special, degenerate case ??}
+}
+
+\notePE{Do you want to use American 'neighbor' or all other English 'neighbour'? (I prefer non-american.. to be unified at the end..)}
 
 \subsection{Prolongation algorithm}
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
-elements of the same dimension (1D, 2D), in the space of 3D elements (tetrahedrons). 
-Obtaining of all the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
-Then we can prolongate the intersection by investigating neighbouring elements of the component.
+elements of the same lower dimension (1D, 2D), in the space of 3D elements. 
+Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
+Then we can prolongate the intersection by investigating neighbouring elements.
 %
 \begin{figure}[!htb]
 %   \vspace{0pt}
@@ -549,7 +563,27 @@ Then we can prolongate the intersection by investigating neighbouring elements o
 The prolongation algorithm is the same for both 1D and 2D components, see \fig{fig:prolongation}. 
 It can be seen as a \emph{breadth-first search}
 \footnote{Wiki, [online 2016-03-01], \url{https://en.wikipedia.org/wiki/Breadth-first_search}}
-algorithm on the graph of 1D and 2D elements, respectively.
+algorithm on the graph of component elements.
+
+\textbf{breadth first search} algorithm:
+  \begin{enumerate}
+    \item\label{en:first} Get next unprocessed component element $k$.
+    \item Find intersection candidates $\mathcal K$ in bulk mesh (3D elements).
+    \item \label{en:q2}For $K\in \mathcal K$ compute intersection $(k, K)$.  
+    \item Push the intersection neigbours into queues: $(k, L) \to Q_b$, $(l, K) \to Q_c$. 
+    \item While $(l, L) \in Q_b$ check intersection $(l, L)$. Append queues.
+    \item Pop pair from $Q_c$. (move to the next component element: go to \ref{en:q2}).
+    \item If $Q_c$ is empty, go to \ref{en:first}.
+  \end{enumerate}
+  Prerequisites:
+  \begin{itemize}
+   \item need information about element connectivity (mesh preprocessing)
+%   \item mark and check already inspected pairs. Marking elements + hashing.
+   \item find the starting intersection -- AABB (Axes Aligned Bounding Boxes) 
+   \item possibly create Bounding Interval Hierarchy (BIH)
+%   \item Pass already known information with pairs.
+%   \item Deal with degenerated cases.
+  \end{itemize}
 
 After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
 two queues with element pairs as candidates for further intersection. If the intersection edge 
@@ -565,6 +599,89 @@ another component.
 
 The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
 queue is emptied at first.
+
+% \subsubsection{1D-3D prolongation}
+% 1d-3d prolongation logic
+% IP is:
+% - 1D element node
+%     - inside tetrahedron
+%         - get the neighboring 1D element
+%         - push to component queue candidate pair [1D neigbor -- tetrahedron]
+%     - on the surface of tetrahedron
+%         - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%         - get the tetrahedron neighbors on the faces
+%         - push to bulk queue new candidates pairs:
+%             - [current 1D element -- tetrahedron neighbor]
+%             - [1D neighbor -- tetragedron neighbor]
+%             - check whether the candidate pair has not been computed yet
+%             (- if no new prolongation, push empty pair; means IP is on the boundary; 
+%                the element is not closed then -- not fully covered with tetrahedrons)
+% - inside 1D element
+%     - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%     - get the tetrahedron neighbors on the faces
+%     - push to bulk queue candidate pair [current 1D element -- tetrahedron neighbor]
+%     - check whether the candidate pair has not been computed yet
+%     (- if no new prolongation, push empty pair; same meaning as above)
+
+% A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases:
+
+% \begin{itemize}
+%     \item \textbf{IP lies at 1D element node and inside 3D element} \\
+%             We find the neighboring 1D element over the node and push a new candidate pair [1D neighbor -- current 3D element] into component queue.
+%     \item \textbf{IP lies at 1D element node and on the surface of 3D element} \\
+%             We find all the faces of 3D element in which the IP lies (1 face, or 2 faces (IP on an edge), 
+%             or 3 faces (IP at a node)). We find the corresponding neghboring 3D elements over the faces and
+%             push the following new candidates pairs into the bulk queue: [current 1D element -- 3D neighbor], [1D neighbor -- 3D neighbor].
+%             If the candidates pair has been investigated already, we skip it.
+%     \item \textbf{IP lies inside 1D element (therefore must be on the surface of 3D element)} \\
+%             The same as before, but we push only [current 1D element -- 3D neighbor] candidates pairs, since
+%             there is no 1D neighbor.
+% \end{itemize}
+
+A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases (applies both for 1D-3D and 2D-3D):
+\begin{itemize}
+    \item \textbf{IP lies on component element side and inside bulk element} \\
+            We find all the sides of component element in which the IP lies (IP can be at node and connect more sides).
+            We find the component neighboring elements over the sides and push a new candidate pair
+            [component neighbor -- current bulk element] into component queue.
+    \item \textbf{IP lies on component element side and on the surface of bulk element} \\
+            We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
+            or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
+            push the following new candidates pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
+            If the candidates pair has been investigated already, we skip it.
+    \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
+            The same as before, but we push only [current component element -- bulk neighbor] candidates pairs, since
+            there is no component neighbor.
+\end{itemize}
+
+% 2d-3d prolongation logic CURRENT
+% IP is:
+% - inside 2D element side
+%     - inside 3D element
+%         - get the neighboring 2D elements over the side
+%         - push to component queue candidates pair [2D neigbor -- current 3D element]
+% - inside the face of 3D element
+%     - get the neighboring 3D element over the face
+%     - push to bulk queue candidate pair [2D neighbor -- 3D element]
+% 
+% 2d-3d prolongation logic WITH FUTURE CORRECTIONS
+% IP is:
+% - on 2D element side
+%     - find 2D element sides (if at node) and the corresponding neighbors
+%     - inside 3D element
+%         - push to component queue candidates pairs [2D neigbor -- current 3D element]
+%     - on the surface of 3D element
+%         - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%         - get the 3D neighbors over the faces
+%         - push to bulk queue new candidates pairs
+%             - [current 2D element -- 3D neighbor]
+%             - [2D neighbor -- 3D neighbor] (all combinations)
+%             - check whether the candidate pair has not been computed yet
+% - inside the 2D element (=> on the surface of 3D element)
+%     - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%     - get the 3D neighbors over the faces
+%     - push to bulk queue new candidates pairs [current 2D element -- 3D neighbor]
+%     - check whether the candidate pair has not been computed yet
 
 
 \section{Front tracking algorithm}
