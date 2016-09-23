@@ -308,16 +308,16 @@ see \fig{fig:plucker_products}.
 \subsection{Intersection Line-Triangle (1D-2D)}
 \notePE{In this paragraph we investigate real lines. Trimming comes later when tolerance is denoted, see next PE note.}
 Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
-with oriented sides $s_i=(V_j, V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
+with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
 is an intersection point with the       line $p$ inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
-In particular for the barycentric coordinate $w_i$ related to the vertex $V_i$ we have
+In particular for the barycentric coordinate $w_i$ related to the vertex $\vc V_i$ we have
 \[
    w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }
 \]
 Indeed, using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
 The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ (\plucker coordinates are invariant to change of initial point). Combining these two expressions we get
 \[
-   \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
+   \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times \vc V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
    =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
 \]
 Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2 \times \vc s_0 = \vc s_0 \times \vc s_1$ and thus
