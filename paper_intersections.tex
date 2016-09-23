@@ -265,19 +265,20 @@ orientation of the edges of the intersection polygon.
 
 \section{Element Intersections}
 \label{sec:elements_intersections}
-In this section, we present algorithms for computing intersection of a pair of simpicial elements of different dimension in the 3D ambient space.
+In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space.
 In particular we are interested in intersection of 1D-2D, 1D-3D, 2D-2D, 2D-3D simplices. In general the intersection can be a point, a line segment or a polygon.
-All these three objects are represented as a vector of the vertices called \emph{intersection points}. Basic idea is to compute 1D-2D case using the 
-\plucker coordinates and reduce all other cases to that case. 
+All these three objects are represented as a vector of vertices called \emph{intersection points}. The fundamental idea is to compute intersection of 1D-2D simplices using the 
+\plucker coordinates and reduce all other cases to this one. 
 
 The intersection point data structure keeps for each of the two intersection simplices:
+\notePE{Subsimplex or subelement?}
 \begin{itemize}
  \item Barycentric coordinate of the intersection.
- \item Dimenstion of the most specific subsimplex (face, edge, vertex) where the point lies.
- \item Indice of the most specific subelement.
+ \item Dimension of the most specific subsimplex (face, edge, vertex) where the point lies.
+ \item Index of the most specific subelement.
 \end{itemize}
-Further, keep sign of the permuted inner product  we store
-In order to catch various degenerate cases, the intersec
+Further, we store the sign of the permuted inner product
+in order to detect various special and degenerate cases.
 
 
 
@@ -289,7 +290,7 @@ the \plucker coordinates of $p$ are defined as
 Further we use a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
-The sign of the inner product product gives us the relative position of the two lines, 
+The sign of the permuted inner product gives us the relative position of the two lines, 
 see \fig{fig:plucker_products}.
 
 
@@ -299,8 +300,8 @@ see \fig{fig:plucker_products}.
     \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
 %    \includegraphics{\figpath plucker_products.pdf}
   \end{center}
-  \caption{Sign of the permuted inner product is related to the relative position of two oriented lines. Dashed line symbolizes that the line 
-           is in the back, the lines intersect in the last case.}
+  \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines. Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+           \notePE{circle dot permuted inner product}}
   \label{fig:plucker_products}
 \end{figure}
 
@@ -311,7 +312,8 @@ see \fig{fig:plucker_products}.
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
 \subsection{Intersection Line-Triangle (1D-2D)}
-Let us consider a line $p$, with parametric equation $\vc X = \vc A + t\vc u$, $t\in(0,1)$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+\notePE{In this paragraph we investigate real lines. Trimming comes later when tolerance is denoted, see next PE note.}
+Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
 with oriented sides $s_i=(V_j, V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
 is an intersection point with the       line $p$ inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
 In particular for the barycentric coordinate $w_i$ related to the vertex $V_i$ we have
@@ -332,9 +334,9 @@ Having the barycentric coordinates of the intersection on the triangle we can co
 \[
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
 \]
-For practical computation we use $i$ with maximal $|u_i|$.
+We use $i$ with maximal $|u_i|$ for practical computation.
 
-Next, we shell discuss the case when some of the permuted inner products is zero. In fact we test if any barycentric coordinate is under given tolerance 
+Next, we shall discuss the case when some of the permuted inner products are zero. In fact, we test if any barycentric coordinate is under given tolerance 
 ($\abs{w_i} \le \epsilon$). Various \emph{pathological} cases are detected and further topological 
 information is atached to the intersection data.  In the case of one zero coordinate (non-coplanar intersection on the edge)
 or two zero coordinates (intersection in the vertex), we add the local edge index or the local vertex index to the intersection, respectively.
@@ -352,6 +354,7 @@ intersection only in the case of final intersection. Need to verify it since it 
 
 We distinguis two variants of the desired result: the auxiliary intersection used as subprocedure of the other intersections and the final intersection.
 In the first case we just return the array of the intersection points with the line.
+\notePE{In the first case, we do not trim the line (We need both IPs (if there are two), for 1D-3D). In the final case, we need to check that also $t_p \in (-\epsilon, 1+\epsilon)$. That is the current state.}
  Degenerated case of $p$ laying on the triangle edge is also detected....
 
 Intersection with line segment ... (final 1D-2D intersection)
