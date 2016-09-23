@@ -395,6 +395,7 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   \KwOut{List of IPs sorted output data}  
   $I =\emptyset$\tcp*{Intersection polygon.}
   $F(:,:)=-1$\tcp*{Unset entries of the face connection table.}
+  $V =\emptyset$\tcp*{$S_4$ vertex intersections.}
   \For{side $s$ of $S_3$}{ 
     \nllabel{line:1_3}
     $L$ = intersection($s, S_4$)  \tcp*{List of max.\ two points.}
@@ -407,60 +408,70 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
 \end{algorithm}
 
 \begin{algorithm}
+  \caption{process point( $p$, $i$ )}
+  
+  
   \SetKw{And}{And}
   \DontPrintSemicolon
   \KwIn{intersection point $p$, face relation indicator $i$}
   \KwOut{update of $I$ and $F$}
   \lIf{ $p \ne I[-1]$ }{append $p$ to $I$}
-  set $j$ to index of $p$ in $I$\;
-  \lIf{ $p$ is on face $f$}{ F[i,f]=j}
-  \uElseIf{ $p$ is on edge $e$}{
-    compute sign of intersection($e$, $S_3$)\;
-    sort faces $f_0$, $f_1$ coincident with $e$\;
-    F[i, $f_i$]=j
-  }
-  \ElseIf{ $p$ is on vertex $v$ of $S_4$}{
-      \For{face $f$ coincident with $v$}{
-         \lIf{ $F[i,f]==-1$}{F[i,f]=j}
-      }
-  }
-  mark all edges of $S_4$ the $p$ lies on
-
-  \caption{process point( $p$, $i$ )}
-  \label{algo:collect_23_ip_edges}
+  \If{ $p$ is not vertex of $S_3$}{    
+    set $j$ to index of $p$ in $I$\;
+    \lIf{ $p$ is on face $f$}{ F[i,f]=j}
+    \uElseIf{ $p$ is on edge $e$}{
+        F[i, $e$]=j
+    }
+    \ElseIf{ $p$ is on vertex $v$ of $S_4$}{
+        F[i, $v$] =j
+   }
+  }    
 \end{algorithm}
 
 
 \begin{algorithm}
+  \label{algo:collect_23_ip_edges}
+  \caption{2d-3d intersection, points in triangle interior}
+  
   \SetKw{And}{And}
   \DontPrintSemicolon
   \KwIn{input data}
   \KwOut{List of IPs sorted output data}  
-  \For{unmarked edge $e$ of $S_4$}{
+  \For{edge $e$ of $S_4$}{
     $p$ = intersection($e, S_3$)\;
-    append $p$ to $I$\;
-    set $j$ to index of $p$ in $I$\;
-    \uIf{ $p$ is inside of $e$}{ 
-        sort faces $f_0$, $f_1$ coincident with $e$\;
-        F[0, $f_0$]=j\;
-        F[1, $f_1$]=j
-    } %else
-    \Else($p$ on the vertex $v$ of $S_4$){       
-      \For{face $f$ coincident with $v$}{
-         \lIf{ $F[i,f]==-1$}{F[i,f]=j}
-      }
-      mark all edges of $S_4$ coincident with $v$
+    \uIf{ $p$ is on boundary of $S_3$}{
+        
     }
+    \Else{
+        append $p$ to $I$\;
+        set $j$ to index of $p$ in $I$\;
+        \uIf{ $p$ is inside of $e$}{ 
+            sort faces $f_0$, $f_1$ coincident with $e$\;
+            F[0, $f_0$]=j\;
+            F[1, $f_1$]=j
+        } %else
+        \Else($p$ on the vertex $v$ of $S_4$){       
+        append $j$ to $V$
+        \For{face $f$ coincident with $v$}{
+            \lIf{ $F[i,f]==-1$}{F[i,f]=j}
+        }
+        mark all edges of $S_4$ coincident with $v$
+        }
+     }   
   }
-  \caption{2d-3d intersection, points in triangle interior}
-  \label{algo:order_23}
 \end{algorithm}
 
 \begin{algorithm}
+  \caption{2d-3d intersection, finish sort of points}  
+  \label{algo:order_23}
+  
   \SetKw{To}{To}
   \DontPrintSemicolon
   \KwIn{all points in $I$}
-  \KwOut{polygon in $J$ in correct order}  
+  \KwOut{polygon in $K$ in correct order}  
+  \If{\abs{V} = 3}{
+  
+  }
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
   \For{ $f$ is face of $S_4$}{
     \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$}
@@ -469,7 +480,6 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
     $K[n]=I[i]$
     $i=P[i]$
   }    
-  \caption{2d-3d intersection, finish sort of points}
 \end{algorithm}
 
 
