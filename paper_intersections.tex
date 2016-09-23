@@ -449,6 +449,7 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
       \For{face $f$ coincident with $v$}{
          \lIf{ $F[i,f]==-1$}{F[i,f]=j}
       }
+      mark all edges of $S_4$ coincident with $v$
     }
   }
   \caption{2d-3d intersection, points in triangle interior}
@@ -461,7 +462,8 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   \KwIn{all points in $I$}
   \KwOut{polygon in $J$ in correct order}  
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
-  \lFor{ $f$ is face of $S_4$}{$P[ F[0,f] ] = F[1, f]$}
+  \For{ $f$ is face of $S_4$}{
+    \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$}
   $i=0$  
   \lFor{$n=0$ \To $\abs{I}-1$}{
     $K[n]=I[i]$
