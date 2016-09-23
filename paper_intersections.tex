@@ -377,16 +377,26 @@ can arise from intersection of a side with a face or an edge with $S_3$ or from 
 So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
 
-Computation of the intersection polygon consist of three parts. In the first part (Algorithm \ref{algo:colect_23_ip_triangle}), we compute intersection points
-on baundary if $S_3$ using the line-tetrahedron intersection algorithm for every side. There are 0,1, or 2 intersection points
+Computation of the intersection polygon consists of three parts. In the first part (Algorithm \ref{algo:colect_23_ip_triangle}), we compute intersection points
+on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every of its sides. There are 0,1, or 2 intersection points
 on every side and the points are already sorted according to the side orientation, which match orientation of the intersection polygon. So, passing
-through the all sides and appending the points into $I$ provides as with incomplete intersectionn polygon but in the correct order.
+through all the sides and appending the points into $I$ provides us with incomplete intersection polygon but in the correct order.
+\notePE{Comment on process point (Algorithm \ref{algo:process_point}), face relation indicator, I would move description of face table here, since I looked at algorithm1 here, from it skipped to process point and I got lost..}
+
+\notePE{If IP lies on an edge(s) of $S_4$, we create a mark so we exclude the edges from further computation in Algorithm \ref{algo:collect_23_ip_edges}.}
+
+\notePE{In process point, we set for all the face of the vertex, if we coming through the vertex in or out the $S_4$. I understand that the condition on line 10 means, that we do not overwrite info if there is another IP on that face..}
+
+\notePE{I corrected the algorithm references. Please check, it is ok now..}
+
 Then we proceed to the second part (Algorithm \ref{algo:collect_23_ip_edges}). Using the line-triangle intersection algorithm for edges of $S_4$
 we obtain points from interior of $S_3$ and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
-with faces of $S_4$. Every point $p$ from the first part of the algorithm that is not a veertex of $S_3$ belongs to a face $f$ of $S_4$, we know from the order of the points
-if the face comes before or after the point in the intersection polygon, in the first case we set $F[0,f] =p$ inthe second case we set $F[1,f]=p$. 
+with faces of $S_4$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_3$ belongs to a face $f$ of $S_4$; we know from the order of the points
+whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
 Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
 intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
+
+
 
 Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than allows us to modify array of successors $P$ and get $I$ in correct order as the list $K$.
 
@@ -403,11 +413,15 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
     $L$ = intersection($s, S_4$)  \tcp*{List of max.\ two points.}
     process point($L[0]$, 0)\; 
     process point($L[-1]$, 1)
+    \notePE{Isn't it clearer to write the two process point lines into cycle over L?}
   }
   \lIf{ $I[0] == I[-1]$ }{remove $I[-1]$}
+  \notePE{I am not sure if I understand the notation '($[-1]$)', can be explained?
+The last line then checks if first and last IPs, if they are not duplicates..??}
   \caption{2d-3d intersection, points on triangle boundary}
   \label{algo:colect_23_ip_triangle}
 \end{algorithm}
+
 
 \begin{algorithm}
   \SetKw{And}{And}
@@ -415,6 +429,8 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   \KwIn{intersection point $p$, face relation indicator $i$}
   \KwOut{update of $I$ and $F$}
   \lIf{ $p \ne I[-1]$ }{append $p$ to $I$}
+  \notePE{I am missing the check whether IP is vertex of $S_3$ as referred in text.
+  So what if it is a vertex?}\;
   set $j$ to index of $p$ in $I$\;
   \lIf{ $p$ is on face $f$}{ F[i,f]=j}
   \uElseIf{ $p$ is on edge $e$}{
@@ -430,7 +446,7 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   mark all edges of $S_4$ the $p$ lies on
 
   \caption{process point( $p$, $i$ )}
-  \label{algo:collect_23_ip_edges}
+  \label{algo:process_point}
 \end{algorithm}
 
 
@@ -456,17 +472,19 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
     }
   }
   \caption{2d-3d intersection, points in triangle interior}
-  \label{algo:order_23}
+  \label{algo:collect_23_ip_edges}
 \end{algorithm}
 
 \begin{algorithm}
   \SetKw{To}{To}
   \DontPrintSemicolon
   \KwIn{all points in $I$}
-  \KwOut{polygon in $J$ in correct order}  
+  \KwOut{polygon in $J$ in correct order \notePE{J should be K ?}}  
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
   \For{ $f$ is face of $S_4$}{
     \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$} 
+    \notePE{condition should be $F[0,f] \ne F[1,f]$ ? I don't understand: successor indices should be switched?
+    This way there would be same two indices..}
   }
   $i=0$
   
@@ -475,6 +493,7 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
     $i=P[i]$
   }    
   \caption{2d-3d intersection, finish sort of points}
+  \label{algo:order_23}
 \end{algorithm}
 
 
