@@ -463,8 +463,10 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   \KwOut{polygon in $J$ in correct order}  
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
   \For{ $f$ is face of $S_4$}{
-    \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$}
-  $i=0$  
+    \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$} 
+  }
+  $i=0$
+  
   \lFor{$n=0$ \To $\abs{I}-1$}{
     $K[n]=I[i]$
     $i=P[i]$
