@@ -371,26 +371,161 @@ Pathologic cases are again carefully processed so we obtain the most extensive t
 See \cite{fris_dp_2015} for detailed description of all possible cases.
 
 \subsection{Intersection Triangle-Tetrahedron (2D-3D)}
-The intersection of a triangle $S_3$ and a tetrahedron $S_4$ is a polygon with 7 vertices at maximum. The sides of the polygon
-are coincident with either sides of $S_3$ or with faces of the $S_4$. So a vertex of the polygon
-can arise from intersection of a side with a face or an edge with $S_3$ or from a vertex of $S_3$.
+The intersection of a triangle $S_3$ and a tetrahedron $S_4$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
+are coincident with either sides of $S_3$ or with faces of the $S_4$. Thus each vertex of the polygon
+can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_3$.
 So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
+Computation of the intersection polygon consists of three parts: calculation of IPs on the $S_3$ boundary (Algorithm \ref{algo:colect_23_ip_triangle}),
+calculation of IPs in the interior of $S_3$ (Algorithm \ref{algo:collect_23_ip_edges}), and finalize the correct order of IPs (Algorithm \ref{algo:order_23}).
 
-Computation of the intersection polygon consists of three parts. In the first part (Algorithm \ref{algo:colect_23_ip_triangle}), we compute intersection points
-on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every of its sides. There are 0,1, or 2 intersection points
-on every side and the points are already sorted according to the side orientation, which match orientation of the intersection polygon. So, passing
-through all the sides and appending the points into $I$ provides us with incomplete intersection polygon but in the correct order.
-\notePE{Comment on process point (Algorithm \ref{algo:process_point}), face relation indicator, I would move description of face table here, since I looked at algorithm1 here, from it skipped to process point and I got lost..}
+\begin{algorithm}
+  \caption{2d-3d intersection, points on triangle boundary}
+  \label{algo:colect_23_ip_triangle}
 
-\notePE{If IP lies on an edge(s) of $S_4$, we create a mark so we exclude the edges from further computation in Algorithm \ref{algo:collect_23_ip_edges}.}
+  \DontPrintSemicolon
+  \KwIn{input data}
+  \KwOut{List of IPs on sorted output data}  
+  $F(:,:)=-1$\tcp*{Unset entries of the face connection table.}  
+    
+  \For{side $i$ of $S_3$}{ 
+    $L$ = intersection($i, S_4$)\;
+    \For{ $p \in L$, $p \ne I[-1]$ }{append $p$ to $I$}    
+    \lIf{$\abs{L}=2$}{
+        append $0,0$ to $s$
+    } \lElse {
+        append $1$ to $s$
+    }
+  }
+  \nllabel{line:ip_first_vtx_duplicate}
+  \lIf{ $I[0] == I[-1]$ }{remove $I[-1]$}
+  
+  $l=0$
+  \For{$p \in I$}{
+    set $j$ to index of $p$ in $I$\;
+    \If{ $p$ is on boundary of $S_4$}{
+      $x$ is vertex,edge, or face on which $p$ lies\; 
+      \For{ $i=0,\dots, s[j]$}{
+        $F[l, x]=j$\;
+        $l=1-l$ \tcp*{switch from input to output and vice versa}
+      }  
+    }
+  }  
+\end{algorithm}
 
-\notePE{In process point, we set for all the face of the vertex, if we coming through the vertex in or out the $S_4$. I understand that the condition on line 10 means, that we do not overwrite info if there is another IP on that face..}
 
-\notePE{I corrected the algorithm references. Please check, it is ok now..}
+In Algorithm \ref{algo:colect_23_ip_triangle}, we first compute IPs
+on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every side. Every IP that is not same as the previous IP 
+(occures at vertices of $S_3$) is appended to $I$. The IPs are added in the order around $S_3$ which match the orientation of the intersection polygon.
+The array $s$ indicates IPs that comes from side touching $S_4$ at its edge or vertex. 
+At line \ref{line:ip_first_vtx_duplicate}, we remove posible dupicate IP for the first vertex.
+Then we pass through $I$ and denote to the table $F$ at which IP ($j$) the polygon's boundary switchs from the $S_4$ boundary to the $S_3$ boundary
+($l=0$) and vice versa ($l=1$). The table $F$ contains the entry ($l=1$) and leave ($l=0$) IP for every geometrical object (vertex, edge, or  face) 
+$x$ on the boundary. In particular the touching IPs appear in both directions. The result of Algorithm \ref{algo:colect_23_ip_triangle} is incomplete 
+list $I$ of IPs lying on the $S_3$ boundary and the table $F$ stores relation of the objects on the $S_4$ boundary to the IPs on the $S_3$ boundary.
 
-Then we proceed to the second part (Algorithm \ref{algo:collect_23_ip_edges}). Using the line-triangle intersection algorithm for edges of $S_4$
-we obtain points from interior of $S_3$ and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
+
+\begin{algorithm}  
+  \caption{2d-3d intersection, points in triangle interior}
+  \label{algo:collect_23_ip_edges}
+  
+  \SetKw{And}{And}
+  \DontPrintSemicolon
+  \KwIn{$I$ with IPs on $S_3$ boundary, partialy filled $F$}
+  \KwOut{all IPs in $I$, complete $F$}  
+  
+  \nllabel{line:12edges}
+  \lFor{edge $e$ of $S_4$}{$L[e]$ = intersection($e, S_3$)} 
+  \For{unmarked edge $e$ of $S_4$}{
+    \uIf{ $L[e]$ is inside of $e$}{ 
+        \nllabel{line:edge_faces}        
+        $(f_0,\ f_1)$ = edge faces($e$)
+    } 
+    \Else($p$ on the vertex $v$ of $S_4$){       
+            $(f_0,\ f_1)$ = vertex faces($v$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
+    }    
+    \uIf{ $L[e]$ is on boundary of $S_3$ }{
+         \uIf{ $L[e]$ is inside of $e$}{ 
+             get $i$ such that $F[i,e] = k$, $k\ne -1$
+         }
+         \Else($p$ on the vertex $v$ of $S_4$){ 
+             get $i$ such that $F[i,v] = k$, $k\ne -1$          
+         }         
+         $F[1-i, f_{1-i}] = k$\;
+    }
+    \Else{
+         append $L[e]$ to $I$\;
+         set $j$ to index of $L[e]$ in $I$\;
+         F[0, $f_0$]=j\;
+         F[1, $f_1$]=j\;
+         mark all edges coincident with $L[e]$
+    }   
+  }  
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{2d-3d intersection, vertex faces}  
+  \label{algo:vertex_faces}
+  
+  \SetKw{return}{return}
+  \DontPrintSemicolon
+  \KwIn{vertex $v$ of $S_4$, $L[:]$ intersection results for edges of $S_4$}
+  \KwOut{faces $S_4$ intersected by the plane of $S_3$}
+  $e_0,\ e_1,\ e_2$ edges coincident with $v$\;
+  $s[i] = L[e_i]$, for $i=0,1,2$\;
+  \nllabel{line:two_degenerated}
+  \uIf{$s$ have 1 non-degenerate edge $e$}{
+    \return pair of degenerate edges sorted according to \edgefaces($e$)    
+  }
+  \nllabel{line:one_degenerated}
+  \uElseIf{ $s$ have 1 degenerate edge $e$}{
+    $f$ is face opposite to $e$first of faces coincident with $e$\;
+    $g$ is non-degenerate edge coincident with $f$\;
+    \return edge faces($g$)
+  }
+  \nllabel{line:different_sign}
+  \uElseIf{ $s$ have edge $e$ with sign oposite to other two}{
+    \return edge faces($e$)\;
+  }
+  \nllabel{line:same_signs}
+  \Else($s$ have all signs same){
+    \return anything\;
+  }  
+\end{algorithm}
+
+Algorithm \ref{algo:collect_23_ip_edges} use the line-triangle intersection algorithm for the edges of $S_4$ (line \ref{line:12edges}).
+The loop produce IPs from interior of $S_3$ and possibly those already computed IPs with special position on vertex or edge of $S_4$. 
+Every edge $e$ of $S_4$ is oriented so that the pair of adjacent faces $f_0$, $f_1$ apear in the same order on the intersection polygon when the 
+IP of $e$ have negative sign (see Figure \ref{fig:plucker_products}). The function "edge faces" used on line \ref{line:edge_faces} and later on 
+use the sign of the intersection to return the pair of faces in the correct order. 
+Similarly the function "vertex faces" (Algorithm \ref{algo:vertex_faces}) described latter on
+returns pair of generalized faces (face or edge) possibly adjacent to the IP $L[e]$ at the vertex $v$ of $S_4$.
+
+
+
+\subsubsection{Vertex Faces Algorithm}
+This function get an IP $p$ at vertex $v$ of $S_4$ as a parameter. The IP is special vertex case of non-degenerate edge-triangle intersection. 
+The functin returns pair of generalized faces of $S_4$ preceeding and succeeding $p$ on the polygons boundary in the case that $p$ is at interior of $S_3$.
+Basic idea is to use the signs of IPs of the three edges coincident with $v$. 
+Possible cases are:
+\begin{itemize}
+ \item {\bf All IPs have same sign.} (line \ref{line:same_signs}) We return any pair of faces.  $S_3$ is touching $S_4$ 
+ in the vertex $v$, the polygon ddegenerates to the single IP $p$, no connectionn information from table $F$ necessary.
+ \item {\bf Single IP have sign oposite to the other two.} (line \ref{line:different_sign}) Let $e$ be the edge of the single $IP$ with different sign. 
+ The plane of $S_3$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. The order is detemined by the function edge faces.
+ \item {\bf Single degenerated IP.} (line \ref{line:one_degenerated}) Let us denote $e$ the edge with degenerated IP and $f$ the face between the other two edges.
+ The other two (non-degenerate) edges may have either oposite sign (the plane cut $S_4$) or the same sign (the plane touching $S_4$ at the edge $e$.
+ 
+ The edge $e$ lies in the the singel edge
+ \item {\bf Two degenerated IPs.} (line \ref{line:two_degenerated}) A face of $S_4$ lies in the plane of $S_3$, single edge $e$ have non-degenerate IP.
+ We treat the two degenerate edges as special case of faces adjacent to $e$ and return them sorted like the faces given by edge faces fro edge $e$.
+\end{itemize}
+
+Either all signs are equal ($S_3$ touching $S_4$) wee , or
+a single edge have the sign oposite to other twotwo edges have a sign oposite then the thi. of According to the 
+
+
+and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
 with faces of $S_4$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_3$ belongs to a face $f$ of $S_4$; we know from the order of the points
 whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
 Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
@@ -401,105 +536,25 @@ intersection polygon is determined by the sign of the edge-triangle intersection
 Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than allows us to modify array of successors $P$ and get $I$ in correct order as the list $K$.
 
 
-\begin{algorithm}
-  \SetKw{And}{And}
-  \DontPrintSemicolon
-  \KwIn{input data}
-  \KwOut{List of IPs sorted output data}  
-  $I =\emptyset$\tcp*{Intersection polygon.}
-  $F(:,:)=-1$\tcp*{Unset entries of the face connection table.}
-  $V =\emptyset$\tcp*{$S_4$ vertex intersections.}
-  \For{side $s$ of $S_3$}{ 
-    \nllabel{line:1_3}
-    $L$ = intersection($s, S_4$)  \tcp*{List of max.\ two points.}
-    process point($L[0]$, 0)\; 
-    process point($L[-1]$, 1)
-    \notePE{Isn't it clearer to write the two process point lines into cycle over L?}
-  }
-  \lIf{ $I[0] == I[-1]$ }{remove $I[-1]$}
-  \notePE{I am not sure if I understand the notation '($[-1]$)', can be explained?
-The last line then checks if first and last IPs, if they are not duplicates..??}
-  \caption{2d-3d intersection, points on triangle boundary}
-  \label{algo:colect_23_ip_triangle}
-\end{algorithm}
 
 
-\begin{algorithm}
-  \caption{process point( $p$, $i$ )}
-  
-  
-  \SetKw{And}{And}
-  \DontPrintSemicolon
-  \KwIn{intersection point $p$, face relation indicator $i$}
-  \KwOut{update of $I$ and $F$}
-  \lIf{ $p \ne I[-1]$ }{append $p$ to $I$}
-  \If{ $p$ is not vertex of $S_3$}{    
-  \notePE{I am missing the check whether IP is vertex of $S_3$ as referred in text.
-  So what if it is a vertex?}\;
-    set $j$ to index of $p$ in $I$\;
-    \lIf{ $p$ is on face $f$}{ F[i,f]=j}
-    \uElseIf{ $p$ is on edge $e$}{
-        F[i, $e$]=j
-    }
-    \ElseIf{ $p$ is on vertex $v$ of $S_4$}{
-        F[i, $v$] =j
-   }
-  }    
-  \label{algo:process_point}
-\end{algorithm}
 
 
-\begin{algorithm}
-  \label{algo:collect_23_ip_edges}
-  \caption{2d-3d intersection, points in triangle interior}
-  
-  \SetKw{And}{And}
-  \DontPrintSemicolon
-  \KwIn{input data}
-  \KwOut{List of IPs sorted output data}  
-  \For{edge $e$ of $S_4$}{
-    $p$ = intersection($e, S_3$)\;
-    \uIf{ $p$ is on boundary of $S_3$}{
-        
-    }
-    \Else{
-        append $p$ to $I$\;
-        set $j$ to index of $p$ in $I$\;
-        \uIf{ $p$ is inside of $e$}{ 
-            sort faces $f_0$, $f_1$ coincident with $e$\;
-            F[0, $f_0$]=j\;
-            F[1, $f_1$]=j
-        } %else
-        \Else($p$ on the vertex $v$ of $S_4$){       
-        append $j$ to $V$
-        \For{face $f$ coincident with $v$}{
-            \lIf{ $F[i,f]==-1$}{F[i,f]=j}
-        }
-        mark all edges of $S_4$ coincident with $v$
-        }
-     }   
-  }
-\end{algorithm}
+
+
+
 
 \begin{algorithm}
   \caption{2d-3d intersection, finish sort of points}  
   \label{algo:order_23}
   
-  \SetKw{To}{To}
+  \SetKw{To}{to}
   \DontPrintSemicolon
   \KwIn{all points in $I$}
   \KwOut{polygon in $K$ in correct order}  
-  \If{\abs{V} = 3}{
-  
-  }
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
-  \For{ $f$ is face of $S_4$}{
-    \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$} 
-    \notePE{condition should be $F[0,f] \ne F[1,f]$ ? I don't understand: successor indices should be switched?
-    This way there would be same two indices..}
-  }
-  $i=0$
-  
+  \lFor{ $f$ is face of $S_4$}{$P[ F[1,f] ] = F[0, f]$}
+  $i=0$\;  
   \lFor{$n=0$ \To $\abs{I}-1$}{
     $K[n]=I[i]$
     $i=P[i]$
@@ -507,9 +562,6 @@ The last line then checks if first and last IPs, if they are not duplicates..??}
   \label{algo:order_23}
 \end{algorithm}
 
-
-
-  
   
  List $in[f]$ contains index of the intersection point that follows after $f$ on the boundary of traced polygon, 
  similarly $out[f]$ stores index of the intersection point that preeceeds the face $f$.
