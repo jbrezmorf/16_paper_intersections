@@ -265,19 +265,20 @@ orientation of the edges of the intersection polygon.
 
 \section{Element Intersections}
 \label{sec:elements_intersections}
-In this section, we present algorithms for computing intersection of a pair of simpicial elements of different dimension in the 3D ambient space.
+In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space.
 In particular we are interested in intersection of 1D-2D, 1D-3D, 2D-2D, 2D-3D simplices. In general the intersection can be a point, a line segment or a polygon.
-All these three objects are represented as a vector of the vertices called \emph{intersection points}. Basic idea is to compute 1D-2D case using the 
-\plucker coordinates and reduce all other cases to that case. 
+All these three objects are represented as a vector of vertices called \emph{intersection points}. The fundamental idea is to compute intersection of 1D-2D simplices using the 
+\plucker coordinates and reduce all other cases to this one. 
 
 The intersection point data structure keeps for each of the two intersection simplices:
+\notePE{Subsimplex or subelement?}
 \begin{itemize}
  \item Barycentric coordinate of the intersection.
- \item Dimenstion of the most specific subsimplex (face, edge, vertex) where the point lies.
- \item Indice of the most specific subelement.
+ \item Dimension of the most specific subsimplex (face, edge, vertex) where the point lies.
+ \item Index of the most specific subelement.
 \end{itemize}
-Further, keep sign of the permuted inner product  we store
-In order to catch various degenerate cases, the intersec
+Further, we store the sign of the permuted inner product
+in order to detect various special and degenerate cases.
 
 
 
@@ -289,7 +290,7 @@ the \plucker coordinates of $p$ are defined as
 Further we use a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
-The sign of the inner product product gives us the relative position of the two lines, 
+The sign of the permuted inner product gives us the relative position of the two lines, 
 see \fig{fig:plucker_products}.
 
 
@@ -299,8 +300,8 @@ see \fig{fig:plucker_products}.
     \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
 %    \includegraphics{\figpath plucker_products.pdf}
   \end{center}
-  \caption{Sign of the permuted inner product is related to the relative position of two oriented lines. Dashed line symbolizes that the line 
-           is in the back, the lines intersect in the last case.}
+  \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines. Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+           \notePE{circle dot permuted inner product}}
   \label{fig:plucker_products}
 \end{figure}
 
@@ -311,7 +312,8 @@ see \fig{fig:plucker_products}.
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
 \subsection{Intersection Line-Triangle (1D-2D)}
-Let us consider a line $p$, with parametric equation $\vc X = \vc A + t\vc u$, $t\in(0,1)$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+\notePE{In this paragraph we investigate real lines. Trimming comes later when tolerance is denoted, see next PE note.}
+Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
 with oriented sides $s_i=(V_j, V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
 is an intersection point with the       line $p$ inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
 In particular for the barycentric coordinate $w_i$ related to the vertex $V_i$ we have
@@ -332,9 +334,9 @@ Having the barycentric coordinates of the intersection on the triangle we can co
 \[
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
 \]
-For practical computation we use $i$ with maximal $|u_i|$.
+We use $i$ with maximal $|u_i|$ for practical computation.
 
-Next, we shell discuss the case when some of the permuted inner products is zero. In fact we test if any barycentric coordinate is under given tolerance 
+Next, we shall discuss the case when some of the permuted inner products are zero. In fact, we test if any barycentric coordinate is under given tolerance 
 ($\abs{w_i} \le \epsilon$). Various \emph{pathological} cases are detected and further topological 
 information is atached to the intersection data.  In the case of one zero coordinate (non-coplanar intersection on the edge)
 or two zero coordinates (intersection in the vertex), we add the local edge index or the local vertex index to the intersection, respectively.
@@ -352,6 +354,7 @@ intersection only in the case of final intersection. Need to verify it since it 
 
 We distinguis two variants of the desired result: the auxiliary intersection used as subprocedure of the other intersections and the final intersection.
 In the first case we just return the array of the intersection points with the line.
+\notePE{In the first case, we do not trim the line (We need both IPs (if there are two), for 1D-3D). In the final case, we need to check that also $t_p \in (-\epsilon, 1+\epsilon)$. That is the current state.}
  Degenerated case of $p$ laying on the triangle edge is also detected....
 
 Intersection with line segment ... (final 1D-2D intersection)
@@ -374,16 +377,26 @@ can arise from intersection of a side with a face or an edge with $S_3$ or from 
 So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
 
-Computation of the intersection polygon consist of three parts. In the first part (Algorithm \ref{algo:colect_23_ip_triangle}), we compute intersection points
-on baundary if $S_3$ using the line-tetrahedron intersection algorithm for every side. There are 0,1, or 2 intersection points
+Computation of the intersection polygon consists of three parts. In the first part (Algorithm \ref{algo:colect_23_ip_triangle}), we compute intersection points
+on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every of its sides. There are 0,1, or 2 intersection points
 on every side and the points are already sorted according to the side orientation, which match orientation of the intersection polygon. So, passing
-through the all sides and appending the points into $I$ provides as with incomplete intersectionn polygon but in the correct order.
+through all the sides and appending the points into $I$ provides us with incomplete intersection polygon but in the correct order.
+\notePE{Comment on process point (Algorithm \ref{algo:process_point}), face relation indicator, I would move description of face table here, since I looked at algorithm1 here, from it skipped to process point and I got lost..}
+
+\notePE{If IP lies on an edge(s) of $S_4$, we create a mark so we exclude the edges from further computation in Algorithm \ref{algo:collect_23_ip_edges}.}
+
+\notePE{In process point, we set for all the face of the vertex, if we coming through the vertex in or out the $S_4$. I understand that the condition on line 10 means, that we do not overwrite info if there is another IP on that face..}
+
+\notePE{I corrected the algorithm references. Please check, it is ok now..}
+
 Then we proceed to the second part (Algorithm \ref{algo:collect_23_ip_edges}). Using the line-triangle intersection algorithm for edges of $S_4$
 we obtain points from interior of $S_3$ and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
-with faces of $S_4$. Every point $p$ from the first part of the algorithm that is not a veertex of $S_3$ belongs to a face $f$ of $S_4$, we know from the order of the points
-if the face comes before or after the point in the intersection polygon, in the first case we set $F[0,f] =p$ inthe second case we set $F[1,f]=p$. 
+with faces of $S_4$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_3$ belongs to a face $f$ of $S_4$; we know from the order of the points
+whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
 Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
 intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
+
+
 
 Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than allows us to modify array of successors $P$ and get $I$ in correct order as the list $K$.
 
@@ -401,11 +414,15 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
     $L$ = intersection($s, S_4$)  \tcp*{List of max.\ two points.}
     process point($L[0]$, 0)\; 
     process point($L[-1]$, 1)
+    \notePE{Isn't it clearer to write the two process point lines into cycle over L?}
   }
   \lIf{ $I[0] == I[-1]$ }{remove $I[-1]$}
+  \notePE{I am not sure if I understand the notation '($[-1]$)', can be explained?
+The last line then checks if first and last IPs, if they are not duplicates..??}
   \caption{2d-3d intersection, points on triangle boundary}
   \label{algo:colect_23_ip_triangle}
 \end{algorithm}
+
 
 \begin{algorithm}
   \caption{process point( $p$, $i$ )}
@@ -417,6 +434,8 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   \KwOut{update of $I$ and $F$}
   \lIf{ $p \ne I[-1]$ }{append $p$ to $I$}
   \If{ $p$ is not vertex of $S_3$}{    
+  \notePE{I am missing the check whether IP is vertex of $S_3$ as referred in text.
+  So what if it is a vertex?}\;
     set $j$ to index of $p$ in $I$\;
     \lIf{ $p$ is on face $f$}{ F[i,f]=j}
     \uElseIf{ $p$ is on edge $e$}{
@@ -426,6 +445,7 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
         F[i, $v$] =j
    }
   }    
+  \label{algo:process_point}
 \end{algorithm}
 
 
@@ -474,12 +494,17 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than al
   }
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
   \For{ $f$ is face of $S_4$}{
-    \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$}
-  $i=0$  
+    \lIf{$F[1,f] \ne F[1,f]$}{$P[ F[1,f] ] = F[0, f]$} 
+    \notePE{condition should be $F[0,f] \ne F[1,f]$ ? I don't understand: successor indices should be switched?
+    This way there would be same two indices..}
+  }
+  $i=0$
+  
   \lFor{$n=0$ \To $\abs{I}-1$}{
     $K[n]=I[i]$
     $i=P[i]$
   }    
+  \label{algo:order_23}
 \end{algorithm}
 
 
