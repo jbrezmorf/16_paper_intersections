@@ -378,51 +378,62 @@ So we have to compute at most 12 side-face intersections and at most 6 edge-tria
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
 Computation of the intersection polygon consists of three parts: calculation of IPs on the $S_3$ boundary (Algorithm \ref{algo:colect_23_ip_triangle}),
 calculation of IPs in the interior of $S_3$ (Algorithm \ref{algo:collect_23_ip_edges}), and finalize the correct order of IPs (Algorithm \ref{algo:order_23}).
+Correct order of the IPs stored in the list $I$ is defined by tables $F_g(:)$ and $F_p(:)$. Every side of the intersection polygon lies either on side of $S_3$, or
+on face, or on edge of $S_4$. Let us denote $M_3$ the set of sides of $S_3$ and $M_4$ the set of volume, faces, edges, and vertices of $S_4$. 
+Every side of polygon that lies on $x\in M_32$ is folowed by an IP given by $F_g[x]$ and every IP $p$ is folowed by the side that lies on $F_p[p]\in M_32$. 
 
 \begin{algorithm}
   \caption{2d-3d intersection, points on triangle boundary}
   \label{algo:colect_23_ip_triangle}
 
   \DontPrintSemicolon
+  \SetKw{continue}{continue}
   \KwIn{input data}
   \KwOut{List of IPs on sorted output data}  
-  $F(:,:)=-1$\tcp*{Unset entries of the face connection table.}  
+  $F_g(:)=-1$\tcp*{Unset IPs of geometric entities.} 
+  $F_p(:)=-1$\tcp*{Unset geometric entities of IPs.}
     
   \For{side $i$ of $S_3$}{ 
     $L$ = intersection($i, S_4$)\;
-    \For{ $p \in L$, $p \ne I[-1]$ }{append $p$ to $I$}    
-    \lIf{$\abs{L}=2$}{
-        append $0,0$ to $s$
-    } \lElse {
-        append $1$ to $s$
+    \lIf{ \abs{L} = 0}{\continue}
+    \lIf{ \abs{L} = 1}{
+        append $p$ to $J$
+        \continue
     }
-  }
-  \nllabel{line:ip_first_vtx_duplicate}
-  \lIf{ $I[0] == I[-1]$ }{remove $I[-1]$}
-  
-  $l=0$
-  \For{$p \in I$}{
-    set $j$ to index of $p$ in $I$\;
-    \If{ $p$ is on boundary of $S_4$}{
-      $x$ is vertex,edge, or face on which $p$ lies\; 
-      \For{ $i=0,\dots, s[j]$}{
-        $F[l, x]=j$\;
-        $l=1-l$ \tcp*{switch from input to output and vice versa}
-      }  
+    \For{$p$ in $L$}{
+        \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
+        $p$ lies on $x\in M_4$ and side $s\in M_3$\; 
+        \uIf{$p$ is first in $L$}{
+            $F_g[x] = p$\;
+            $F_p[p] = s$\;
+        }
+        \Else($p$ is the last in $L$){
+            $F_g[s] = p$\;
+            $F_p[p] = x$\;
+            \nllabel{line:back_link43}
+            \lIf{$F_g[x] = -1$}{$F_g[x] = p$}\;
+        }
     }
   }  
+  \lIf{$I[-1] = I[0]$}{
+    $F_g[F_p[I[-1]]]]=I[0]$\;
+    $F_g[s_2] = I[0]$\;
+    remove $I[-1]$
+  }
 \end{algorithm}
 
 
 In Algorithm \ref{algo:colect_23_ip_triangle}, we first compute IPs
-on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every side. Every IP that is not same as the previous IP 
-(occures at vertices of $S_3$) is appended to $I$. The IPs are added in the order around $S_3$ which match the orientation of the intersection polygon.
-The array $s$ indicates IPs that comes from side touching $S_4$ at its edge or vertex. 
-At line \ref{line:ip_first_vtx_duplicate}, we remove posible dupicate IP for the first vertex.
-Then we pass through $I$ and denote to the table $F$ at which IP ($j$) the polygon's boundary switchs from the $S_4$ boundary to the $S_3$ boundary
-($l=0$) and vice versa ($l=1$). The table $F$ contains the entry ($l=1$) and leave ($l=0$) IP for every geometrical object (vertex, edge, or  face) 
-$x$ on the boundary. In particular the touching IPs appear in both directions. The result of Algorithm \ref{algo:colect_23_ip_triangle} is incomplete 
-list $I$ of IPs lying on the $S_3$ boundary and the table $F$ stores relation of the objects on the $S_4$ boundary to the IPs on the $S_3$ boundary.
+on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every side. We store intersections with just single IP ito separate list $J$
+and skip filling the connection tables. This happen when the side just touch $S_4$ in edge or vertex. 
+These IPs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} with better topological information, however
+this is not the case if the touched edge $e$ of $S_4$ is coplanar with $S_3$ and the IP is inside of $e$. 
+Therefore we keep a separate list of IPs to deal with this case.
+For the intersection $L$ we pass through its IPs. The IP $p$ is added to the list $I$ unless the last point is the same. 
+This condition is effective just for the first point of $L$ and merge IPs at the same vertex of $S_3$. If the vertex $v$ is between sides $s_1$, $s_2$, 
+we effectively set $F_g[s_1] = v$, $F_g[y]=v$, $F_p[v] = s_2$. The backward temporary link on the line \ref{line:back_link43} 
+is used in Algorithm \ref{algo:collect_23_ip_edges} to fix $F_p[p]$ for the second $p$ lying on an edge or a vertex of $S_4$. The condition deals with the case
+when two sides intersect the same object $x\in M_4$.
 
 
 \begin{algorithm}  
@@ -437,30 +448,31 @@ list $I$ of IPs lying on the $S_3$ boundary and the table $F$ stores relation of
   \nllabel{line:12edges}
   \lFor{edge $e$ of $S_4$}{$L[e]$ = intersection($e, S_3$)} 
   \For{unmarked edge $e$ of $S_4$}{
-    \uIf{ $L[e]$ is inside of $e$}{ 
+    $p=L[e]$\;
+    \uIf{ $p$ is inside of $e$}{ 
         \nllabel{line:edge_faces}        
         $(f_0,\ f_1)$ = edge faces($e$)
     } 
     \Else($p$ on the vertex $v$ of $S_4$){       
             $(f_0,\ f_1)$ = vertex faces($v$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
     }    
-    \uIf{ $L[e]$ is on boundary of $S_3$ }{
-         \uIf{ $L[e]$ is inside of $e$}{ 
-             get $i$ such that $F[i,e] = k$, $k\ne -1$
-         }
-         \Else($p$ on the vertex $v$ of $S_4$){ 
-             get $i$ such that $F[i,v] = k$, $k\ne -1$          
-         }         
-         $F[1-i, f_{1-i}] = k$\;
+    \uIf{ $p$ is on boundary of $S_3$ }{
+         $p\in x \in M_4$; $x$ is edge or vertex 
+         $q=F_g[x]$\tcp*{$q$ is already computed $p$}
+         \lIf{$F_p[q]=x$}{$F_p[q]=f_1$}
+         \lElse{$F_g[f_0]=q$}
+         $F_g[x]=-1$\tcp*{remove the backlink}
     }
     \Else{
-         append $L[e]$ to $I$\;
-         set $j$ to index of $L[e]$ in $I$\;
-         F[0, $f_0$]=j\;
-         F[1, $f_1$]=j\;
-         mark all edges coincident with $L[e]$
+         append $p$ to $I$\;
+         $F_g[f_0]=p$\tcp*{overwrites the backlink}
+         $F_p[p]=f_1$
+         mark all edges coincident with $p$
     }   
   }  
+  
+  \lIf{$\abs{I} < 3$}{ \return $J$}
+  \lElse{ return $I$ soter according connectivity in $F_g$ and $F_p$}
 \end{algorithm}
 
 \begin{algorithm}
@@ -468,20 +480,27 @@ list $I$ of IPs lying on the $S_3$ boundary and the table $F$ stores relation of
   \label{algo:vertex_faces}
   
   \SetKw{return}{return}
+  \SetKw{edgefaces}{edge faces}
   \DontPrintSemicolon
   \KwIn{vertex $v$ of $S_4$, $L[:]$ intersection results for edges of $S_4$}
-  \KwOut{faces $S_4$ intersected by the plane of $S_3$}
-  $e_0,\ e_1,\ e_2$ edges coincident with $v$\;
-  $s[i] = L[e_i]$, for $i=0,1,2$\;
+  \KwOut{$(x_1, x_2)$, $x_1, x_2 \in M_4$, coincident with $v$ and intersected by the plane of $S_3$}
+  $e_0,\ e_1,\ e_2$ edges coincident with $v$ oriented out of $v$
+  $s[i] = L[e_i]$, for $i=0,1,2$, \;
   \nllabel{line:two_degenerated}
-  \uIf{$s$ have 1 non-degenerate edge $e$}{
+  \uIf{$s[:]$ have 1 non-degenerate edge $e$}{
     \return pair of degenerate edges sorted according to \edgefaces($e$)    
   }
   \nllabel{line:one_degenerated}
   \uElseIf{ $s$ have 1 degenerate edge $e$}{
-    $f$ is face opposite to $e$first of faces coincident with $e$\;
-    $g$ is non-degenerate edge coincident with $f$\;
-    \return edge faces($g$)
+    $f$ is face oposite to $e$
+    \uIf{other two edges $e_a$, $e_b$ have different sign}{
+        $z=\edgefaces(e_a)$\;
+        replace $g\in z$, $g\ne f$ with $e$
+        \return $z$
+    }\lElse{
+        append IP of $v$ to $J$
+        \return anything\;
+    }
   }
   \nllabel{line:different_sign}
   \uElseIf{ $s$ have edge $e$ with sign oposite to other two}{
@@ -489,6 +508,7 @@ list $I$ of IPs lying on the $S_3$ boundary and the table $F$ stores relation of
   }
   \nllabel{line:same_signs}
   \Else($s$ have all signs same){
+    append IP of $v$ to $J$
     \return anything\;
   }  
 \end{algorithm}
@@ -514,7 +534,9 @@ Possible cases are:
  \item {\bf Single IP have sign oposite to the other two.} (line \ref{line:different_sign}) Let $e$ be the edge of the single $IP$ with different sign. 
  The plane of $S_3$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. The order is detemined by the function edge faces.
  \item {\bf Single degenerated IP.} (line \ref{line:one_degenerated}) Let us denote $e$ the edge with degenerated IP and $f$ the face between the other two edges.
- The other two (non-degenerate) edges may have either oposite sign (the plane cut $S_4$) or the same sign (the plane touching $S_4$ at the edge $e$.
+ The other two (non-degenerate) edges may have either oposite sign (the plane cut $S_4$) or the same sign (the plane touching $S_4$ at the edge $e$).
+ In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then thr vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
+ 
  
  The edge $e$ lies in the the singel edge
  \item {\bf Two degenerated IPs.} (line \ref{line:two_degenerated}) A face of $S_4$ lies in the plane of $S_3$, single edge $e$ have non-degenerate IP.
