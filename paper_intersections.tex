@@ -265,21 +265,15 @@ orientation of the edges of the intersection polygon.
 
 \section{Element Intersections}
 \label{sec:elements_intersections}
-In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space.
-In particular we are interested in intersection of 1D-2D, 1D-3D, 2D-2D, 2D-3D simplices. In general the intersection can be a point, a line segment or a polygon.
-All these three objects are represented as a vector of vertices called \emph{intersection points}. The fundamental idea is to compute intersection of 1D-2D simplices using the 
+In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space. 
+In particular we are interested in the intersections in 1D-2D, 1D-3D, 2D-2D, 2D-3D cases.
+It will be suitable to denote $S_i$ a simplicial element with $i$ vertices (of dimension $i-1$).
+In general, an intersection can be a point, a line segment or a polygon.
+All these three objects are represented as a vector of vertices called \emph{intersection points} 
+(later denoted IP, or IPs in plural). 
+
+The fundamental idea is to compute intersection of 1D-2D simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
-
-The intersection point data structure keeps for each of the two intersection simplices:
-\notePE{Subsimplex or subelement?}
-\begin{itemize}
- \item Barycentric coordinate of the intersection.
- \item Dimension of the most specific subsimplex (face, edge, vertex) where the point lies.
- \item Index of the most specific subelement.
-\end{itemize}
-Further, we store the sign of the permuted inner product
-in order to detect various special and degenerate cases.
-
 
 
 \subsection{\plucker Coordinates}
@@ -314,16 +308,16 @@ see \fig{fig:plucker_products}.
 \subsection{Intersection Line-Triangle (1D-2D)}
 \notePE{In this paragraph we investigate real lines. Trimming comes later when tolerance is denoted, see next PE note.}
 Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
-with oriented sides $s_i=(V_j, V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
+with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
 is an intersection point with the       line $p$ inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
-In particular for the barycentric coordinate $w_i$ related to the vertex $V_i$ we have
+In particular for the barycentric coordinate $w_i$ related to the vertex $\vc V_i$ we have
 \[
    w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }
 \]
 Indeed, using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
 The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ (\plucker coordinates are invariant to change of initial point). Combining these two expressions we get
 \[
-   \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
+   \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times \vc V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
    =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
 \]
 Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2 \times \vc s_0 = \vc s_0 \times \vc s_1$ and thus
@@ -343,7 +337,15 @@ or two zero coordinates (intersection in the vertex), we add the local edge inde
 When all coordinates are (close to) zero, the line and the triangle are (nearly) coplanar. For every edge $s_i$ we compute
 its intersection with the line segment $p$ in terms of the local coordinates $t_i$ and $t_p$. Only intersections with $t_i \in (-\epsilon, 1+\epsilon)$
 are accepted, for $t_i$ close to $0$ and $1$ we append the vertex index to the intersection. Edges parallel to $p$ or lying on the $p$ are skipped.
+
 Finally, we obtain zero, one, or two intersection points with additional topological information.
+The intersection point data structure keeps for each of the two intersecting elements:
+\begin{itemize}
+ \item Barycentric coordinate of the intersection.
+ \item Dimension of the most specific subelement (face, edge, vertex) where the point lies.
+ \item Local index of the most specific subelement.
+\end{itemize}
+Further, we store the sign of the permuted inner product in order to detect various special and degenerate cases higher dimensional cases.
 
 
 TODO:
@@ -641,14 +643,13 @@ the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N
 
 
 \subsection{Tracking boundary of the intersection polygon}
-\notePE{I suggest to denote IP, IPs intersection point and its plural respectively.}
 
 \notePE{It seems to me, that we can really describe the prolongation in general, for 1D and 2D, 
 refering to them as components. I tried to do so..}
 
 \notePE{We need proper definitions of terms we use: \\
-\emph{component} is a set of connected elements of the same lower dimension (1D, 2D)\\
-\emph{bulk} is a set of 3D elements\\
+% \emph{component} is a set of connected elements of the same lower dimension (1D, 2D)\\
+% \emph{bulk} is a set of 3D elements\\
 % or slave, master...
 \emph{candidates pair}  is a pair of a component element and a bulk element, that might intersect
 each other (due to intersection of their bounding boxes or prolongation result)
@@ -659,7 +660,7 @@ each other (due to intersection of their bounding boxes or prolongation result)
 
 \subsection{Prolongation algorithm}
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
-elements of the same lower dimension (1D, 2D), in the space of 3D elements. 
+elements of the same lower dimension (1D, 2D), in the space of 3D elements, which we shall call a \emph{bulk}. 
 Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
 Then we can prolongate the intersection by investigating neighbouring elements.
 %
