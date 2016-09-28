@@ -455,23 +455,24 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
   \label{algo:collect_23_ip_edges}
   
   \SetKw{And}{And}
+  \SetKw{edgefaces}{edge faces}
+  \SetKw{vertexfaces}{vertex faces}
   \DontPrintSemicolon
   \KwIn{$I$ with IPs on $S_3$ boundary, partially filled $F$}
   \KwOut{all IPs in $I$, complete $F$}  
   
-  \nllabel{line:12edges}
-  \lFor{edge $e$ of $S_4$}{$L[e]$ = intersection($e, S_3$)} 
+  \lFor{edge $e$ of $S_4$}{$L[e]$ = intersection($e, S_3$)}  \nllabel{line:12edges}
   \For{unmarked edge $e$ of $S_4$}{
     $p=L[e]$\;
-    \uIf{ $p$ is inside of $e$}{ 
+    \uIf{ $p$ is inside $e$}{ 
         \nllabel{line:edge_faces}        
-        $(f_0,\ f_1)$ = edge faces($e$)
+        $(f_0,\ f_1)$ = \edgefaces($e$)
     } 
-    \Else($p$ on the vertex $v$ of $S_4$){       
-            $(f_0,\ f_1)$ = vertex faces($v$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
+    \Else($p$ at the vertex $v$ of $S_4$){       
+            $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
     }    
     \uIf{ $p$ is on boundary of $S_3$ }{
-         $p$ lies on edge or vertex $x \in M_4$\;
+         $p$ lies on edge or at vertex $x \in M_4$\;
          $q=F_g[x]$\tcp*{$q$ is already computed $p$}
          \lIf{$F_p[q]=x$}{$F_p[q]=f_1$}
          \lElse{$F_g[f_0]=q$}
@@ -479,7 +480,7 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
     }
     \Else{
          append $p$ to $I$\;
-         $F_g[f_0]=p$\tcp*{overwrites the backlink}
+         $F_g[f_0]=p$\tcp*{overwrite the backlink}
          $F_p[p]=f_1$\;
          mark all edges coincident with $p$
     }   
@@ -500,13 +501,13 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
   \KwOut{$(x_1, x_2)$, $x_1, x_2 \in M_4$, coincident with $v$ and intersected by the plane of $S_3$}
   $e_0,\ e_1,\ e_2$ edges coincident with $v$ oriented out of $v$
   $s[i] = L[e_i]$, for $i=0,1,2$, \;
-  \nllabel{line:two_degenerated}
-  \uIf{$s[:]$ have 1 non-degenerate edge $e$}{
+  
+  \uIf{$s[:]$ have 1 non-degenerate edge $e$}{ \nllabel{line:two_degenerated}
     \return pair of degenerate edges sorted according to \edgefaces($e$)    
   }
-  \nllabel{line:one_degenerated}
-  \uElseIf{ $s$ have 1 degenerate edge $e$}{
-    $f$ is face oposite to $e$
+  
+  \uElseIf{ $s$ have 1 degenerate edge $e$}{\nllabel{line:one_degenerated}
+    $f$ is face opposite to $e$
     \uIf{other two edges $e_a$, $e_b$ have different sign}{
         $z=\edgefaces(e_a)$\;
         replace $g\in z$, $g\ne f$ with $e$
@@ -516,60 +517,60 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
         \return anything\;
     }
   }
-  \nllabel{line:different_sign}
-  \uElseIf{ $s$ have edge $e$ with sign oposite to other two}{
+  
+  \uElseIf{ $s$ have edge $e$ with sign oposite to other two}{ \nllabel{line:different_sign}
     \return edge faces($e$)\;
   }
-  \nllabel{line:same_signs}
-  \Else($s$ have all signs same){
+  
+  \Else($s$ have all signs same){ \nllabel{line:same_signs}
     append IP of $v$ to $J$
     \return anything\;
   }  
 \end{algorithm}
 
-Algorithm \ref{algo:collect_23_ip_edges} use the line-triangle intersection algorithm for the edges of $S_4$ (line \ref{line:12edges}).
-The loop produce IPs from interior of $S_3$ and possibly those already computed IPs with special position on vertex or edge of $S_4$. 
-Every edge $e$ of $S_4$ is oriented so that the pair of adjacent faces $f_0$, $f_1$ apear in the same order on the intersection polygon when the 
-IP of $e$ have negative sign (see Figure \ref{fig:plucker_products}). The function "edge faces" used on line \ref{line:edge_faces} and later on 
-use the sign of the intersection to return the pair of faces in the correct order. 
-Similarly the function "vertex faces" (Algorithm \ref{algo:vertex_faces}) described latter on
-returns pair of generalized faces (face or edge) possibly adjacent to the IP $L[e]$ at the vertex $v$ of $S_4$.
+Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_4$ (line \ref{line:12edges}).
+The loop produces IPs in the interior of $S_3$ and possibly those IPs with special position on vertex or edge of $S_4$ already computed in Algorithm \ref{algo:colect_23_ip_triangle}. 
+Every edge $e$ of $S_4$ is oriented so that the pair of adjacent faces $f_0$, $f_1$ appears in the same order on the intersection polygon when the 
+IP on $e$ has a negative sign (see Figure \ref{fig:plucker_products}). The function \emph{edge faces}, used on line \ref{line:edge_faces} and later on,
+uses the sign of the intersection to return the pair of faces ordered correctly. 
+Similarly the function \emph{vertex faces} (Algorithm \ref{algo:vertex_faces}, described later)
+returns a pair of generalized faces (face or edge) possibly adjacent to the IP $L[e]$ at the vertex $v$ of $S_4$.
 
 
 
 \subsubsection{Vertex Faces Algorithm}
-This function get an IP $p$ at vertex $v$ of $S_4$ as a parameter. The IP is special vertex case of non-degenerate edge-triangle intersection. 
-The functin returns pair of generalized faces of $S_4$ preceeding and succeeding $p$ on the polygons boundary in the case that $p$ is at interior of $S_3$.
-Basic idea is to use the signs of IPs of the three edges coincident with $v$. 
+This function gets an IP $p$ at vertex $v$ of $S_4$ as a parameter. The IP is special vertex case of non-degenerate edge-triangle intersection. 
+The function returns a pair of generalized faces of $S_4$ preceeding and succeeding $p$ on the polygons boundary in the case that $p$ is at interior of $S_3$.
+The basic idea is to use the signs of IPs of the three edges coincident with $v$. 
 Possible cases are:
 \begin{itemize}
- \item {\bf All IPs have same sign.} (line \ref{line:same_signs}) We return any pair of faces.  $S_3$ is touching $S_4$ 
- in the vertex $v$, the polygon ddegenerates to the single IP $p$, no connectionn information from table $F$ necessary.
- \item {\bf Single IP have sign oposite to the other two.} (line \ref{line:different_sign}) Let $e$ be the edge of the single $IP$ with different sign. 
- The plane of $S_3$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. The order is detemined by the function edge faces.
+ \item {\bf All IPs have the same sign.} (line \ref{line:same_signs}) We return any pair of faces.  $S_3$ is touching $S_4$ 
+ at the vertex $v$, the polygon degenerates into the single IP $p$, no connection information from table $F$ is necessary.
+ \item {\bf Single IP has the opposite sign to the other two.} (line \ref{line:different_sign}) Let $e$ be the edge of the single IP with the different sign. 
+ The plane of $S_3$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. The order is detemined by the function \emph{edge faces}.
  \item {\bf Single degenerated IP.} (line \ref{line:one_degenerated}) Let us denote $e$ the edge with degenerated IP and $f$ the face between the other two edges.
- The other two (non-degenerate) edges may have either oposite sign (the plane cut $S_4$) or the same sign (the plane touching $S_4$ at the edge $e$).
- In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then thr vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
+ The other two (non-degenerates) edges may have either the opposite sign (the plane is cutting $S_4$) or the same sign (the plane is touching $S_4$ at the edge $e$).
+ In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then the vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
  
  
  The edge $e$ lies in the the singel edge
  \item {\bf Two degenerated IPs.} (line \ref{line:two_degenerated}) A face of $S_4$ lies in the plane of $S_3$, single edge $e$ have non-degenerate IP.
- We treat the two degenerate edges as special case of faces adjacent to $e$ and return them sorted like the faces given by edge faces fro edge $e$.
+ We treat the two degenerate edges as special case of faces adjacent to $e$ and return them sorted like the faces given by edge faces of edge $e$.
 \end{itemize}
 
-Either all signs are equal ($S_3$ touching $S_4$) wee , or
-a single edge have the sign oposite to other twotwo edges have a sign oposite then the thi. of According to the 
+% Either all signs are equal ($S_3$ touching $S_4$) wee , or
+% a single edge have the sign oposite to other twotwo edges have a sign oposite then the thi. of According to the 
+% 
+% 
+% and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
+% with faces of $S_4$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_3$ belongs to a face $f$ of $S_4$; we know from the order of the points
+% whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
+% Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
+% intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
 
 
-and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
-with faces of $S_4$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_3$ belongs to a face $f$ of $S_4$; we know from the order of the points
-whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
-Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
-intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
 
-
-
-Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ than allows us to modify array of successors $P$ and get $I$ in correct order as the list $K$.
+Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ allows us to modify array of successors $P$ and get $I$ in the correct order as the list $K$.
 
 
 
