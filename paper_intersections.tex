@@ -470,6 +470,8 @@ For the intersection $L$ we pass through its IPs.
     } 
     \Else($p$ on the vertex $v$ of $S_4$){       
             $(f_0,\ f_1)$ = vertex faces($v$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
+            \nllabel{line:mark_edges}
+            mark all edges coincident with $p$
     }    
     \uIf{ $p$ is on boundary of $S_3$ }{
          $p$ lies on edge or vertex $x \in M_4$\;
@@ -481,8 +483,7 @@ For the intersection $L$ we pass through its IPs.
     \Else{
          append $p$ to $I$\;
          $F_g[f_0]=p$\tcp*{overwrites the backlink}
-         $F_p[p]=f_1$\;
-         mark all edges coincident with $p$
+         $F_p[p]=f_1$\;         
     }   
   }  
   
@@ -535,7 +536,8 @@ IP of $e$ have negative sign (see Figure \ref{fig:plucker_products}). The functi
 use the sign of the intersection to return the pair of faces in the correct order. 
 Similarly the function "vertex faces" (Algorithm \ref{algo:vertex_faces}) described latter on
 returns pair of generalized faces (face or edge) possibly adjacent to the IP $L[e]$ at the vertex $v$ of $S_4$.
-
+On line \ref{line:mark_edges} we mark all edges coincident with the vertex, since if they have any other intersection point they are degenerate and 
+not processed anyway.
 
 
 \subsubsection{Vertex Faces Algorithm}
