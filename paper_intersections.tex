@@ -379,17 +379,18 @@ See \cite{fris_dp_2015} for detailed description of all possible cases.
 
 \subsection{Intersection Triangle-Tetrahedron (2D-3D)}
 The intersection of a triangle $S_3$ and a tetrahedron $S_4$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
-lies either on sides of $S_3$ or on faces of $S_4$. Thus each vertex (IP) of the polygon
+lie either on sides of $S_3$ or on faces of $S_4$. Thus each vertex (IP) of the polygon
 can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_3$.
 So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
 Computation of the intersection polygon consists of two parts: calculation of side-tetrahedron IPs (Algorithm \ref{algo:colect_23_ip_triangle})
 provides all IPs on the boundary of $S_3$,
 calculation of edge-triangle IPs (Algorithm \ref{algo:collect_23_ip_edges}).
-Correct order of the IPs stored in the list $I$ is defined by the tables $F_g(:)$ and $F_p(:)$. Every side of the intersection polygon 
+\notePE{The following sentence is somehow weird.. I would say that we store IPs $I$; to sort $I$ during the computation, we use the two tables; at the end, $I$ is ordered correctly.}
+Correct order of the IPs, stored in the list $I$, is defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. \notePE{The following sentece is a copy of the second sentence is this subsection.} Every side of the intersection polygon 
 lies either on a side of $S_3$, or on a face, or on an edge of $S_4$. Let us denote $M_3$ the set of sides of $S_3$ and $M_4$ the set of volume,
-faces, edges, and vertices of $S_4$. Every side of polygon that lies on $x\in M_3\cup M_4$ is folowed by an IP given by $F_g[x]$ 
-and every IP $p$ is folowed by the side that lies on $F_p[p]\in M_3\cup M_4$. 
+faces, edges, and vertices of $S_4$. Every side of polygon that lies on $x\in M_3\cup M_4$ is followed by an IP given by $F_g[x]$ 
+and every IP $p$ is followed by the side that lies on $F_p[p]\in M_3\cup M_4$. 
 
 \begin{algorithm}
   \caption{2d-3d intersection, points on triangle boundary}
@@ -416,8 +417,7 @@ and every IP $p$ is folowed by the side that lies on $F_p[p]\in M_3\cup M_4$.
         }
         \Else($p$ is the last in $L$){
             $F_g[s] = p,\ F_p[p] = x$\;
-            \nllabel{line:back_link43}
-            \lIf{$F_g[x] = -1$}{$F_g[x] = p$}
+            \lIf{$F_g[x] = -1$}{$F_g[x] = p$} \nllabel{line:back_link43}
         }
     }
   }  
@@ -430,25 +430,24 @@ and every IP $p$ is folowed by the side that lies on $F_p[p]\in M_3\cup M_4$.
 \end{algorithm}
 
 
-Algorithm \ref{algo:colect_23_ip_triangle} pass through every side $s$ of the triangle $S_3$ computing the line-tetrahedron intersection $L$.
+Algorithm \ref{algo:colect_23_ip_triangle} passes through every side $s$ of the triangle $S_3$ and computes the line-tetrahedron intersection $L$.
 In the regular case we process each of the two IPs in $L$. The IP $p$ is added to the list $I$ unless the last point is the same. 
-This condition is effective just for the first IP in $L$ and merge IPs at the same vertex of $S_3$. Then we identify an object $x\in M_4$ the point
-$p$ lies on (line \ref{line:m4_object}).
+This condition is effective just for the first IP in $L$ and merges IPs at the same vertex of $S_3$. Then we identify an object $x\in M_4$ the point
+$p$ lies on (line \ref{line:m4_object}). \notePE{I am not sure, if the term 'object' is clear..}
 
+\notePE{Why calling it vertex $v$ instead of IP $p$ here? What is $y$?}
 If the vertex $v$ is between sides $s_1$, $s_2$, 
-we effectively set $F_g[s_1] = v$, $F_g[y]=v$, $F_p[v] = s_2$. The backward temporary link on the line \ref{line:back_link43} 
-is used in Algorithm \ref{algo:collect_23_ip_edges} to fix $F_p[p]$ for the second $p$ lying on an edge or a vertex of $S_4$. The condition deals with the case
-when two sides intersect the same object $x\in M_4$.
+we effectively set connections $F_g[s_1] = v$, $F_g[y]=v$, $F_p[v] = s_2$. The backward temporary link on the line \ref{line:back_link43} 
+is used in Algorithm \ref{algo:collect_23_ip_edges} to fix $F_p[p]$ for the second $p$ lying on an edge or a vertex of $S_4$. The condition at the end deals with the case
+in which two sides intersect the same object $x\in M_4$.
 
 
-, we first compute IPs
-on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every side. We store intersections with just single IP ito separate list $J$
-and skip filling the connection tables. This happen when the side just touch $S_4$ in edge or vertex. 
+For the regular intersection $L$, we pass through its IPs, as described above. \notePE{For special cases}, we firstly compute IPs
+on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every side. We store single point intersections into separate list $J$
+and skip filling the connection tables. This happens when the side touches $S_4$ at its edge or vertex. 
 These IPs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} with better topological information, however
 this is not the case if the touched edge $e$ of $S_4$ is coplanar with $S_3$ and the IP is inside of $e$. 
-Therefore we keep a separate list of IPs to deal with this case.
-
-For the intersection $L$ we pass through its IPs. 
+Therefore we keep a separate list $J$ of IPs to deal with this case.
 
 
 \begin{algorithm}  
@@ -457,7 +456,7 @@ For the intersection $L$ we pass through its IPs.
   
   \SetKw{And}{And}
   \DontPrintSemicolon
-  \KwIn{$I$ with IPs on $S_3$ boundary, partialy filled $F$}
+  \KwIn{$I$ with IPs on $S_3$ boundary, partially filled $F$}
   \KwOut{all IPs in $I$, complete $F$}  
   
   \nllabel{line:12edges}
