@@ -170,74 +170,59 @@ mixed-dimensional mesh \sep
 
 %% main text
 \section{Introduction}
-Structure of introduction:
-
-- motivation for computing mesh intersections, other applications
-- basic overview of existing work, approaches
-- our contribution
-    - new algorithms for element intersectins based on Pl\"ucker coordinates
-    - improvement of the front tracking algorithm
-
-\cite{sukumar_extended_2000} - Use {\emph geometric predicates} incircle and orientation. Use mesh of bounding boxes to search for intersection candidates. 
-Only use point queries for all vertices of triangle/tetrahedron. Use compatible partitioning of elements by the crack elements.
-
-\cite{massing_efficient_2013} - Implementation of the Nitche method in Fenics. They need 2d-3d intersections, but only for distribution od quadrature points. 
-So they do not store whole intersection data, but only the quad points. The boundary of one domain is partitioned into intersections with elements of the other domain.
-Use {\\emph collision relations} ( pairs of faces of boundary and elmements of the background mesh) and {\emph collision maps} 
-( map face to all intersections and background element to all intersections, can be constructed from the collision relation), They cite books from computer graphics ..
-Mention geometric predicates. Present algorithms for:  find intersection candidates, comput intersections, integrate over complex domains.
-
-\cite{elsheikh_reliable_2012} Claim to provide robust algorithm covering all tiangle-trinagle degenerate cases. Basic idea is the same as our: use some tree 
-(Binary SPace Tree) structure to find initial point on intersection curve and trace the curve in both directions. Quite clever data structure for the mesh. Adaptive precision 
-geometric predicates. Store topological information about the intersection points (point on triangle, edge, vertex). Resolve various degenerate cases, 
-dicuss mesh optimization after subdivision.
+Structure:
+\begin{itemize}
+ \item Introduction of the problem. 
+ \item Overview of methods using some sort of mesh intersections.
+ \item Our motivation from groundwater applications.
+ \item Existing algorithms.
+ \item Our contribution:
+    new algorithms for element intersections based on \plucker coordinates,
+    improvement of the front tracking algorithm
+ \item Paper overview   
+\end{itemize}
 
 
-\cite{gander_algorithm_2013} Full algorithm for 2d=3D called PANG. Implemented in DUNE in 2010 (Bastian). Other software (Hecht, MpCCI). 
-Triangle-Triangle and Tetra-Triangle intersections done similarly as in aur approach: set of points including vertices and then sort them countercolckwise.
-Local intersection algorithm do not provide neighbouring information so the traversal algorithm do not use it.
+The grid intersection algorithms are crucial for several techniques that tries to overcome some limitations of the classical finite element method.
+The Chimera method \cite{brezzi_analysis_2001} also called overset grid and similar Nitche method \cite{massing_efficient_2013}
+allow solution of the problems with changing geometry as in the fluid-structure problems. 
+The Mortar method \cite{belgacem_mortar_1999} allows domain decomposition, independent meshing of domains, and supports sliding boundaries.
+However our primal motivation is usage of XFEM methods and non-matching meshes of mixed dimension in groundwater models.
 
-Review of algorithms: \cite{gander_algorithm_2009}
- 
+The realistic models of groundwater processes including the transport processes and geomechanics have to deal with 
+a complex nature of geological formations including the fractures and wells. Although of small scale, these features may have significant impact 
+on the global behavior of the system and their representation in the numerical model is imperative.
+One possible approach is to model fractures and wells as lower dimensional objects and introduce their coupling with the surrounding continuum. 
+The discretization then leads to the meshes of mixed dimensions, i.e. composed of elements of different dimension. This approach 
+called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
+\cite{martin_modeling_2005}, \cite{fumagalli_numerical_2011}, \cite{brezina_analysis_2015} and 
+already adopted by some groundwater simulation software, e.g FeFlow \cite{trefry_feflow:_2007} and Flow123d \cite{flow123d}.
+Nevertheless as the complexity of the geometry increase (e.g. when lot of fractures are randomly generated) the compatible meshing becomes painful or even 
+impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently getting a non-matching 
+(or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
+around the wells. The prerequisity for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
-\cite{boon_robust_2016} Robust discretization of porous media. Complete error analysis with mortar non-compatible case. Seems they use normal fluxes accros
-fracture instead of pressure traces. This allows conforming discretization and error results.
+We consider a composed mesh $\mathcal T$ consisting of meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$. 
+We assume that the meshes $\mathcal T_i$ are connected, that is the graph having elements for vertices and their nighbouring for edges is connected.
+We also assume that no submesh intersect itself. Further we assume that only $\mathcal{T}_1$ have $d_1=3$ and $d_i < 3$ for $i>1$. 
+The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
+and compute that intersection. Every (possibly degenerated) intersection polygon (IP) is determined by its corners called intersection corners (IC).
+For every IC we want to compute its barycentric coordinates on $K$ and on $L$.
 
-
-\cite{bournival_mesh-geometry_2008} Application of mixed-dimensional approach in mechanics. Beam and shell elements ...
-
-\cite{reichenberger_mixed-dimensional_2006} Finite volume method, fully implicit two phase flow. Cite usage of FRAC3D generator. 
-
-\cite{sladkova_bakalarka} Space-time DG with adaptive mesh, need integration of product of functions on different meshes (in 2D). An algorithm 
-for computing triangle-triangle intersections in 2D.
-
-\cite{pichot_generalized_2012} DFN + MHFEM. Mortar method for intersections. Focused on formulation not on intersections. 
-
-\cite{flemisch_non-matching_2012} (Barbara) Mortad, non=matching, acustics. Theory, structured gird case. No complex intersections.
-
-\cite{mustapha_hybrid_2014} Patent for curiosity.
-
-\cite{mittal_immersed_2005} Immersed boundary. ??
-
-\cite{owen_survey_1998} ??
-
-\cite{kuznetsov_overlapping_1998}
-
-\cite{platis_fast_2003} Original algorithm for line-thetrahedra intersections.
-
-\cite{haines_fast_1991} Line-convex Polyhedra intersections using generalisation of line-clipping algorithm
+The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. Second, compute the intersection for particular pair.
+In order to get candidate pairs efficiently, the existing algorithms use either various space trees \cite{massing_efficient_2013} or front tracing
+\cite{gander_algorithm_2013} or both \cite{elsheikh_reliable_2012} as in our approach. To compute the actual intersections, we 
+use the \plucker coordinates for the line-triangle intersections and a modification of the  Platis and Theoharis algorithm \cite{platis_fast_2003}
+for the line-tetrahedron intersections. These are used as the building block for the triangle-triangle and the trinagle-tetrahedron cases.
 
 
 
-The initial problem that occurs when working with incompatible meshes of combined dimensions is the efficient 
-computation of intersections of the mesh subdomains, in particular 1D-2D, 1D-3D, 2D-3D.
-There is a piece of code in Flow123d at the moment which uses means of analytic geometry. In particular, it computes 
-an intersection of a line and a plane in 3D by solving Gaussian elimination. However it is not effiecient
-and it does not provide barycentric coordinates explicitly.
-In this section, we present our latest work on this problematics.
 
-The topic is studied in the bachelor and master thesis of Viktor Fri{\v s} \cite{fris_dp_2015}, who was supervised by 
-Jan B{\v r}ezina.
+
+
+
+
+
 They suggested a solution, based on \cite{yuan_efficient_2003} for the two aspects of the problem: 
 \begin{enumerate}[itemsep=-3pt]
 \item an efficient identification of the intersecting pairs of elements,
@@ -329,6 +314,12 @@ Having the barycentric coordinates of the intersection on the triangle we can co
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
 \]
 We use $i$ with maximal $|u_i|$ for practical computation.
+
+adaptive precision arithmetic 
+    \cite{elsheikh_reliable_2012} (based on edge-triangle intersections, 
+        use calculations that are similar to usage of \plucker coordinates), 
+    \cite{shewchuk_adaptive_1997}
+
 
 Next, we shall discuss the case when some of the permuted inner products are zero. In fact, we test if any barycentric coordinate is under given tolerance 
 ($\abs{w_i} \le \epsilon$). Various \emph{pathological} cases are detected and further topological 
@@ -855,6 +846,61 @@ CZ.1.05/2.1.00/01.0005.
  \bibliographystyle{elsarticle-num} 
  \bibliography{paper_intersections.bib}
 \end{document}
+
+
+
+
+\cite{sukumar_extended_2000} - Use {\emph geometric predicates} incircle and orientation. Use mesh of bounding boxes to search for intersection candidates. 
+Only use point queries for all vertices of triangle/tetrahedron. Use compatible partitioning of elements by the crack elements.
+
+\cite{boon_robust_2016} Robust discretization of porous media. Complete error analysis with mortar non-compatible case. Seems they use normal fluxes accros
+fracture instead of pressure traces. This allows conforming discretization and error results.
+
+\cite{reichenberger_mixed-dimensional_2006} Finite volume method, fully implicit two phase flow. Cite usage of FRAC3D generator. 
+
+\cite{sladkova_bakalarka} Space-time DG with adaptive mesh, need integration of product of functions on different meshes (in 2D). An algorithm 
+for computing triangle-triangle intersections in 2D.
+
+\cite{pichot_generalized_2012} DFN + MHFEM. Mortar method for intersections. Focused on formulation not on intersections. 
+
+\cite{flemisch_non-matching_2012} (Barbara) Mortad, non=matching, acustics. Theory, structured gird case. No complex intersections.
+
+\cite{mustapha_hybrid_2014} Patent for curiosity.
+
+\cite{mittal_immersed_2005} Immersed boundary. ??
+
+\cite{owen_survey_1998} ??
+
+\cite{kuznetsov_overlapping_1998}
+
+\cite{platis_fast_2003} Original algorithm for line-thetrahedra intersections.
+
+\cite{haines_fast_1991} Line-convex Polyhedra intersections using generalisation of line-clipping algorithm
+
+
+USED:
+\cite{massing_efficient_2013} - Implementation of the Nitche method in Fenics. They need 2d-3d intersections, but only for distribution od quadrature points. 
+So they do not store whole intersection data, but only the quad points. The boundary of one domain is partitioned into intersections with elements of the other domain.
+Use {\\emph collision relations} ( pairs of faces of boundary and elmements of the background mesh) and {\emph collision maps} 
+( map face to all intersections and background element to all intersections, can be constructed from the collision relation), They cite books from computer graphics ..
+Mention geometric predicates. Present algorithms for:  find intersection candidates, comput intersections, integrate over complex domains.
+
+\cite{elsheikh_reliable_2012} Claim to provide robust algorithm covering all tiangle-trinagle degenerate cases. Basic idea is the same as our: use some tree 
+(Binary SPace Tree) structure to find initial point on intersection curve and trace the curve in both directions. Quite clever data structure for the mesh. Adaptive precision 
+geometric predicates. Store topological information about the intersection points (point on triangle, edge, vertex). Resolve various degenerate cases, 
+dicuss mesh optimization after subdivision.
+
+
+\cite{gander_algorithm_2013} Full algorithm for 2d=3D called PANG. Implemented in DUNE in 2010 (Bastian). Other software (Hecht, MpCCI). 
+Triangle-Triangle and Tetra-Triangle intersections done similarly as in aur approach: set of points including vertices and then sort them countercolckwise.
+Local intersection algorithm do not provide neighbouring information so the traversal algorithm do not use it.
+
+Review of algorithms: \cite{gander_algorithm_2009}
+
+
+\cite{bournival_mesh-geometry_2008} Application of mixed-dimensional approach in mechanics. Beam and shell elements ...
+
+
 
 
 %\endinput
