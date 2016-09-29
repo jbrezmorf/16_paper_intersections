@@ -630,16 +630,25 @@ each other (due to intersection of their bounding boxes or prolongation result)
 
 
 \section{Front tracking algorithm}
-
+Prerequisites:
+  \begin{itemize}
+   \item need information about element connectivity (mesh preprocessing)
+%   \item mark and check already inspected pairs. Marking elements + hashing.
+   \item find the starting intersection -- AABB (Axes Aligned Bounding Boxes) 
+   \item possibly create Bounding Interval Hierarchy (BIH)
+%   \item Pass already known information with pairs.
+%   \item Deal with degenerated cases.
+  \end{itemize}
+  
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
 elements of the same lower dimension (1D, 2D), in the space of 3D elements, which we shall call a \emph{bulk}. 
-Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
-Then we can prolongate the intersection by investigating neighbouring elements.
+Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other. Then we can prolongate the intersection by investigating neighbouring elements.
+
 %
 \begin{figure}[!htb]
 %   \vspace{0pt}
   \centering    
-    \includegraphics[width=\textwidth]{\figpath prolongation_scheme.pdf}
+    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip.pdf}
   \caption{Prolongation algorithm for 1D-2D and 2D-3D intersections. }
   \label{fig:prolongation}
 \end{figure}
@@ -659,15 +668,7 @@ algorithm on the graph of component elements.
     \item Pop pair from $Q_c$. (move to the next component element: go to \ref{en:q2}).
     \item If $Q_c$ is empty, go to \ref{en:first}.
   \end{enumerate}
-  Prerequisites:
-  \begin{itemize}
-   \item need information about element connectivity (mesh preprocessing)
-%   \item mark and check already inspected pairs. Marking elements + hashing.
-   \item find the starting intersection -- AABB (Axes Aligned Bounding Boxes) 
-   \item possibly create Bounding Interval Hierarchy (BIH)
-%   \item Pass already known information with pairs.
-%   \item Deal with degenerated cases.
-  \end{itemize}
+  
 
 After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
 two queues with element pairs as candidates for further intersection. If the intersection edge 
@@ -736,10 +737,11 @@ There are 3 possible cases (applies both for 1D-3D and 2D-3D):
             We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
             or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
             push the following new candidate pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
-            If the candidate pair has been investigated already, we skip it.
     \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
             We proceed as in previous case, but we push only [current component element -- bulk neighbor] candidate pairs, since there is no component neighbor.
 \end{itemize}
+
+If the candidate pair has been found already, we skip it.
 
 % 2d-3d prolongation logic CURRENT
 % IP is:
