@@ -147,7 +147,7 @@ TODO: An abstract.
 
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword
-non-matching gird \sep 
+non-matching grid \sep 
 intersections \sep
 mixed-dimensional mesh \sep
 \plucker coordinates
@@ -170,9 +170,10 @@ mixed-dimensional mesh \sep
 
 %% main text
 \section{Introduction}
+\notePE{How did you decided for 'non-matching' term? Instead of e.g. incompatible or non-conforming?}
 
-The grid intersection algorithms are crucial for several techniques that tries to overcome some limitations of the classical finite element method.
-The Chimera method \cite{brezzi_analysis_2001} also called overset grid and similar Nitche method \cite{massing_efficient_2013}
+The grid intersection algorithms are crucial for several techniques that try to overcome some limitations of the classical finite element method.
+The Chimera method \cite{brezzi_analysis_2001}, also called overset grid, and similar Nitche method \cite{massing_efficient_2013}
 allow solution of the problems with changing geometry as in the fluid-structure problems. 
 The Mortar method \cite{belgacem_mortar_1999} allows domain decomposition, independent meshing of domains, and supports sliding boundaries.
 However our primal motivation is usage of XFEM methods and non-matching meshes of mixed dimension in groundwater models.
@@ -191,20 +192,21 @@ impossible. In order to avoid these difficulties we may discretize the continuum
 around the wells. The prerequisity for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
 We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$. 
-We assume that the meshes $\mathcal T_i$ are connected, that is the graph having elements for vertices and their nighbouring for edges is connected.
-We also assume that no submesh intersect itself. Further we assume that only $\mathcal{T}_1$ have $d_1=3$ and $d_i < 3$ for $i>1$. 
+We assume that the meshes $\mathcal T_i$ are connected, that is the graph having elements for vertices and their neighbouring for edges is connected.
+We also assume that no submesh intersects itself. Further we assume that only $\mathcal{T}_1$ has $d_1=3$ and $d_i < 3$ for $i>1$. 
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
-and compute that intersection. Every (possibly degenerated) intersection polygon (IP) is determined by its corners called intersection corners (IC).
+and to compute that intersection. Every (possibly degenerated) intersection polygon (IP) is determined by its corners called intersection corners (IC).
 For every IC we want to compute its barycentric coordinates on $K$ and on $L$.
 
 The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. Second, compute the intersection for particular pair.
 In order to get candidate pairs efficiently, the existing algorithms use either various space trees \cite{massing_efficient_2013} or front tracing
 \cite{gander_algorithm_2013} or both \cite{elsheikh_reliable_2012} as in our approach. To compute the actual intersections, we 
 use the \plucker coordinates for the line-triangle intersections and a modification of the  Platis and Theoharis algorithm \cite{platis_fast_2003}
-for the line-tetrahedron intersections. These are used as the building block for the triangle-triangle and the triangle-tetrahedron cases.
+for the line-tetrahedron intersections. These are used as the building blocks for the triangle-triangle and the triangle-tetrahedron cases.
 
 \noteJB{Better overview of works, seems that most of works deals with simple intersections, can not find any example of 2d-3d.}
 
+\notePE{Unify the term 'front tracing' 'front tracking' 'advancing front'.}
 Our contribution is twofold: First, we present family of efficient algorithms based on \plucker coordinates for computing 1d-2d, 1d-3d, 2d-2d, and 2d-3d intersections 
 of simplicies. Second, we use the front tracking algorithm both to minimize set of intersection candidates as well to reuse part of calculations made on neighboring
 intersections. The paper is organized as follows \dots
@@ -626,7 +628,9 @@ each other (due to intersection of their bounding boxes or prolongation result)
 
 \notePE{Do you want to use American 'neighbor' or all other English 'neighbour'? (I prefer non-american.. to be unified at the end..)}
 
-\subsection{Prolongation algorithm}
+
+\section{Front tracking algorithm}
+
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
 elements of the same lower dimension (1D, 2D), in the space of 3D elements, which we shall call a \emph{bulk}. 
 Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other.
@@ -718,20 +722,23 @@ queue is emptied at first.
 %             there is no 1D neighbor.
 % \end{itemize}
 
-A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases (applies both for 1D-3D and 2D-3D):
+\subsection{Prolongation over IPs}
+Having an intersection of a pair of elements, we now look for new candidate pairs among the neighboring elements.
+Therefore, we iterate over the intersection points and further exploit their topological information.
+There are 3 possible cases (applies both for 1D-3D and 2D-3D):
 \begin{itemize}
-    \item \textbf{IP lies on component element side and inside bulk element} \\
+    \item \textbf{IP lies on the component element side and inside the bulk element} \\
             We find all the sides of component element in which the IP lies (IP can be at node and connect more sides).
-            We find the component neighboring elements over the sides and push a new candidate pair
-            [component neighbor -- current bulk element] into component queue.
-    \item \textbf{IP lies on component element side and on the surface of bulk element} \\
+            Next, we find the component neighboring elements over the sides and push all new candidate pairs
+            [component neighbor -- current bulk element] into the component queue.
+            Note, that there can be more than one neighbor on a side, if the component has branches.
+    \item \textbf{IP lies on the component element side and on the surface of the bulk element} \\
             We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
             or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
-            push the following new candidates pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
-            If the candidates pair has been investigated already, we skip it.
+            push the following new candidate pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
+            If the candidate pair has been investigated already, we skip it.
     \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
-            The same as before, but we push only [current component element -- bulk neighbor] candidates pairs, since
-            there is no component neighbor.
+            We proceed as in previous case, but we push only [current component element -- bulk neighbor] candidate pairs, since there is no component neighbor.
 \end{itemize}
 
 % 2d-3d prolongation logic CURRENT
@@ -764,7 +771,9 @@ A new candidate pair of elements is found during prologantion, based on the topo
 %     - check whether the candidate pair has not been computed yet
 
 
-\section{Front tracking algorithm}
+
+
+
 \section{Benchmarks}
 
 \section{Conclusions}
