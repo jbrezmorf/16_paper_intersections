@@ -56,7 +56,18 @@
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{esint}
+
+\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+%\newtheorem{remark}[theorem]{Remark}
+\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{corollary}[theorem]{Corollary}
+%\newtheorem{thmproblem}{Problem}
+%\newtheorem{exercise}[theorem]{Cvičení}
+
 
 %% The amsthm package provides extended theorem environments
 %% \usepackage{amsthm}
@@ -87,7 +98,7 @@
 \def\abs#1{| #1 |}
 \def\prtl{\partial}
 \newcommand{\dd}{\; \mathrm{d}}
-\newcommand{\R}{\mathbf{R}}
+\newcommand{\R}{\mathbb{R}}
 \newcommand{\bx}{\vc{x}}
 \newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}
 
@@ -95,6 +106,8 @@
 \newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
 \newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
 \newcommand{\plucker}{Pl\"{u}cker }
+\newcommand{\nface}{$n$-face }
+\newcommand{\nfaces}{$n$-faces }
 
 \newdefinition{mdef}{Definition}%[section]
 
@@ -190,12 +203,11 @@ impossible. In order to avoid these difficulties we may discretize the continuum
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
 around the wells. The prerequisity for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
-We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$. 
-We assume that the meshes $\mathcal T_i$ are connected, that is the graph having elements for vertices and their nighbouring for edges is connected.
-We also assume that no submesh intersect itself. Further we assume that only $\mathcal{T}_1$ have $d_1=3$ and $d_i < 3$ for $i>1$. 
+We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$
+in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected set with no self intersection.
+Further we assume only single 3d mesh $\mathcal{T}_1$.
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
-and compute that intersection. Every (possibly degenerated) intersection polygon (IP) is determined by its corners called intersection corners (IC).
-For every IC we want to compute its barycentric coordinates on $K$ and on $L$.
+and compute that intersection.
 
 The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. Second, compute the intersection for particular pair.
 In order to get candidate pairs efficiently, the existing algorithms use either various space trees \cite{massing_efficient_2013} or front tracing
@@ -205,22 +217,29 @@ for the line-tetrahedron intersections. These are used as the building block for
 
 \noteJB{Better overview of works, seems that most of works deals with simple intersections, can not find any example of 2d-3d.}
 
-Our contribution is twofold: First, we present family of efficient algorithms based on \plucker coordinates for computing 1d-2d, 1d-3d, 2d-2d, and 2d-3d intersections 
-of simplicies. Second, we use the front tracking algorithm both to minimize set of intersection candidates as well to reuse part of calculations made on neighboring
-intersections. The paper is organized as follows \dots
+Our contribution is twofold:  First, we use the front tracking algorithm both to minimize set of intersection candidates as well 
+to reuse part of calculations made on neighbouring intersections. Second, we present family of efficient algorithms based on \plucker coordinates 
+for computing 1d-2d, 1d-3d, 2d-2d, and 2d-3d intersections of simplicies. The paper is organized as follows \dots
 
 
 \section{Element Intersections}
 \label{sec:elements_intersections}
 In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space. 
-In particular we are interested in the intersections in 1D-2D, 1D-3D, 2D-2D, 2D-3D cases.
-It will be suitable to denote $S_i$ a simplicial element with $i$ vertices (of dimension $i-1$).
-In general, an intersection can be a point, a line segment or a polygon.
-All these three objects are represented as a vector of vertices called \emph{intersection points} 
-(later denoted IP, or IPs in plural). 
-
-The fundamental idea is to compute intersection of 1D-2D simplices using the 
+In particular we are interested in the intersections of 1D-2D, 1D-3D, 2D-2D, 2D-3D pairs of elements. The fundamental idea is to compute intersection of 1D-2D simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
+
+We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simlices itself the \nfaces and we denote
+$M_i$ the set of all \nfaces of the simplex $S_i$.
+In general, an intersection can be a point, a line segment or a polygon called \emph{intersection polygon} (IP) in common.
+The intersection polygon is represented as a list of its corners called \emph{intersection corners} (IC). The IP data structure keeps also 
+reference to the intersecting simplices. A data structure of a single IC consists of:
+\begin{itemize}
+ \item the barycentric coordinate $\vc w_K$ of IC on $K$,
+ \item the dimension $d_K$ of the most specific \nface the IC lies on,
+ \item the local index $i_K$ of that \nface on $K$,
+\end{itemize}
+for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
+we call the topological position of the IC on $K$.
 
 
 \subsection{\plucker Coordinates}
@@ -249,20 +268,25 @@ see \fig{fig:plucker_products}.
 
 %Notice the condition on the orientation of the triangle sides. To always satisfy it, we use a
 %reference simplex, in which the numbering of nodes and sides and also the orientation is fixed.
-%The barycentric coordinates of the intersection point can be computed directly from the \plucker products
+%The barycentric coordinates of the intersection corner can be computed directly from the \plucker products
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
 \subsection{Intersection Line-Triangle (1D-2D)}
-\notePE{In this paragraph we investigate real lines. Trimming comes later when tolerance is denoted, see next PE note.}
-Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
-with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same sign if and only if there
-is an intersection point with the       line $p$ inside the triangle. In such a case, the inner products provides scaled barycentric coordinates of the intersection on the triangle.
-In particular for the barycentric coordinate $w_i$ related to the vertex $\vc V_i$ we have
-\[
-   w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }
-\]
-Indeed, using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
-The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ (\plucker coordinates are invariant to change of initial point). Combining these two expressions we get
+Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle $T$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. 
+\begin{lemma}
+The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
+is an intersection point $X$ on the $p$ and inside the triangle $T$. 
+The barycentric coordinates of $X$ on $T$ are
+\begin{equation}
+  \label{eq:bary_centric}
+   w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }.
+\end{equation}
+\end{lemma}
+\begin{proof}
+Using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
+The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ since these are invariant to change of the initial point. 
+Combining these two expressions we get
 \[
    \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times \vc V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
    =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
@@ -271,79 +295,72 @@ Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2
 \[
    \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc v_1 \times \vc v_2).
 \]
-Having the barycentric coordinates of the intersection on the triangle we can compute also its local coordinate on $p$ from its parametric form:
-\[
+The point $X$ is inside of $T$ if and only if $w_i>0$ for all $i=0,1,2$.
+\end{proof}
+Having the barycentric coordinates of $X$ on $T$, we can compute also its local coordinate on $p$ from its parametric form:
+\begin{equation}
+   \label{eq:line}
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
-\]
-We use $i$ with maximal $|u_i|$ for practical computation.
+\end{equation}
+We use $i$ with maximal $|u_i|$ for practical computation. 
 
-adaptive precision arithmetic 
-    \cite{elsheikh_reliable_2012} (based on edge-triangle intersections, 
-        use calculations that are similar to usage of \plucker coordinates), 
-    \cite{shewchuk_adaptive_1997}
+The calculation of the intersection proceeds as follows:
+\begin{enumerate}
+    \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_i$, $\pi_s \odot \pi_i$, for $i=1,2,3$.
+    \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
+    \item If any $w_i$ is less then $\epsilon$ there is no intersection, return empty IP.  
+    \item If all $w_i$ are greater then $\epsilon$, we set $\tau_T = (2, 0)$ for the IC.
+    \item If one $w_i$ is less then $\epsilon$, intersection on edge $s_i$, we set $\tau_T =(1,i)$.
+    \item If two $w_i$ are less then $\epsilon$, intersection in the vertex $V_i$, we set $\tau_T=(0,,i)$.
+    \item \label{item:coplanar} If all $w_i$ are less then $\epsilon$, the line is coplanar with the triangle, both objects are 
+        projected to the plane $x_i=0$ where $i$ is the index of maximal component of the triangle's normal vector.
+        Every pair $p$, $s_i$ is checked for an intersection on $T$ boundary either inside $s_i$ or in a vertex $V_i$ setting the topological info $\tau_T$ to 
+        $(1, i)$ or $(0, i)$ respectively. At most two ICs are obtained.
+    \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
+    \item If $t\in (-\epsilon, \epsilon)$ or $t\in (1-\epsilon, 1+\epsilon)$, we set $\tau_p = (0,0)$ or $\tau_p = (0,1)$, respectively.
+    \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
+\end{enumerate}
 
+The check for the same sign of the inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
+line with respect to the triangle. Adaptive-precision evaluation of the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997}
+and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}. However, we rather apply a fixed tolerance check for the zero 
+barycentric coordinates and consistently keep the topological positions in this and related algorithms. \noteJB{Can we make the algorithm 
+\emph{parsimonious} in the spirit of the Fortune \cite{fortune_stable_1989} quoted by Schewchuk? 
+Seems that our problem is more local than the line example that was proven to be NP-hard.}
 
-Next, we shall discuss the case when some of the permuted inner products are zero. In fact, we test if any barycentric coordinate is under given tolerance 
-($\abs{w_i} \le \epsilon$). Various \emph{pathological} cases are detected and further topological 
-information is atached to the intersection data.  In the case of one zero coordinate (non-coplanar intersection on the edge)
-or two zero coordinates (intersection in the vertex), we add the local edge index or the local vertex index to the intersection, respectively.
-When all coordinates are (close to) zero, the line and the triangle are (nearly) coplanar. For every edge $s_i$ we compute
-its intersection with the line segment $p$ in terms of the local coordinates $t_i$ and $t_p$. Only intersections with $t_i \in (-\epsilon, 1+\epsilon)$
-are accepted, for $t_i$ close to $0$ and $1$ we append the vertex index to the intersection. Edges parallel to $p$ or lying on the $p$ are skipped.
+The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2d intersection algorithm, in particular the search for ICs in the coplanar case 
+(item \ref{item:coplanar}) is not necessary and the test in the last point is not performed.
+and degenerate cases higher dimensional cases.
 
-Finally, we obtain zero, one, or two intersection points with additional topological information.
-The intersection point data structure keeps for each of the two intersecting elements:
-\begin{itemize}
- \item Barycentric coordinate of the intersection.
- \item Dimension of the most specific subelement (face, edge, vertex) where the point lies.
- \item Local index of the most specific subelement.
-\end{itemize}
-Further, we store the sign of the permuted inner product in order to detect various special and degenerate cases higher dimensional cases.
-
-
-TODO:
-We should distinguish "special" case and "degenerate" case. The later one is the case when line lies in the plane of the triangle. The first case should be
-treated as usual only set aditional topology info about vertex or edge. The degenerate case is not necessary to investigate in the case of auxiliary
-intersection only in the case of final intersection. Need to verify it since it is not the case in current code.
-
-
-We distinguish two variants of the desired result: the auxiliary intersection used as subprocedure of the other intersections and the final intersection.
-In the first case we just return the array of the intersection points with the line.
-\notePE{In the first case, we do not trim the line (We need both IPs (if there are two), for 1D-3D). In the final case, we need to check that also $t_p \in (-\epsilon, 1+\epsilon)$. That is the current state.}
- Degenerated case of $p$ laying on the triangle edge is also detected....
-\noteJB{No, in 1D-3D we doesn't need result of the degenerate case (all products zero), which is the only case we can obtain two IPs. 
-I'm going to do not deal with the two variants and focus more on correctness then on optimality of the described algorithm.}
-
-Intersection with line segment ... (final 1D-2D intersection)
 
 \subsection{Intersection Line-Teraherdon (1D-3D)}
-\noteJB{Has to be completed yet, however we consider that we obtain 0,1, or 2 distinguish IPs for all cases including various touch cases. Anyway every IP results from 
-some non-degenerate 1d-2d intersection. We also assume that the IPs are in order according to the orientation of the side which is
+\noteJB{Has to be completed yet, however we consider that we obtain 0,1, or 2 distinguish ICs for all cases including various touch cases. Anyway every IC results from 
+some non-degenerate 1d-2d intersection. We also assume that the ICs are in order according to the orientation of the side which is
 counterclockwise aroung the triangle.}
 We consider a line $p$ and a tetraherdon...
 Tetrahedron has six edges, so six \plucker coordinates and inner products are computed at most. These data are
 passed to the 1D-2D algorithm described above, which is applied to the every face of the tetrahedron face. 
 
-There might be two intersection points maximally, which are finally checked that they belong o abscissas.
+There might be two intersection corners maximally, which are finally checked that they belong o abscissas.
 If the line has its boundary point inside the tetrahedron, the intersection line must be cut
-and coordinates of intersection point are interpolated.
+and coordinates of intersection corner are interpolated.
 Pathologic cases are again carefully processed so we obtain the most extensive topology information we can.
 See \cite{fris_dp_2015} for detailed description of all possible cases.
 
 \subsection{Intersection Triangle-Tetrahedron (2D-3D)}
-The intersection of a triangle $S_3$ and a tetrahedron $S_4$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
-lie either on sides of $S_3$ or on faces of $S_4$. Thus each vertex (IP) of the polygon
-can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_3$.
+The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
+lie either on sides of $S_2$ or on faces of $S_3$. Thus each vertex (IC) of the polygon
+can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_2$.
 So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
-Computation of the intersection polygon consists of two parts: calculation of side-tetrahedron IPs (Algorithm \ref{algo:colect_23_ip_triangle})
-provides all IPs on the boundary of $S_3$,
-calculation of edge-triangle IPs (Algorithm \ref{algo:collect_23_ip_edges}).
-\notePE{The following sentence is somehow weird.. I would say that we store IPs $I$; to sort $I$ during the computation, we use the two tables; at the end, $I$ is ordered correctly.}
-Correct order of the IPs, stored in the list $I$, is defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. \notePE{The following sentece is a copy of the second sentence is this subsection.} Every side of the intersection polygon 
-lies either on a side of $S_3$, or on a face, or on an edge of $S_4$. Let us denote $M_3$ the set of sides of $S_3$ and $M_4$ the set of volume,
-faces, edges, and vertices of $S_4$. Every side of polygon that lies on $x\in M_3\cup M_4$ is followed by an IP given by $F_g[x]$ 
-and every IP $p$ is followed by the side that lies on $F_p[p]\in M_3\cup M_4$. 
+Computation of the intersection polygon consists of two parts: calculation of side-tetrahedron ICs (Algorithm \ref{algo:colect_23_ip_triangle})
+provides all ICs on the boundary of $S_2$,
+calculation of edge-triangle ICs (Algorithm \ref{algo:collect_23_ip_edges}).
+\notePE{The following sentence is somehow weird.. I would say that we store ICs $I$; to sort $I$ during the computation, we use the two tables; at the end, $I$ is ordered correctly.}
+Correct order of the ICs, stored in the list $I$, is defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. \notePE{The following sentece is a copy of the second sentence is this subsection.} Every side of the intersection polygon 
+lies either on a side of $S_2$, or on a face, or on an edge of $S_3$. Let us denote $M_2$ the set of sides of $S_2$ and $M_3$ the set of volume,
+faces, edges, and vertices of $S_3$. Every side of polygon that lies on $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
+and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$. 
 
 \begin{algorithm}
   \caption{2d-3d intersection, points on triangle boundary}
@@ -352,10 +369,10 @@ and every IP $p$ is followed by the side that lies on $F_p[p]\in M_3\cup M_4$.
   \DontPrintSemicolon
   \SetKw{continue}{continue}
   \KwIn{input data}
-  \KwOut{List of IPs on sorted output data}  
+  \KwOut{List of ICs on sorted output data}  
   $F_g(:)=-1,\ F_p(:)=-1$\tcp*{Unset links.} 
-  \For{side $s$ of $S_3$}{ 
-    $L$ = intersection($s, S_4$)\;
+  \For{side $s$ of $S_2$}{ 
+    $L$ = intersection($s, S_3$)\;
     \lIf{ $\abs{L} = 0$}{\continue}
     \lIf{ $\abs{L} = 1$}{
         append $p$ to $J$
@@ -364,7 +381,7 @@ and every IP $p$ is followed by the side that lies on $F_p[p]\in M_3\cup M_4$.
     \For{$p$ in $L$}{
         \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
         \nllabel{line:m4_object}
-        $p$ lies on $x\in M_4$\; 
+        $p$ lies on $x\in M_3$\; 
         \uIf{$p$ is first in $L$}{
             $F_g[x] = p$,\ $F_p[p] = s$\;
         }
@@ -383,24 +400,24 @@ and every IP $p$ is followed by the side that lies on $F_p[p]\in M_3\cup M_4$.
 \end{algorithm}
 
 
-Algorithm \ref{algo:colect_23_ip_triangle} passes through every side $s$ of the triangle $S_3$ and computes the line-tetrahedron intersection $L$.
-In the regular case we process each of the two IPs in $L$. The IP $p$ is added to the list $I$ unless the last point is the same. 
-This condition is effective just for the first IP in $L$ and merges IPs at the same vertex of $S_3$. Then we identify an object $x\in M_4$ the point
+Algorithm \ref{algo:colect_23_ip_triangle} passes through every side $s$ of the triangle $S_2$ and computes the line-tetrahedron intersection $L$.
+In the regular case we process each of the two ICs in $L$. The IC $p$ is added to the list $I$ unless the last point is the same. 
+This condition is effective just for the first IC in $L$ and merges ICs at the same vertex of $S_2$. Then we identify an object $x\in M_3$ the point
 $p$ lies on (line \ref{line:m4_object}). \notePE{I am not sure, if the term 'object' is clear..}
 
-\notePE{Why calling it vertex $v$ instead of IP $p$ here? What is $y$?}
+\notePE{Why calling it vertex $v$ instead of IC $p$ here? What is $y$?}
 If the vertex $v$ is between sides $s_1$, $s_2$, 
 we effectively set connections $F_g[s_1] = v$, $F_g[y]=v$, $F_p[v] = s_2$. The backward temporary link on the line \ref{line:back_link43} 
-is used in Algorithm \ref{algo:collect_23_ip_edges} to fix $F_p[p]$ for the second $p$ lying on an edge or a vertex of $S_4$. The condition at the end deals with the case
-in which two sides intersect the same object $x\in M_4$.
+is used in Algorithm \ref{algo:collect_23_ip_edges} to fix $F_p[p]$ for the second $p$ lying on an edge or a vertex of $S_3$. The condition at the end deals with the case
+in which two sides intersect the same object $x\in M_3$.
 
 
-For the regular intersection $L$, we pass through its IPs, as described above. \notePE{For special cases}, we firstly compute IPs
-on the boundary of $S_3$ using the line-tetrahedron intersection algorithm for every side. We store single point intersections into separate list $J$
-and skip filling the connection tables. This happens when the side touches $S_4$ at its edge or vertex. 
-These IPs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} with better topological information, however
-this is not the case if the touched edge $e$ of $S_4$ is coplanar with $S_3$ and the IP is inside of $e$. 
-Therefore we keep a separate list $J$ of IPs to deal with this case.
+For the regular intersection $L$, we pass through its ICs, as described above. \notePE{For special cases}, we firstly compute ICs
+on the boundary of $S_2$ using the line-tetrahedron intersection algorithm for every side. We store single point intersections into separate list $J$
+and skip filling the connection tables. This happens when the side touches $S_3$ at its edge or vertex. 
+These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} with better topological information, however
+this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$. 
+Therefore we keep a separate list $J$ of ICs to deal with this case.
 
 
 \begin{algorithm}  
@@ -411,23 +428,23 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
   \SetKw{edgefaces}{edge faces}
   \SetKw{vertexfaces}{vertex faces}
   \DontPrintSemicolon
-  \KwIn{$I$ with IPs on $S_3$ boundary, partially filled $F$}
-  \KwOut{all IPs in $I$, complete $F$}  
+  \KwIn{$I$ with ICs on $S_2$ boundary, partially filled $F$}
+  \KwOut{all ICs in $I$, complete $F$}  
   
-  \lFor{edge $e$ of $S_4$}{$L[e]$ = intersection($e, S_3$)}  \nllabel{line:12edges}
-  \For{unmarked edge $e$ of $S_4$}{
+  \lFor{edge $e$ of $S_3$}{$L[e]$ = intersection($e, S_2$)}  \nllabel{line:12edges}
+  \For{unmarked edge $e$ of $S_3$}{
     $p=L[e]$\;
     \uIf{ $p$ is inside $e$}{ 
         \nllabel{line:edge_faces}        
         $(f_0,\ f_1)$ = \edgefaces($e$)
     } 
-    \Else($p$ at the vertex $v$ of $S_4$){       
+    \Else($p$ at the vertex $v$ of $S_3$){       
             $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
             \nllabel{line:mark_edges}
             mark all edges coincident with $p$
     }    
-    \uIf{ $p$ is on boundary of $S_3$ }{
-         $p$ lies on edge or at vertex $x \in M_4$\;
+    \uIf{ $p$ is on boundary of $S_2$ }{
+         $p$ lies on edge or at vertex $x \in M_3$\;
          $q=F_g[x]$\tcp*{$q$ is already computed $p$}
          \lIf{$F_p[q]=x$}{$F_p[q]=f_1$}
          \lElse{$F_g[f_0]=q$}
@@ -451,8 +468,8 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
   \SetKw{return}{return}
   \SetKw{edgefaces}{edge faces}
   \DontPrintSemicolon
-  \KwIn{vertex $v$ of $S_4$, $L[:]$ intersection results for edges of $S_4$}
-  \KwOut{$(x_1, x_2)$, $x_1, x_2 \in M_4$, coincident with $v$ and intersected by the plane of $S_3$}
+  \KwIn{vertex $v$ of $S_3$, $L[:]$ intersection results for edges of $S_3$}
+  \KwOut{$(x_1, x_2)$, $x_1, x_2 \in M_3$, coincident with $v$ and intersected by the plane of $S_2$}
   $e_0,\ e_1,\ e_2$ edges coincident with $v$ oriented out of $v$
   $s[i] = L[e_i]$, for $i=0,1,2$, \;
   
@@ -467,7 +484,7 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
         replace $g\in z$, $g\ne f$ with $e$
         \return $z$
     }\lElse{
-        append IP of $v$ to $J$
+        append IC of $v$ to $J$
         \return anything\;
     }
   }
@@ -477,48 +494,48 @@ Therefore we keep a separate list $J$ of IPs to deal with this case.
   }
   
   \Else($s$ have all signs same){ \nllabel{line:same_signs}
-    append IP of $v$ to $J$
+    append IC of $v$ to $J$
     \return anything\;
   }  
 \end{algorithm}
 
-Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_4$ (line \ref{line:12edges}).
-The loop produces IPs in the interior of $S_3$ and possibly those IPs with special position on vertex or edge of $S_4$ already computed in Algorithm \ref{algo:colect_23_ip_triangle}. 
-Every edge $e$ of $S_4$ is oriented so that the pair of adjacent faces $f_0$, $f_1$ appears in the same order on the intersection polygon when the 
-IP on $e$ has a negative sign (see Figure \ref{fig:plucker_products}). The function \emph{edge faces}, used on line \ref{line:edge_faces} and later on,
+Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
+The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position on vertex or edge of $S_3$ already computed in Algorithm \ref{algo:colect_23_ip_triangle}. 
+Every edge $e$ of $S_3$ is oriented so that the pair of adjacent faces $f_0$, $f_1$ appears in the same order on the intersection polygon when the 
+IC on $e$ has a negative sign (see Figure \ref{fig:plucker_products}). The function \emph{edge faces}, used on line \ref{line:edge_faces} and later on,
 uses the sign of the intersection to return the pair of faces ordered correctly. 
 Similarly the function \emph{vertex faces} (Algorithm \ref{algo:vertex_faces}, described later)
-returns a pair of generalized faces (face or edge) possibly adjacent to the IP $L[e]$ at the vertex $v$ of $S_4$.
-On line \ref{line:mark_edges} we mark all edges coincident with the vertex, since if they have any other intersection point they are degenerate and 
+returns a pair of generalized faces (face or edge) possibly adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$.
+On line \ref{line:mark_edges} we mark all edges coincident with the vertex, since if they have any other intersection corner they are degenerate and 
 not processed anyway.
 
 
 \subsubsection{Vertex Faces Algorithm}
-This function gets an IP $p$ at vertex $v$ of $S_4$ as a parameter. The IP is special vertex case of non-degenerate edge-triangle intersection. 
-The function returns a pair of generalized faces of $S_4$ preceeding and succeeding $p$ on the polygons boundary in the case that $p$ is at interior of $S_3$.
-The basic idea is to use the signs of IPs of the three edges coincident with $v$. 
+This function gets an IC $p$ at vertex $v$ of $S_3$ as a parameter. The IC is special vertex case of non-degenerate edge-triangle intersection. 
+The function returns a pair of generalized faces of $S_3$ preceeding and succeeding $p$ on the polygons boundary in the case that $p$ is at interior of $S_2$.
+The basic idea is to use the signs of ICs of the three edges coincident with $v$. 
 Possible cases are:
 \begin{itemize}
- \item {\bf All IPs have the same sign.} (line \ref{line:same_signs}) We return any pair of faces.  $S_3$ is touching $S_4$ 
- at the vertex $v$, the polygon degenerates into the single IP $p$, no connection information from table $F$ is necessary.
- \item {\bf Single IP has the opposite sign to the other two.} (line \ref{line:different_sign}) Let $e$ be the edge of the single IP with the different sign. 
- The plane of $S_3$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. The order is detemined by the function \emph{edge faces}.
- \item {\bf Single degenerated IP.} (line \ref{line:one_degenerated}) Let us denote $e$ the edge with degenerated IP and $f$ the face between the other two edges.
- The other two (non-degenerates) edges may have either the opposite sign (the plane is cutting $S_4$) or the same sign (the plane is touching $S_4$ at the edge $e$).
+ \item {\bf All ICs have the same sign.} (line \ref{line:same_signs}) We return any pair of faces.  $S_2$ is touching $S_3$ 
+ at the vertex $v$, the polygon degenerates into the single IC $p$, no connection information from table $F$ is necessary.
+ \item {\bf Single IC has the opposite sign to the other two.} (line \ref{line:different_sign}) Let $e$ be the edge of the single IC with the different sign. 
+ The plane of $S_2$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. The order is detemined by the function \emph{edge faces}.
+ \item {\bf Single degenerated IC.} (line \ref{line:one_degenerated}) Let us denote $e$ the edge with degenerated IC and $f$ the face between the other two edges.
+ The other two (non-degenerates) edges may have either the opposite sign (the plane is cutting $S_3$) or the same sign (the plane is touching $S_3$ at the edge $e$).
  In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then the vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
  
  
  The edge $e$ lies in the the singel edge
- \item {\bf Two degenerated IPs.} (line \ref{line:two_degenerated}) A face of $S_4$ lies in the plane of $S_3$, single edge $e$ have non-degenerate IP.
+ \item {\bf Two degenerated ICs.} (line \ref{line:two_degenerated}) A face of $S_3$ lies in the plane of $S_2$, single edge $e$ have non-degenerate IC.
  We treat the two degenerate edges as special case of faces adjacent to $e$ and return them sorted like the faces given by edge faces of edge $e$.
 \end{itemize}
 
-% Either all signs are equal ($S_3$ touching $S_4$) wee , or
+% Either all signs are equal ($S_2$ touching $S_3$) wee , or
 % a single edge have the sign oposite to other twotwo edges have a sign oposite then the thi. of According to the 
 % 
 % 
 % and need to insert them into $I$ to correct place. To this end we exploit additional information about coincidence of points
-% with faces of $S_4$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_3$ belongs to a face $f$ of $S_4$; we know from the order of the points
+% with faces of $S_3$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_2$ belongs to a face $f$ of $S_3$; we know from the order of the points
 % whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
 % Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
 % intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
@@ -545,7 +562,7 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ allows 
   \KwIn{all points in $I$}
   \KwOut{polygon in $K$ in correct order}  
   $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
-  \lFor{ $f$ is face of $S_4$}{$P[ F[1,f] ] = F[0, f]$}
+  \lFor{ $f$ is face of $S_3$}{$P[ F[1,f] ] = F[0, f]$}
   $i=0$\;  
   \lFor{$n=0$ \To $\abs{I}-1$}{
     $K[n]=I[i]$
@@ -555,28 +572,28 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ allows 
 \end{algorithm}
 
   
- List $in[f]$ contains index of the intersection point that follows after $f$ on the boundary of traced polygon, 
- similarly $out[f]$ stores index of the intersection point that preeceeds the face $f$.
+ List $in[f]$ contains index of the intersection corner that follows after $f$ on the boundary of traced polygon, 
+ similarly $out[f]$ stores index of the intersection corner that preeceeds the face $f$.
 
   
 Possible cases for processing $L$:
 \begin{enumerate}
  \item Regular case, $L$ consists of two intersections $p$, $q$ sorted by orientation of $s$, laying inside of $s$.
  
- If $p$ is on the edge $e$ of $S_4$ compute sign of intersection($e$, $S_3$), sort the faces $f_0$, $f_1$ coincident with $e$
+ If $p$ is on the edge $e$ of $S_3$ compute sign of intersection($e$, $S_2$), sort the faces $f_0$, $f_1$ coincident with $e$
  and set $in[f_0]$ to index of $p$ in $L$. Similarly if $q$ is on the edge, set $out[f_1]$ to index of $q$ in $L$.
  
- If $p$ is in vertex $v$ of $S_4$, for every face $f$ coincident with $v$ set
+ If $p$ is in vertex $v$ of $S_3$, for every face $f$ coincident with $v$ set
  in[$f$] to index of $p$ unless there is some index already set. So, we do not over ride
- entries comming from the edge intersections. Similarly set out[$f$] if $q$ is in vertex of $S_4$.
+ entries comming from the edge intersections. Similarly set out[$f$] if $q$ is in vertex of $S_3$.
  
- If $p$ is on face $f_0$ of $S_4$, set $in[f_0]$ to index of $p$. Similarly, if $q$ is on face $f_1$ of $S_4$, set $out[f_1]$ to index of $q$.
- laying on faces $f_p$, $f_q$ of $S_4$.
+ If $p$ is on face $f_0$ of $S_3$, set $in[f_0]$ to index of $p$. Similarly, if $q$ is on face $f_1$ of $S_3$, set $out[f_1]$ to index of $q$.
+ laying on faces $f_p$, $f_q$ of $S_3$.
  
- \item $L$ consists of a single intersection point $p$ (touching $S_4$)
+ \item $L$ consists of a single intersection corner $p$ (touching $S_3$)
  
  
- If $p$ is on edge, compute sign of intersection($e$, $S_3$), sort the faces $f_0$, $f_1$,
+ If $p$ is on edge, compute sign of intersection($e$, $S_2$), sort the faces $f_0$, $f_1$,
  set $in[f_0]$ and $out[f_1]$ to index of $p$.
  
  If $p$
@@ -584,7 +601,7 @@ Possible cases for processing $L$:
 
 How tracing works.
 \begin{itemize}
- \item If there are no intersections in vertex of $S_4$. 
+ \item If there are no intersections in vertex of $S_3$. 
 \end{itemize}
 
   
@@ -593,13 +610,13 @@ How tracing works.
 
 
 intersection polygon
-are found as intersection points of either triangle side and tetrahedron or tetrahedron edge and triangle.
+are found as intersection corners of either triangle side and tetrahedron or tetrahedron edge and triangle.
 Therefore we use both algorithms above for 1D-3D and 1D-2D, respectively. Data are again efficiently passed
 to lower dimensional problems, so 
 
-The array of intersection points is generally not sorted. We use two so called \emph{tracing} algorithms and we
+The array of intersection corners is generally not sorted. We use two so called \emph{tracing} algorithms and we
 intend to orient the edges of the polygon in the same direction as the triangle is oriented.
-If one of the intersection point is pathologic, a general convex hull method is applied using the Monotone 
+If one of the intersection corner is pathologic, a general convex hull method is applied using the Monotone 
 chain\footnote{Wikibooks, [online 2016-03-01], 
       \url{http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain}} 
 algorithm. The points are sorted using only their barycentric coordinates.
@@ -607,7 +624,7 @@ algorithm. The points are sorted using only their barycentric coordinates.
 An optimized algorithm has been suggested for non-pathologic cases. At this moment all the collected topology 
 data come into play. The algorithm takes advantage by using only the data already computed and also lowers
 the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N)$ 
-($N$ being number of intersection points).
+($N$ being number of intersection corners).
 
 
 \subsection{Tracking boundary of the intersection polygon}
@@ -682,60 +699,60 @@ queue is emptied at first.
 
 % \subsubsection{1D-3D prolongation}
 % 1d-3d prolongation logic
-% IP is:
+% IC is:
 % - 1D element node
 %     - inside tetrahedron
 %         - get the neighboring 1D element
 %         - push to component queue candidate pair [1D neigbor -- tetrahedron]
 %     - on the surface of tetrahedron
-%         - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%         - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
 %         - get the tetrahedron neighbors on the faces
 %         - push to bulk queue new candidates pairs:
 %             - [current 1D element -- tetrahedron neighbor]
 %             - [1D neighbor -- tetragedron neighbor]
 %             - check whether the candidate pair has not been computed yet
-%             (- if no new prolongation, push empty pair; means IP is on the boundary; 
+%             (- if no new prolongation, push empty pair; means IC is on the boundary; 
 %                the element is not closed then -- not fully covered with tetrahedrons)
 % - inside 1D element
-%     - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%     - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
 %     - get the tetrahedron neighbors on the faces
 %     - push to bulk queue candidate pair [current 1D element -- tetrahedron neighbor]
 %     - check whether the candidate pair has not been computed yet
 %     (- if no new prolongation, push empty pair; same meaning as above)
 
-% A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases:
+% A new candidate pair of elements is found during prologantion, based on the topological information of the intersection corner. There are 3 possible cases:
 
 % \begin{itemize}
-%     \item \textbf{IP lies at 1D element node and inside 3D element} \\
+%     \item \textbf{IC lies at 1D element node and inside 3D element} \\
 %             We find the neighboring 1D element over the node and push a new candidate pair [1D neighbor -- current 3D element] into component queue.
-%     \item \textbf{IP lies at 1D element node and on the surface of 3D element} \\
-%             We find all the faces of 3D element in which the IP lies (1 face, or 2 faces (IP on an edge), 
-%             or 3 faces (IP at a node)). We find the corresponding neghboring 3D elements over the faces and
+%     \item \textbf{IC lies at 1D element node and on the surface of 3D element} \\
+%             We find all the faces of 3D element in which the IC lies (1 face, or 2 faces (IC on an edge), 
+%             or 3 faces (IC at a node)). We find the corresponding neghboring 3D elements over the faces and
 %             push the following new candidates pairs into the bulk queue: [current 1D element -- 3D neighbor], [1D neighbor -- 3D neighbor].
 %             If the candidates pair has been investigated already, we skip it.
-%     \item \textbf{IP lies inside 1D element (therefore must be on the surface of 3D element)} \\
+%     \item \textbf{IC lies inside 1D element (therefore must be on the surface of 3D element)} \\
 %             The same as before, but we push only [current 1D element -- 3D neighbor] candidates pairs, since
 %             there is no 1D neighbor.
 % \end{itemize}
 
-A new candidate pair of elements is found during prologantion, based on the topological information of the intersection point. There are 3 possible cases (applies both for 1D-3D and 2D-3D):
+A new candidate pair of elements is found during prologantion, based on the topological information of the intersection corner. There are 3 possible cases (applies both for 1D-3D and 2D-3D):
 \begin{itemize}
-    \item \textbf{IP lies on component element side and inside bulk element} \\
-            We find all the sides of component element in which the IP lies (IP can be at node and connect more sides).
+    \item \textbf{IC lies on component element side and inside bulk element} \\
+            We find all the sides of component element in which the IC lies (IC can be at node and connect more sides).
             We find the component neighboring elements over the sides and push a new candidate pair
             [component neighbor -- current bulk element] into component queue.
-    \item \textbf{IP lies on component element side and on the surface of bulk element} \\
-            We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
-            or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
+    \item \textbf{IC lies on component element side and on the surface of bulk element} \\
+            We find all the faces of bulk element in which the IC lies (1 face, or 2 faces (IC on an edge), 
+            or 3 faces (IC at a node)). We find the corresponding neighboring bulk elements over the faces and
             push the following new candidates pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
             If the candidates pair has been investigated already, we skip it.
-    \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
+    \item \textbf{IC lies inside component element (therefore must be on the surface of bulk element)} \\
             The same as before, but we push only [current component element -- bulk neighbor] candidates pairs, since
             there is no component neighbor.
 \end{itemize}
 
 % 2d-3d prolongation logic CURRENT
-% IP is:
+% IC is:
 % - inside 2D element side
 %     - inside 3D element
 %         - get the neighboring 2D elements over the side
@@ -745,20 +762,20 @@ A new candidate pair of elements is found during prologantion, based on the topo
 %     - push to bulk queue candidate pair [2D neighbor -- 3D element]
 % 
 % 2d-3d prolongation logic WITH FUTURE CORRECTIONS
-% IP is:
+% IC is:
 % - on 2D element side
 %     - find 2D element sides (if at node) and the corresponding neighbors
 %     - inside 3D element
 %         - push to component queue candidates pairs [2D neigbor -- current 3D element]
 %     - on the surface of 3D element
-%         - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%         - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
 %         - get the 3D neighbors over the faces
 %         - push to bulk queue new candidates pairs
 %             - [current 2D element -- 3D neighbor]
 %             - [2D neighbor -- 3D neighbor] (all combinations)
 %             - check whether the candidate pair has not been computed yet
 % - inside the 2D element (=> on the surface of 3D element)
-%     - get all faces in which the IP lies (1 face, or 2 faces (edge), or 3 faces (node))
+%     - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
 %     - get the 3D neighbors over the faces
 %     - push to bulk queue new candidates pairs [current 2D element -- 3D neighbor]
 %     - check whether the candidate pair has not been computed yet
@@ -850,7 +867,7 @@ Mention geometric predicates. Present algorithms for:  find intersection candida
 
 \cite{elsheikh_reliable_2012} Claim to provide robust algorithm covering all tiangle-trinagle degenerate cases. Basic idea is the same as our: use some tree 
 (Binary SPace Tree) structure to find initial point on intersection curve and trace the curve in both directions. Quite clever data structure for the mesh. Adaptive precision 
-geometric predicates. Store topological information about the intersection points (point on triangle, edge, vertex). Resolve various degenerate cases, 
+geometric predicates. Store topological information about the intersection corners (point on triangle, edge, vertex). Resolve various degenerate cases, 
 dicuss mesh optimization after subdivision.
 
 
