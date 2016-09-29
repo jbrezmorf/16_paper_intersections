@@ -644,16 +644,6 @@ Consider now a complex mesh of combined dimensions consisting of \emph{component
 elements of the same lower dimension (1D, 2D), in the space of 3D elements, which we shall call a \emph{bulk}. 
 Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other. Then we can prolongate the intersection by investigating neighbouring elements.
 
-%
-\begin{figure}[!htb]
-%   \vspace{0pt}
-  \centering    
-    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip.pdf}
-  \caption{Prolongation algorithm for 1D-2D and 2D-3D intersections. }
-  \label{fig:prolongation}
-\end{figure}
-
-The prolongation algorithm is the same for both 1D and 2D components, see \fig{fig:prolongation}. 
 It can be seen as a \emph{breadth-first search}
 \footnote{Wiki, [online 2016-03-01], \url{https://en.wikipedia.org/wiki/Breadth-first_search}}
 algorithm on the graph of component elements.
@@ -669,21 +659,63 @@ algorithm on the graph of component elements.
     \item If $Q_c$ is empty, go to \ref{en:first}.
   \end{enumerate}
   
+%
+\begin{figure}[!htb]
+%   \vspace{0pt}
+  \centering    
+    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip.pdf}
+  \caption{Prolongation algorithm for 1D-2D and 2D-3D intersections. }
+  \label{fig:prolongation}
+\end{figure}
 
-After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
-two queues with element pairs as candidates for further intersection. If the intersection edge 
-(point of line in 1D, edge of polygon in 2D) is inside the tetrahedron, not on its surface, we
-get a neighbouring element of the component and push it back together with the current tetrahedron into 
-\emph{component prolongation queue}. If the intersection edge is inside the \emph{slave} element 
-(line or triangle), i.e. is on the surface of tetrahedron, we get a neighbouring element of the tetrahedron
-and push it back together with the current slave element into \emph{3D prolongation queue}.
+The advancing front algorithm works the same way for both 1D and 2D components and is displayed in \fig{fig:prolongation}. The main idea is to compute intersections for a component element with all 
+possible bulk elements, and then move to a~next neighboring component element. For this reason, we define two
+queues of candidate pairs: a~\emph{bulk queue} and a~\emph{component queue} (yellow boxes in \fig{fig:prolongation}). We shall now describe the algorithm in detail.
 
-Then we empty the prolongation queues -- the 3D prolongation queue at first, then the component prolongation queue.
-When both queues are empty, all intersections of a component have been found and we continue to look for
-another component.
+On input we consider a candidate pair, for which a non-empty intersection is computed.
+Now we look for new candidate pairs among the neighboring elements (the block Prolongation decide).
+Therefore, we iterate over the intersection points and further exploit their topological information.
+There are 3 possible cases (applies both for 1D-3D and 2D-3D):
+\begin{itemize}
+    \item \textbf{IP lies on the component element side and inside the bulk element} \\
+            We find all the sides of component element in which the IP lies (IP can be at node and connect more sides).
+            Next, we find the component neighboring elements over the sides and push all new candidate pairs
+            [component neighbor -- current bulk element] into the component queue.
+            Note, that there can be more than one neighbor on a side, if the component has branches.
+    \item \textbf{IP lies on the component element side and on the surface of the bulk element} \\
+            We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
+            or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
+            push the following new candidate pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
+    \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
+            We proceed as in previous case, but we push only [current component element -- bulk neighbor] candidate pairs, since there is no component neighbor.
+\end{itemize}
 
-The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
-queue is emptied at first.
+If the candidate pair has been found already, we skip it.
+We also see that the candidate pairs are of three types:
+[current component element -- bulk neighbor],
+[component neighbor -- current bulk element], 
+[component neighbor -- bulk neighbor],
+from which only the first one goes into the bulk queue, trying to cover the whole component element.
+
+
+% After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
+% two queues with element pairs as candidates for further intersection. If the intersection edge 
+% (point of line in 1D, edge of polygon in 2D) is inside the tetrahedron, not on its surface, we
+% get a neighbouring element of the component and push it back together with the current tetrahedron into 
+% \emph{component prolongation queue}. If the intersection edge is inside the \emph{slave} element 
+% (line or triangle), i.e. is on the surface of tetrahedron, we get a neighbouring element of the tetrahedron
+% and push it back together with the current slave element into \emph{3D prolongation queue}.
+
+
+Then we empty the two queues. 
+We pop out new candidate pairs from the \emph{bulk queue} as long as it is not empty and for every new intersection computed, we repeat the previous part (means that we can further fill both queues).
+The \emph{bulk queue} is empty when the component element is fully covered by bulk elements, or
+when there is no bulk neighbor to which we can advance.
+Then we can pop a new candidate pair from \emph{component prolongation queue} and process it.
+When both queues are empty, all intersections of a component have been found and we start over by looking for the first intersection of another component.
+
+% The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
+% queue is emptied at first.
 
 % \subsubsection{1D-3D prolongation}
 % 1d-3d prolongation logic
@@ -723,25 +755,7 @@ queue is emptied at first.
 %             there is no 1D neighbor.
 % \end{itemize}
 
-\subsection{Prolongation over IPs}
-Having an intersection of a pair of elements, we now look for new candidate pairs among the neighboring elements.
-Therefore, we iterate over the intersection points and further exploit their topological information.
-There are 3 possible cases (applies both for 1D-3D and 2D-3D):
-\begin{itemize}
-    \item \textbf{IP lies on the component element side and inside the bulk element} \\
-            We find all the sides of component element in which the IP lies (IP can be at node and connect more sides).
-            Next, we find the component neighboring elements over the sides and push all new candidate pairs
-            [component neighbor -- current bulk element] into the component queue.
-            Note, that there can be more than one neighbor on a side, if the component has branches.
-    \item \textbf{IP lies on the component element side and on the surface of the bulk element} \\
-            We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
-            or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
-            push the following new candidate pairs into the bulk queue: [current component element -- bulk neighbor], [component neighbor -- bulk neighbor].
-    \item \textbf{IP lies inside component element (therefore must be on the surface of bulk element)} \\
-            We proceed as in previous case, but we push only [current component element -- bulk neighbor] candidate pairs, since there is no component neighbor.
-\end{itemize}
 
-If the candidate pair has been found already, we skip it.
 
 % 2d-3d prolongation logic CURRENT
 % IP is:
