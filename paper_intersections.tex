@@ -139,7 +139,7 @@
 %% \fntext[label3]{}
 
 %\title{Algorithm for Intersections of Nonmatching Grids of Different Dimensions}
-\title{Fast Algorithms for Intersection of Non-matching Grids Using \plucker coordinates.}
+\title{Fast Algorithms for Intersection of Non-matching Grids Using \plucker Coordinates.}
 
 
 %% use optional labels to link authors explicitly to addresses:
@@ -162,15 +162,15 @@
 The XFEM and Mortar methods can be used in combination with non-matching or non-conforming grids 
 to deal with problems on complex geometries. However the information about the mesh intersection must be provided.
 We present algorithms for intersections between 1d and 2d unstructured multi component meshes 
-and their intersections a background unstructured 3d mesh. A common algorithm 
-based on the advancing front technique is used for the efficient selection of candidate pairs of 
+and their intersections with a background unstructured 3d mesh. A common algorithm 
+based on the advancing front technique is used for the efficient selection of candidate pairs among 
 simplicial elements. Bounding interval hierarchy (BIH) of axes aligned bounding boxes (AABB) of elements
 is used to initialize the front tracking algorithm. The family of element intersection algorithms
-is build upon a line-triangle intersection algorithm based on the \plucker
-coordinates. These algorithms combined with the advancing front technique can reuse calculations 
-done on the neigbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
+is built upon a line-triangle intersection algorithm based on the \plucker
+coordinates. These algorithms combined with the advancing front technique can reuse the results of calculations 
+performed on the neigbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
 on each of the intersecting elements are provided for every intersection point. Benchmarks 
-of the element intersection algorithms are provided and three variants of the global intersection 
+of the element intersection algorithms are presented and three variants of the global intersection 
 algorithm are compared on the meshes raising from a hydrogeological application.
 \end{abstract}
 
@@ -254,7 +254,7 @@ In particular we address intersection algorithms for 1d-2d, 1d-3d, 2d-3d pairs o
 of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1d-2d simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
 
-We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simlices itself the \nfaces and we denote
+We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simplices itself the \nfaces and we denote
 $M_i$ the set of all \nfaces of the simplex $S_i$.
 In general, an intersection can be a point, a line segment or a polygon called \emph{intersection polygon} (IP) in common.
 The intersection polygon is represented as a list of its corners called \emph{intersection corners} (IC). The IP data structure keeps also 
@@ -366,7 +366,7 @@ and degenerate cases higher dimensional cases.
 %\subsection{Intersection Triangle-Tetrahedron (2d-2d)}
 %\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
 
-\subsection{Intersection Line-Teraherdon (1d-3d)}
+\subsection{Intersection Line-Tetrahedron (1d-3d)}
 In this section we consider intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
 $S_3$. The used algorithm is based on 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
 intersection with a line segment and consistently propagates topological position of ICs.
@@ -415,12 +415,12 @@ The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side inte
 lie either on sides of $S_2$ or on faces of $S_3$. Thus each vertex (IC) of the polygon
 can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_2$.
 To get all ICs, we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
-to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
+to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner products, one for every side-edge pair.
 Computation of IP consists of three stages: calculation of side-tetrahedron ICs (Section \ref{sec:sides}), 
 calculation of edge-triangle ICs (Section~\ref{sec:edges}), oredering of ICs (Section~\ref{sec:ordering}).
 The intersection corners are appended to the list $I$ as they are computed however their order on the polygon boundary is 
 defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
-and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are oredered in the same 
+and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
 There are special cases when the IP is degenerated to a line or a point. If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
 
@@ -573,7 +573,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
         append IC of $v$ to $J$, \return anything
     }
   }  
-  \uElseIf{ $s$ have edge $e$ with sign oposite to other two}{ \nllabel{line:different_sign}
+  \uElseIf{ $s$ have edge $e$ with sign opposite to other two}{ \nllabel{line:different_sign}
     \return edge faces($e$)\;
   }
   
