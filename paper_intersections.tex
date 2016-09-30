@@ -157,14 +157,26 @@
 
 
 \begin{abstract}
+We present algorithms for intersections between 1d and 2d unstructured multi component meshes 
+and their intersections a background unstructured 3d mesh. A common algorithm 
+based on the advancing front technique is used for the efficient selection of candidate pairs of 
+simplicial elements. Bounding interval hierarchy (BIH) of axes aligned bounding boxes (AABB) of elements
+is used to initialize the front tracking algorithm. The family of element intersection algorithms
+is build upon a line-triangle intersection algorithm based on the \plucker
+coordinates. These algorithms combined with the advancing front technique can reuse calculations 
+done on the neigbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
+on each of the intersecting elements are provided for every intersection point. Benchmarks 
+of the element intersection algorithms are provided and three variants of the global intersection 
+algorithm are compared on the meshes raising from a hydrogeological application.
 \end{abstract}
 
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword
 non-matching grid \sep 
-intersections \sep
+mesh intersections \sep
 mixed-dimensional mesh \sep
-\plucker coordinates
+\plucker coordinates \sep 
+advancing front method
 
 
 %% PACS codes here, in the form: \PACS code \sep code
