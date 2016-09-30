@@ -1,0 +1,9 @@
+#!/usr/bin/gnuplot
+
+set terminal pdf
+
+set output 'v-out-init.pdf'
+plot [][-1:0] 'header2d_outflow.dat' s b t 'initial shape', -0.443 t 'target'
+
+set output 'v-out-opt.pdf'
+plot [][-1:0] 'header2d-opt-const_outflow.dat' s b t 'optimal shape', -0.443 t 'target'
