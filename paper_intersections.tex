@@ -200,9 +200,6 @@ advancing front method
 
 %% main text
 \section{Introduction}
-\notePE{How did you decided for 'non-matching' term? Instead of e.g. incompatible or non-conforming?}
-\noteJB{Non-matching grid seems to be the most common.}
-
 The grid intersection algorithms are crucial for several techniques that try to overcome some limitations of the classical finite element method.
 The Chimera method \cite{brezzi_analysis_2001}, also called overset grid, and similar Nitche method \cite{massing_efficient_2013}
 allow solution of the problems with changing geometry as in the fluid-structure problems. 
@@ -210,15 +207,15 @@ The Mortar method \cite{belgacem_mortar_1999} allows domain decomposition, indep
 However our primal motivation is usage of XFEM methods \cite{fries_extended/generalized_2010} and non-matching meshes of mixed dimension in groundwater models.
 
 The realistic models of groundwater processes including the transport processes and geomechanics have to deal with 
-a complex nature of geological formations including the fractures and wells. Although of small scale, these features may have significant impact 
+a complex nature of geological formations including fractures and wells. Although of a small scale, these features may have significant impact 
 on the global behavior of the system and their representation in the numerical model is imperative.
 One possible approach is to model fractures and wells as lower dimensional objects and introduce their coupling with the surrounding continuum. 
 The discretization then leads to the meshes of mixed dimensions, i.e. composed of elements of different dimension. This approach 
 called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
 \cite{martin_modeling_2005}, \cite{fumagalli_numerical_2011}, \cite{brezina_analysis_2015} and 
 already adopted by some groundwater simulation software, e.g FeFlow \cite{trefry_feflow:_2007} and Flow123d \cite{flow123d}.
-Nevertheless as the complexity of the geometry increase (e.g. when lot of fractures are randomly generated) the compatible meshing becomes painful or even 
-impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently getting a non-matching 
+Nevertheless as the complexity of the geometry increase (e.g. when lots of fractures are randomly generated) the compatible meshing becomes painful or even 
+impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently, getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
 around the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
@@ -227,24 +224,26 @@ in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected
 Further we assume only single 3d mesh $\mathcal{T}_1$.
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
 and to compute that intersection. The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. 
-Second, compute the intersection for particular pair.
+Second, compute the intersection of a particular pair.
 
-According to our knowledge there are lot of works using non-matching grids yet only few of them discuss algorithms how to compute their intersections. 
+According to our knowledge, there are lots of works using non-matching grids, yet only few of them discuss algorithms how to compute their intersections. 
 Gander and Japhet \cite{gander_algorithm_2013} present the PANG algorithm for 2d-2d and 3d-3d intersections that can be used e.g. for mesh overlapping methods.
 They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the DUNE library \cite{bastian_towards_2005}.
 Massing, Larson, and Logg \cite{massing_efficient_2013} present an algorithm for 2d-3d intersections as part of their implementation of the Nitche method 
 which is part of the Doplhin project \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
 to get intersection candidate pairs of elements, the GTS library \cite{gtslib} is used for 2d-3d intersections. 
-Finally, there is the work of Elsheikh and Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
+Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
 calculation and imprinting of the intersection curves. They exploit binary space partitioning for search of initial intersection and 
 the advancing front method for intersection curve tracking. 
 
-In this paper we present a new approach to calculation intersections of simplicial elements of different dimensions based on the \plucker coordinates
+In this paper we present a new approach to intersection calculation of simplicial elements of different dimensions based on the \plucker coordinates,
 further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. Element intersections based on 
 \plucker coordinates are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neigbouring
-elements and reduce the number of arithmetic operations. The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
-1d-2d, 1d-3d and 2d-3d intersections of simplices are described. In Section \ref{sec:front advancing} we discuss our implementation of the advancing front 
-technique and usage of AABB and BIH for its initialization. Finally, in Section \ref{sec:benchmarks}, we provide benchmarks and comparison of individual algorithms.
+elements and reduce the number of arithmetic operations. 
+
+The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
+1d-2d, 1d-3d and 2d-3d intersections of simplices are described. In Section \ref{sec:front_advancing} we discuss our implementation of the advancing front 
+technique and usage of AABB and BIH for its initialization. Finally, in Section \ref{sec:benchmarks}, we present benchmarks and comparison of individual algorithms.
 
 
 \section{Element Intersections}
@@ -628,7 +627,7 @@ we pass all ICs in $I$.
   
 
 \section{Advancing Front Method}
-
+\label{sec:front_advancing}
 add references...
 % BIH:
 % http://ainc.de/Research/BIH.pdf
