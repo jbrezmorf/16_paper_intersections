@@ -916,13 +916,13 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
 \end{minipage}
 \vspace{2ex}
 
-We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond the presented algorithms
+We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
 using \plucker coordinates, red values \notePE{***}. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
 
 
 \subsection{General algorithms}
 So far, we have suggested an intersection algorithm that uses axes aligned bounding boxes, BIH to find initial
-intersection and advancing front method (shortly AFront) to prolong the intersection. From now on, we shall refer to an algorithm made of these components \emph{BIHsearch}. In this section, we shall compare two additional algorithms \emph{BBsearch} and \emph{BIHonly} to see the effects of BIH and AFront (see Table \ref{tab:search_algorithms}). \emph{BBsearch} does not use BIH, but searches for the initial intersection using only AABB, and then follows the AFront. The version 
+intersection and advancing front method (shortly AFront) to prolong the intersection. From now on, we shall refer to the algorithm made of these components \emph{BIHsearch}. In this section, we shall compare two additional algorithms \emph{BBsearch} and \emph{BIHonly} to see the effects of BIH and AFront (see Table \ref{tab:search_algorithms}). \emph{BBsearch} does not use BIH, but searches for the initial intersection using only AABB, and then follows AFront. The version 
 \emph{BIHonly} computes AABB together with BIH, but does not use AFront.
 
 
@@ -961,7 +961,20 @@ Let us now start with the problem on an artificial mesh.
 Next, we study the performance of the intersection algorithms on a mesh of a real problem, see \fig{fig:bedrichov_meshes}. The mesh represents a mountain ridge in the Jizera mountains which 
 includes a system of geological fractures (\fig{fig:bedrichov_cut}). We also used this model to create
 a less real mesh, in which the fractures extend through the bulk surface (\fig{fig:bedrichov_extend}). 
-However, this situation might rather occur in another application than porous media problem.
+However, this situation might rather occur in another application than aporous media problem.
+In total, 28 fractures are in the mesh.
+
+The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
+scales in the graph. In the first case, we notice that algorithms using AFront are nearly twice as fast as \emph{BIHonly}. The speed up corresponds to the time saved by using AFront instead of searching the whole mesh for candidate pairs. Computation of BIH in \emph{BIHsearch} pays off and the algorithm performs better than \emph{BBsearch}.
+
+In the second case, we observe large blow up for \emph{BBsearch}. It is caused by the exterior elements, 
+for which all bulk elements bounding boxes are iterated, so we can be sure there is no intersection.
+This of course is much better performed using BIH.
+
+In contrast to the artificial case on the fractured cube, BIH construction is worth due
+to the presence of more components. Having more fractures inside the bulk would result to even bigger difference.
+
+
 
 \begin{figure}[!htb]
     \subfloat[interior fractures]{
