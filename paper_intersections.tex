@@ -109,8 +109,10 @@
 \newcommand{\plucker}{Pl\"{u}cker }
 \newcommand{\nface}{$n$-face }
 \newcommand{\nfaces}{$n$-faces }
+\newcommand{\ngh}{NGH }
 
 \newdefinition{mdef}{Definition}%[section]
+
 
 \begin{document}
 
@@ -805,27 +807,81 @@ thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_
 
 \section{Benchmarks}
 \label{sec:benchmarks}
-In this section we present numerical results on several benchmark problems. At first we shall compare 
-the effectivity of our fundamental algorithms for intersections with other approaches.
-\noteJB{I prefer to call them element intersection. Fundamental intersection seems to epic.}
+
+%done \noteJB{I prefer to call them element intersection. Fundamental intersection seems to epic.}
 \noteJB{We compare just against NGH which we should briefly describe. Neither of the algorithms is optimized. The new one deals correctly with special cases and provides 
 barycentric coordinates (so more work for less time).}
 \noteJB{Also write little about Flow123d here. The language etc.}
 
+In this section, we present numerical results on several benchmark problems. 
+In the beginning, we provide some software development related information.
+Then we compare the performance of our algorithms for element intersections with other approaches.
 Next we shall compare our algorithms with different initialization phase (candidate pairs search),
 and using the advancing front method or not. We shall show the results both on a mesh of a real locality
 and an artificial mesh.
 
-\subsection{Fundamental Intersection Algorithms}
-The first benchmark focuses on the fundamental 1D-3D and 2D-3D intersections. We randomly generated
+
+\subsection{Software Flow123d}
+The intersection algorithms are implemented as a part of the software Flow123d~\cite{flow123d}.
+The software is developed with an open source licence at the Technical University in Liberec,
+the implementation is based mostly on C++ language. 
+Flow123d provides models for (un)saturated groundwater flow, transport of solutes possibly
+coupled with first order reactions and heat transfer in fractured porous media. 
+The speciality of the software is that it enables
+computations on complex meshes consisting of simplicial elements of different dimensions. However,
+non-matching meshes are at the moment available only in experimental 1D-2D flow model, using mortar like coupling.
+% This work is the first greater step on the way to dimensional coupling models on non-matching meshes 
+% in Flow123d.
+
+\notePE{check NGH.. how to refer to NGH later?}
+Currently, there is also another implementation of the element intersections in the software (we shall refer to
+it later as \ngh). It uses standard means of analytic geometry for computation of intersections line-line and line-plane.
+This leads to solving a large amount of small linear systems of equations.
+This algorithm also does not provide us barycentric coordinates and topological position of ICs.
+At last, the algorithm cannot handle all of the special cases.
+We must note, that neither the old algorithms nor the new ones are optimised at the moment.
+
+Note, that we use Armadillo~\cite{armadillo_2016}, a C++ linear algebra library, for linear algebra operations. Most importantly, all coordinates are represented as Armadillo vectors, so we can use dot and cross product and further vector and matrix operations provided by the library.
+
+\subsection{Element Intersection Algorithms}
+The first benchmark focuses on the 1D-3D and 2D-3D element intersections. We randomly generated
 100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
 In some of the empty cases, the bounding boxes did not collide, so the actual intersection algorithms were skipped. A single element pair was computed 100 times to obtain reasonable computational time.
 
-\vspace{2ex}
-\begin{minipage}{\textwidth}
-    \centering
-    \hspace{-30pt}
-  \begin{minipage}[b]{0.44\textwidth}
+% \vspace{2ex}
+% \begin{minipage}{\textwidth}
+%     \centering
+%     \hspace{-30pt}
+%   \begin{minipage}[b]{0.44\textwidth}
+%     \centering
+%     \renewcommand{\arraystretch}{1.2}
+%     \begin{tabular}[b]{l|l}
+%             algorithm, 2D-3D& FLOPs\\
+%                       & estimate\\
+%             \hline\\
+%             parametric plane & 585\\
+%             normal plane (reuse) & 765\\
+%             Moller and Trumbore & 783\\
+%             Pl\"ucker (reuse) & 306
+%     \end{tabular}
+%     \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
+%                       Only 2D-3D case considered.}
+%     \label{tab:fundamental_flops}
+%     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
+%   \end{minipage}
+%   \hfil
+%   \begin{minipage}[b]{0.5\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
+%     
+%     \captionof{figure}{Efficiency of \plucker approach compared to the legacy \ngh code.}
+%     \label{fig:fundamental_speed}
+%     \end{minipage}
+% \end{minipage}
+% \vspace{2ex}
+
+
+\begin{table}[!htb]
     \centering
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}[b]{l|l}
@@ -837,29 +893,26 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
             Moller and Trumbore & 783\\
             Pl\"ucker (reuse) & 306
     \end{tabular}
-    \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
-                      Only 2D-3D case considered.}
+    \caption{Estimation of floating point operations count and comparison of different approaches.
+             Only 2D-3D case considered.}
     \label{tab:fundamental_flops}
     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
-  \end{minipage}
-  \hfil
-  \begin{minipage}[b]{0.5\textwidth}
+\end{table}
+
+\begin{figure}[!htb]
     \centering
-    \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
-    
-    \captionof{figure}{Efficiency of \plucker approach compared to the legacy NGH code.}
+    \includegraphics[width=0.5\textwidth]{\figpath intersections_fundamental_speed.pdf}
+    \caption{Efficiency of \plucker approach compared to the legacy \ngh code.}
     \label{fig:fundamental_speed}
-    \end{minipage}
-\end{minipage}
-\vspace{2ex}
+\end{figure}
 
-We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond the presented algorithms
-using \plucker coordinates, red values \notePE{***}NGH. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
-
+We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
+using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
+\notePE{Improve and complete...}
 
 \subsection{General algorithms}
-So far, we have suggested an intersection algorithm that uses axes aligned bounding boxes, BIH to find initial
-intersection and advancing front method (shortly AFront) to prolong the intersection. From now on, we shall refer to an algorithm made of these components \emph{BIHsearch}. In this section, we shall compare two additional algorithms \emph{BBsearch} and \emph{BIHonly} to see the effects of BIH and AFront (see Table \ref{tab:search_algorithms}). \emph{BBsearch} does not use BIH, but searches for the initial intersection using only AABB, and then follows the AFront. The version 
+In previous sections, we have suggested an intersection algorithm that uses axes aligned bounding boxes, BIH to find initial
+intersection and advancing front method (shortly AFront) to prolong the intersection. From now on, we shall refer to the algorithm made of these components \emph{BIHsearch}. In this section, we shall compare two additional algorithms \emph{BBsearch} and \emph{BIHonly} to see the effects of BIH and AFront (see Table \ref{tab:search_algorithms}). \emph{BBsearch} does not use BIH, but searches for the initial intersection using only AABB, and then follows AFront. The version 
 \emph{BIHonly} computes AABB together with BIH, but does not use AFront.
 
 
@@ -874,7 +927,8 @@ intersection and advancing front method (shortly AFront) to prolong the intersec
         AFront & AFront & ---
     \end{tabular}
     \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.
-    \noteJB{Just in the text. Possibly use different name for variants.}}
+    \noteJB{Just in the text. Possibly use different name for variants.}
+    \notePE{jsem vzal z posledni prezentace.. prislo mi to prehledny.. vim jak jsem se v diplomce VF hrozne krkolome vracel od grafu k popisu algoritmu..}}
     \label{tab:search_algorithms}
 \end{table}
 
@@ -891,7 +945,7 @@ Let us now start with the problem on an artificial mesh.
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=0.8\textwidth]{\figpath intersections_test1_cube_speed_scaling.pdf}
-    \caption{asdf}
+    \caption{Dependence of the algorithms performance on number of intersection (and mesh refinement). }
     \label{fig:cube_speed}
 \end{figure}
 
@@ -899,7 +953,20 @@ Let us now start with the problem on an artificial mesh.
 Next, we study the performance of the intersection algorithms on a mesh of a real problem, see \fig{fig:bedrichov_meshes}. The mesh represents a mountain ridge in the Jizera mountains which 
 includes a system of geological fractures (\fig{fig:bedrichov_cut}). We also used this model to create
 a less real mesh, in which the fractures extend through the bulk surface (\fig{fig:bedrichov_extend}). 
-However, this situation might rather occur in another application than porous media problem.
+However, this situation might rather occur in another application than aporous media problem.
+In total, 28 fractures are in the mesh.
+
+The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
+scales in the graph. In the first case, we notice that algorithms using AFront are nearly twice as fast as \emph{BIHonly}. The speed up corresponds to the time saved by using AFront instead of searching the whole mesh for candidate pairs. Computation of BIH in \emph{BIHsearch} pays off and the algorithm performs better than \emph{BBsearch}.
+
+In the second case, we observe large blow up for \emph{BBsearch}. It is caused by the exterior elements, 
+for which all bulk elements bounding boxes are iterated, so we can be sure there is no intersection.
+This of course is much better performed using BIH.
+
+In contrast to the artificial case on the fractured cube, BIH construction is worth due
+to the presence of more components. Having more fractures inside the bulk would result to more dramatic difference.
+
+
 
 \begin{figure}[!htb]
     \subfloat[interior fractures]{
