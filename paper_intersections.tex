@@ -136,7 +136,7 @@
 %% \fntext[label3]{}
 
 %\title{Algorithm for Intersections of Nonmatching Grids of Different Dimensions}
-\title{Fast Algorithms for Intersection of Nonmatching Grids Using \plucker coordinates.}
+\title{Fast Algorithms for Intersection of Non-matching Grids Using \plucker coordinates.}
 
 
 %% use optional labels to link authors explicitly to addresses:
@@ -184,12 +184,13 @@ mixed-dimensional mesh \sep
 %% main text
 \section{Introduction}
 \notePE{How did you decided for 'non-matching' term? Instead of e.g. incompatible or non-conforming?}
+\noteJB{Non-matching grid seems to be the most common.}
 
 The grid intersection algorithms are crucial for several techniques that try to overcome some limitations of the classical finite element method.
 The Chimera method \cite{brezzi_analysis_2001}, also called overset grid, and similar Nitche method \cite{massing_efficient_2013}
 allow solution of the problems with changing geometry as in the fluid-structure problems. 
 The Mortar method \cite{belgacem_mortar_1999} allows domain decomposition, independent meshing of domains, and supports sliding boundaries.
-However our primal motivation is usage of XFEM methods and non-matching meshes of mixed dimension in groundwater models.
+However our primal motivation is usage of XFEM methods \cite{fries_extended/generalized_2010} and non-matching meshes of mixed dimension in groundwater models.
 
 The realistic models of groundwater processes including the transport processes and geomechanics have to deal with 
 a complex nature of geological formations including the fractures and wells. Although of small scale, these features may have significant impact 
@@ -202,32 +203,38 @@ already adopted by some groundwater simulation software, e.g FeFlow \cite{trefry
 Nevertheless as the complexity of the geometry increase (e.g. when lot of fractures are randomly generated) the compatible meshing becomes painful or even 
 impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
-around the wells. The prerequisity for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
+around the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
 We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$
 in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected set with no self intersection.
 Further we assume only single 3d mesh $\mathcal{T}_1$.
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
-and to compute that intersection.
+and to compute that intersection. The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. 
+Second, compute the intersection for particular pair.
 
-The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. Second, compute the intersection for particular pair.
-In order to get candidate pairs efficiently, the existing algorithms use either various space trees \cite{massing_efficient_2013} or front tracing
-\cite{gander_algorithm_2013} or both \cite{elsheikh_reliable_2012} as in our approach. To compute the actual intersections, we 
-use the \plucker coordinates for the line-triangle intersections and a modification of the  Platis and Theoharis algorithm \cite{platis_fast_2003}
-for the line-tetrahedron intersections. These are used as the building blocks for the triangle-triangle and the triangle-tetrahedron cases.
+According to our knowledge there are lot of works using non-matching grids yet only few of them discuss algorithms how to compute their intersections. 
+Gander and Japhet \cite{gander_algorithm_2013} present the PANG algorithm for 2d-2d and 3d-3d intersections that can be used e.g. for mesh overlapping methods.
+They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the DUNE library \cite{bastian_towards_2005}.
+Massing, Larson, and Logg \cite{massing_efficient_2013} present an algorithm for 2d-3d intersections as part of their implementation of the Nitche method 
+which is part of the Doplhin project \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
+to get intersection candidate pairs of elements, the GTS library \cite{gtslib} is used for 2d-3d intersections. 
+Finally, there is the work of Elsheikh and Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
+calculation and imprinting of the intersection curves. They exploit binary space partitioning for search of initial intersection and 
+the advancing front method for intersection curve tracking. 
 
-\noteJB{Better overview of works, seems that most of works deals with simple intersections, can not find any example of 2d-3d.}
-
-\notePE{Unify the term 'front tracing' 'front tracking' 'advancing front'.}
-Our contribution is twofold:  First, we use the front tracking algorithm both to minimize set of intersection candidates as well 
-to reuse part of calculations made on neighbouring intersections. Second, we present family of efficient algorithms based on \plucker coordinates 
-for computing 1d-2d, 1d-3d, 2d-2d, and 2d-3d intersections of simplicies. The paper is organized as follows \dots
+In this paper we present a new approach to calculation intersections of simplicial elements of different dimensions based on the \plucker coordinates
+further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. Element intersections based on 
+\plucker coordinates are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neigbouring
+elements and reduce the number of arithmetic operations. The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
+1d-2d, 1d-3d and 2d-3d intersections of simplices are described. In Section \ref{sec:front advancing} we discuss our implementation of the advancing front 
+technique and usage of AABB and BIH for its initialization. Finally, in Section \ref{sec:benchmarks}, we provide benchmarks and comparison of individual algorithms.
 
 
 \section{Element Intersections}
-\label{sec:elements_intersections}
+\label{sec:element intersecitons}
 In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space. 
-In particular we are interested in the intersections of 1D-2D, 1D-3D, 2D-2D, 2D-3D pairs of elements. The fundamental idea is to compute intersection of 1D-2D simplices using the 
+In particular we are interested in the intersections of 1D-2D, 1D-3D, 2D-2D, 2D-3D pairs of elements. 
+The fundamental idea is to compute intersection of 1D-2D simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
 
 We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simlices itself the \nfaces and we denote
@@ -339,6 +346,9 @@ The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2
 (item \ref{item:coplanar}) is not necessary and the test in the last point is not performed.
 and degenerate cases higher dimensional cases.
 
+\subsection{Intersection Triangle-Tetrahedron (2D-2D)}
+\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
+
 \subsection{Intersection Line-Teraherdon (1D-3D)}
 In this section we consider intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
 $S_3$. The used algorithm is based on 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
@@ -380,6 +390,8 @@ coordinates and products are passed the 1D-2D algorithm which is performed fro t
 we do the line segment trimming \ref{line:trimming}. If both ICs are out of the line segment $p$ we eliminate both of them. If one of the ICs if out of $p$
 we use the closest end point of the line segment instead and interpolate barycentric coordinates of the IC on $S_4$. The topological positions are updated as well.
 The result of the algorithm are zero up to two ICs sorted by the parameter $t$ of the line $p$.
+
+
 
 \subsection{Intersection Triangle-Tetrahedron (2D-3D)}
 The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
@@ -662,7 +674,7 @@ the complexity to $O(N)$, compared with the Monotone chain complexity $O(N\log N
 
 
 \subsection{Tracking boundary of the intersection polygon}
-
+\label{sec:front advancing}
 \notePE{It seems to me, that we can really describe the prolongation in general, for 1D and 2D, 
 refering to them as components. I tried to do so..}
 
@@ -840,17 +852,20 @@ When both queues are empty, all intersections of a component have been found and
 
 
 \section{Benchmarks}
+\label{sec:benchmarks}
 
 \section{Conclusions}
+\label{sec:conclusins}
+
 TODO:
 - line intersection tracking for accelerate 2D-2D intersections
 - better handling of special cases in paarticular in relation to prolongations
 - better calculation reuse (pass with prolongations)
 - optimisation of element intersection - skip unnecessary calculations
-\section{Acknowledgement}
-The paper was supported in part by the Project OP
-VaVpI Centre for Nanomaterials, Advanced Technologies  and Innovations
-CZ.1.05/2.1.00/01.0005.
+%\section{Acknowledgement}
+%The paper was supported in part by the Project OP
+%VaVpI Centre for Nanomaterials, Advanced Technologies  and Innovations
+%CZ.1.05/2.1.00/01.0005.
 
 
 %% The Appendices part is started with the command \appendix;

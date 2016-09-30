@@ -1,8 +1,20 @@
 @Misc{flow123d,
-author =   {B{\v r}ezina, Jan and Stebel, Jan and Exner, Pavel and Flanderka, David},
+author =   {B{\v r}ezina, Jan and Stebel, Jan and Exner, Pavel and Hyb{\v s}, Jan},
 title =    {Flow123d},
 howpublished = {\url{http://flow123d.github.com}},
 year = {2011--2015}
+}
+
+@Misc{gtslib,
+title =    {GTS, GNU Triangulated Surface Library, software package.},
+howpublished = {\url{http://gts.sourceforge.net/.}},
+}
+
+@Misc{Dolphin,
+author = {Logg, Anders   and   Wells, Garth N. and Hake, Johan.},
+title = {DOLFIN: a C++/Python finite element library},
+publisher = {Springer},
+year={2012}
 }
     
 @article{platis_fast_2003,
@@ -390,4 +402,74 @@ year = {2011--2015}
         urldate = {2016-09-28},
         date = {2003-10-01},
         file = {Snapshot:/home/jb/Knihovna/zotero/storage/BQHFNCK8/242703914_An_Efficient_Rejection_Test_for_RayTriangle_Mesh_Intersection.html:text/html}
+}
+
+
+@book{knuth_art_1998,
+        location = {Redwood City, {CA}, {USA}},
+        title = {The Art of Computer Programming, Volume 3: (2Nd Ed.) Sorting and Searching},
+        isbn = {978-0-201-89685-5},
+        shorttitle = {The Art of Computer Programming, Volume 3},
+        publisher = {Addison Wesley Longman Publishing Co., Inc.},
+        author = {Knuth, Donald E.},
+        date = {1998}
+}
+
+
+@inproceedings{plimpton_parallel_1998,
+        location = {Washington, {DC}, {USA}},
+        title = {A Parallel Rendezvous Algorithm for Interpolation Between Multiple Grids},
+        isbn = {978-0-89791-984-5},
+        url = {http://dl.acm.org/citation.cfm?id=509058.509110},
+        series = {{SC} '98},
+        abstract = {A number of computational procedures employ multiple grids on which solutions are computed. For example, in multi-physics simulations a primary grid may be used to compute mechanical deformation of an object while a secondary grid is used for thermal conduction calculations. When modeling coupled thermo-mechanical effects, solution data must be interpolated back and forth between the grids each timestep. On a parallel machine, this grid transfer operation can be challenging if the two grids are decomposed to processors differently for reasons of computational efficiency. If the grids move or adapt separately, the complexity of the operation is compounded. In this paper we describe a grid transfer algorithm suitable for massively parallel codes which use multiple grids. It uses a rendezvous technique wherein a third decomposition is used to search for elements in one grid that contain nodal points of the other. This has the advantage of enabling the grid transfer to be load-balanced separately from the remainder of the computations. The algorithm has been implemented as an object-oriented tool for the multi-physics code {SIERRA}, currently under development at Sandia. Performance and scalability results for the grid transfer operation running on the Intel/Sandia {TFLOPS} supercomputer are presented.},
+        pages = {1--8},
+        booktitle = {Proceedings of the 1998 {ACM}/{IEEE} Conference on Supercomputing},
+        publisher = {{IEEE} Computer Society},
+        author = {Plimpton, Steve and Hendrickson, Bruce and Stewart, James},
+        urldate = {2016-09-30},
+        date = {1998},
+        keywords = {grid transfer, load-balancing, multigrid, multi-physics, parallel computing}
+}
+
+
+@article{fries_extended/generalized_2010,
+        title = {The extended/generalized finite element method: An overview of the method and its applications},
+        volume = {84},
+        issn = {1097-0207},
+        url = {http://onlinelibrary.wiley.com/doi/10.1002/nme.2914/abstract},
+        doi = {10.1002/nme.2914},
+        shorttitle = {The extended/generalized finite element method},
+        abstract = {An overview of the extended/generalized finite element method ({GEFM}/{XFEM}) with emphasis on methodological issues is presented. This method enables the accurate approximation of solutions that involve jumps, kinks, singularities, and other locally non-smooth features within elements. This is achieved by enriching the polynomial approximation space of the classical finite element method. The {GEFM}/{XFEM} has shown its potential in a variety of applications that involve non-smooth solutions near interfaces: Among them are the simulation of cracks, shear bands, dislocations, solidification, and multi-field problems. Copyright © 2010 John Wiley \& Sons, Ltd.},
+        pages = {253--304},
+        number = {3},
+        journaltitle = {International Journal for Numerical Methods in Engineering},
+        shortjournal = {Int. J. Numer. Meth. Engng.},
+        author = {Fries, Thomas-Peter and Belytschko, Ted},
+        urldate = {2016-09-30},
+        date = {2010-10-15},
+        langid = {english},
+        keywords = {Extended finite element method, generalized finite element method, {GFEM}, partition of unity method, {PUM}, review, {XFEM}},
+        file = {Full Text PDF:/home/jb/Knihovna/zotero/storage/GM3HQWPE/Fries and Belytschko - 2010 - The extendedgeneralized finite element method An.pdf:application/pdf;Snapshot:/home/jb/Knihovna/zotero/storage/CKZ2AUIR/abstract.html:text/html}
+}
+
+
+
+@incollection{bastian_towards_2005,
+        title = {Towards a Unified Framework for Scientific Computing},
+        rights = {©2005 Springer-Verlag Berlin Heidelberg},
+        isbn = {978-3-540-22523-2 978-3-540-26825-3},
+        url = {http://link.springer.com/chapter/10.1007/3-540-26825-1_13},
+        series = {Lecture Notes in Computational Science and Engineering},
+        pages = {167--174},
+        number = {40},
+        booktitle = {Domain Decomposition Methods in Science and Engineering},
+        publisher = {Springer Berlin Heidelberg},
+        author = {Bastian, Peter and Droske, Mark and Engwer, Christian and Klöfkorn, Robert and Neubauer, Thimo and Ohlberger, Mario and Rumpf, Martin},
+        editor = {Barth, Timothy J. and Griebel, Michael and Keyes, David E. and Nieminen, Risto M. and Roose, Dirk and Schlick, Tamar and Kornhuber, Ralf and Hoppe, Ronald and Périaux, Jacques and Pironneau, Olivier and Widlund, Olof and Xu, Jinchao},
+        urldate = {2016-09-30},
+        date = {2005},
+        langid = {english},
+        note = {{DOI}: 10.1007/3-540-26825-1\_13},
+        keywords = {Computational Mathematics and Numerical Analysis, Computational Science and Engineering, Mathematics of Computing, Numerical Analysis, Numerical and Computational Physics, Processor Architectures},
 }
