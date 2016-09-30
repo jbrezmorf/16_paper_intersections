@@ -135,8 +135,9 @@
 %% \address{Address\fnref{label3}}
 %% \fntext[label3]{}
 
-\title{Intersection of non-matching grids of different dimensions}
-% Self-intersection of non-matching grid of mixed dimensions
+%\title{Algorithm for Intersections of Nonmatching Grids of Different Dimensions}
+\title{Fast Algorithms for Intersection of Nonmatching Grids Using \plucker coordinates.}
+
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{}
@@ -155,7 +156,6 @@
 
 
 \begin{abstract}
-TODO: An abstract.
 \end{abstract}
 
 \begin{keyword}
@@ -274,7 +274,12 @@ see \fig{fig:plucker_products}.
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
 \subsection{Intersection Line-Triangle (1D-2D)}
-Let us consider a line $p$ with parametric equation $\vc X = \vc A + t\vc u$, $t\in\R$ and a triangle $T$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+Let us consider a line segment $p$ with parametric equation 
+\begin{equation}
+    \label{eq:line_parametric}
+    \vc X = \vc A + t\vc u,\ t\in (0,1)
+\end{equation}
+and a triangle $T$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
 with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. 
 \begin{lemma}
 The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
@@ -334,20 +339,47 @@ The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2
 (item \ref{item:coplanar}) is not necessary and the test in the last point is not performed.
 and degenerate cases higher dimensional cases.
 
-
 \subsection{Intersection Line-Teraherdon (1D-3D)}
-\noteJB{Has to be completed yet, however we consider that we obtain 0,1, or 2 distinguish ICs for all cases including various touch cases. Anyway every IC results from 
-some non-degenerate 1d-2d intersection. We also assume that the ICs are in order according to the orientation of the side which is
-counterclockwise aroung the triangle.}
-We consider a line $p$ and a tetraherdon...
-Tetrahedron has six edges, so six \plucker coordinates and inner products are computed at most. These data are
-passed to the 1D-2D algorithm described above, which is applied to the every face of the tetrahedron face. 
+In this section we consider intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
+$S_3$. The used algorithm is based on 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
+intersection with a line segment and consistently propagates topological position of ICs.
 
-There might be two intersection corners maximally, which are finally checked that they belong o abscissas.
-If the line has its boundary point inside the tetrahedron, the intersection line must be cut
-and coordinates of intersection corner are interpolated.
-Pathologic cases are again carefully processed so we obtain the most extensive topology information we can.
-See \cite{fris_dp_2015} for detailed description of all possible cases.
+\begin{algorithm}
+  \caption{1d-3d intersection}
+  \label{algo:13d}
+
+  \DontPrintSemicolon
+  \SetKw{and}{and}
+  \SetKw{continue}{continue}
+  \SetKw{break}{break}
+  \KwIn{Tetrahedron $S_3$, line segment $p$.}
+  \KwOut{List of ICs on sorted along $p$.}  
+  $I=\{\}$ 
+  \For{unmarked face $f$ of $S_3$}{
+    $L$ = intersection($p,\ f$)\;
+    \lIf{ $L$ is none or degenerate}{\continue}
+    \lIf{ $L$ is inside the edge $e$}{
+        set $\tau_{S_4} = (1,e)$\;
+        mark faces coincident with $e$
+    }
+    \ElseIf{ $L$ is at the vertex $v$}{
+        set $\tau_{S_4} = (0,v)$\;
+        mark faces coincident with $v$
+    }
+    append $L$ to $I$
+    \lIf{$\abs{I}=2$}{\break} 
+  }
+  \lIf{$\abs{I}=1$ \and   $I$ is outside of $p$}{ erase $I$}
+  \ElseIf{$\abs{I}=2$}{    
+    trim intersection with respect to the line segment $p$ \label{line:trimming}
+  }
+\end{algorithm}
+Algorithm \ref{algo:13d} first compute line-face intersections for every face of $S_4$ avoiding duplicate computation of ICs on edges and at vertices and
+skipping remaining faces once two ICs are found. Tetrahedron has six edges, so 7 \plucker coordinates and 6 inner products are computed at most. Precomputed 
+coordinates and products are passed the 1D-2D algorithm which is performed fro the whole line $p$. After collecting line-tetrahedron ICs,
+we do the line segment trimming \ref{line:trimming}. If both ICs are out of the line segment $p$ we eliminate both of them. If one of the ICs if out of $p$
+we use the closest end point of the line segment instead and interpolate barycentric coordinates of the IC on $S_4$. The topological positions are updated as well.
+The result of the algorithm are zero up to two ICs sorted by the parameter $t$ of the line $p$.
 
 \subsection{Intersection Triangle-Tetrahedron (2D-3D)}
 The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
