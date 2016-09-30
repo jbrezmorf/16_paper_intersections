@@ -52,6 +52,7 @@
 \usepackage[vlined, linesnumbered, ruled]{algorithm2e}
 %\usepackage{float}
 %\newfloat{algorithm}{t}{lop}
+\usepackage{array}
 
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
@@ -78,7 +79,7 @@
 %% \usepackage{lineno}
 
 % just for our notes
-\usepackage[usenames,dvipsnames]{color}   %colors
+\usepackage[usenames,dvipsnames]{xcolor}   %colors
 
 
 \journal{Applied Mathematics and Computation}
@@ -695,7 +696,7 @@ To construct the Advancing front algorithm, we shall need:
     \item \textbf{Axes Aligned Bounding Boxes (AABB)} -- we construct these in order to decide fastly
                     whether to compute the actual intersection of two elements,
     \item \textbf{Bounding Interval Hierarchy (BIH)} -- we alternatively create BIH above AABB to fastly search 
-                    created bounding boxes for two coinciding with each other and thus obtaining a candidate pair.
+                    created bounding boxes for two colliding with each other and thus obtaining a candidate pair.
 \end{itemize}
 
 
@@ -857,6 +858,109 @@ thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_
 
 
 \section{Benchmarks}
+In this section we present numerical results on several benchmark problems. At first we shall compare 
+the effectivity of our fundamental algorithms for intersections with other approaches.
+
+Next we shall compare our algorithms with different initialization phase (candidate pairs search),
+and using the advancing front method or not. We shall show the results both on a mesh of a real locality
+and an artificial mesh.
+
+\subsection{Fundamental Intersection Algorithms}
+The first benchmark focuses on the fundamental 1D-3D and 2D-3D intersections. We randomly generated
+100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
+In some of the empty cases, the bounding boxes did not collide, so the actual intersection algorithms were skipped. A single element pair was computed 100 times to obtain reasonable computational time.
+
+\vspace{2ex}
+\begin{minipage}{\textwidth}
+    \centering
+    \hspace{-30pt}
+  \begin{minipage}[b]{0.44\textwidth}
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}[b]{l|l}
+            algorithm, 2D-3D& FLOPs\\
+                      & estimate\\
+            \hline\\
+            parametric plane & 585\\
+            normal plane (reuse) & 765\\
+            Moller and Trumbore & 783\\
+            Pl\"ucker (reuse) & 306
+    \end{tabular}
+    \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
+                      Only 2D-3D case considered.
+    \label{tab:fundamental_flops}
+    \notePE{comment on different strategies}}
+  \end{minipage}
+  \hfil
+  \begin{minipage}[b]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
+    
+    \captionof{figure}{Effectivity of our algorithms using \plucker coordinates in comparison to \notePE{***}.
+                         One can see 1D-3D case on the left, 2D-3D on the right.}
+    \label{fig:fundamental_speed}
+    \end{minipage}
+\end{minipage}
+\vspace{2ex}
+
+We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond the presented algorithms
+using \plucker coordinates, red values \notePE{***}. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 1D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
+
+
+\subsection{General algorithms}
+
+\begin{center}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{>{\centering\arraybackslash}p{20ex}
+                    >{\centering\arraybackslash}p{20ex}
+                    >{\centering\arraybackslash}p{20ex}}
+        \colorbox{NavyBlue}{\textcolor{white}{BIHsearch}} & \colorbox{orange}{BBsearch} & \colorbox{Goldenrod}{BIHonly} \\ \hline
+        BIH(AABB) & AABB & BIH(AABB) \\
+        AFront & AFront & ---
+    \end{tabular}
+\end{center}
+
+
+\begin{figure}[!htb]
+    \subfloat[interior fractures]{
+        \includegraphics[width=0.49\textwidth]{\figpath bedrichov_fract.pdf}
+        \label{fig:bedrichov_cut}
+    }
+    \hspace{3pt}
+    \subfloat[extending fractures]{
+        \includegraphics[width=0.49\textwidth]{\figpath bedrichov_fract_extend.pdf}
+        \label{fig:bedrichov_extend}
+    }
+    \caption{A mesh of the real locality of Bed{\v r}ichov in the Jizera mountains.
+             We see fractures inside the bulk mesh in the left figure,
+             fractures are extending the bulk mesh.}
+    \label{fig:bedrichov_meshes}
+\end{figure}
+
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{\figpath intersections_bedrichov_both_speed.pdf}
+    \caption{Comparison of the algorithms on meshes of Bed{\v r}ichov locality -- interior fractures on the left,
+             extending fractures on the right.}
+    \label{fig:bedrichov_speed}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.43\textwidth]{\figpath test1_cube0.pdf}
+    \caption{Artificial mesh -- a cube with two perpendicular planes placed on the diagonals of the cube.}
+    \label{fig:cube_mesh}
+\end{figure}
+  
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{\figpath intersections_test1_cube_speed_scaling.pdf}
+    \caption{}
+    \label{fig:cube_speed}
+\end{figure}
+
+
 
 \section{Conclusions}
 TODO:
