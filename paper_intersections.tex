@@ -905,11 +905,40 @@ The first benchmark focuses on the 1D-3D and 2D-3D element intersections. We ran
 100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
 In some of the empty cases, the bounding boxes did not collide, so the actual intersection algorithms were skipped. A single element pair was computed 100 times to obtain reasonable computational time.
 
-\vspace{2ex}
-\begin{minipage}{\textwidth}
-    \centering
-    \hspace{-30pt}
-  \begin{minipage}[b]{0.44\textwidth}
+% \vspace{2ex}
+% \begin{minipage}{\textwidth}
+%     \centering
+%     \hspace{-30pt}
+%   \begin{minipage}[b]{0.44\textwidth}
+%     \centering
+%     \renewcommand{\arraystretch}{1.2}
+%     \begin{tabular}[b]{l|l}
+%             algorithm, 2D-3D& FLOPs\\
+%                       & estimate\\
+%             \hline\\
+%             parametric plane & 585\\
+%             normal plane (reuse) & 765\\
+%             Moller and Trumbore & 783\\
+%             Pl\"ucker (reuse) & 306
+%     \end{tabular}
+%     \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
+%                       Only 2D-3D case considered.}
+%     \label{tab:fundamental_flops}
+%     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
+%   \end{minipage}
+%   \hfil
+%   \begin{minipage}[b]{0.5\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
+%     
+%     \captionof{figure}{Efficiency of \plucker approach compared to the legacy \ngh code.}
+%     \label{fig:fundamental_speed}
+%     \end{minipage}
+% \end{minipage}
+% \vspace{2ex}
+
+
+\begin{table}[!htb]
     \centering
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}[b]{l|l}
@@ -921,21 +950,18 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
             Moller and Trumbore & 783\\
             Pl\"ucker (reuse) & 306
     \end{tabular}
-    \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
-                      Only 2D-3D case considered.}
+    \caption{Estimation of floating point operations count and comparison of different approaches.
+             Only 2D-3D case considered.}
     \label{tab:fundamental_flops}
     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
-  \end{minipage}
-  \hfil
-  \begin{minipage}[b]{0.5\textwidth}
+\end{table}
+
+\begin{figure}[!htb]
     \centering
-    \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
-    
-    \captionof{figure}{Efficiency of \plucker approach compared to the legacy \ngh code.}
+    \includegraphics[width=0.5\textwidth]{\figpath intersections_fundamental_speed.pdf}
+    \caption{Efficiency of \plucker approach compared to the legacy \ngh code.}
     \label{fig:fundamental_speed}
-    \end{minipage}
-\end{minipage}
-\vspace{2ex}
+\end{figure}
 
 We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
 using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
