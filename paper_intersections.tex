@@ -678,35 +678,53 @@ each other (due to intersection of their bounding boxes or prolongation result)
 \notePE{Do you want to use American 'neighbor' or all other English 'neighbour'? (I prefer non-american.. to be unified at the end..)}
 
 
-\section{Front tracking algorithm}
-Prerequisites:
-  \begin{itemize}
-   \item need information about element connectivity (mesh preprocessing)
-%   \item mark and check already inspected pairs. Marking elements + hashing.
-   \item find the starting intersection -- AABB (Axes Aligned Bounding Boxes) 
-   \item possibly create Bounding Interval Hierarchy (BIH)
-%   \item Pass already known information with pairs.
-%   \item Deal with degenerated cases.
-  \end{itemize}
-  
+\section{Advancing Front Method}
+
+add references...
+% BIH:
+% http://ainc.de/Research/BIH.pdf
+% http://diglib.eg.org/handle/10.2312/EGWR.EGSR06.139-149
+
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
-elements of the same lower dimension (1D, 2D), in the space of 3D elements, which we shall call a \emph{bulk}. 
-Obtaining all of the 1D-3D and 2D-3D intersections is based on finding the first two elements intersecting each other. Then we can prolongate the intersection by investigating neighbouring elements.
+elements of the same lower dimension (1D, 2D), in the space of connected 3D elements, which we shall call a \emph{bulk}. 
+Obtaining all of component-bulk intersections is done in two phases: firstly, we look for the first two elements intersecting each other (initialization); secondly, we prolong the intersection by investigating neighbouring elements (intersection tracking).
 
-It can be seen as a \emph{breadth-first search}
+To construct the Advancing front algorithm, we shall need:
+\begin{itemize}
+    \item \textbf{element connectivity} -- we assume this data is available from mesh preprocessing,
+    \item \textbf{Axes Aligned Bounding Boxes (AABB)} -- we construct these in order to decide fastly
+                    whether to compute the actual intersection of two elements,
+    \item \textbf{Bounding Interval Hierarchy (BIH)} -- we alternatively create BIH above AABB to fastly search 
+                    created bounding boxes for two coinciding with each other and thus obtaining a candidate pair.
+\end{itemize}
+
+
+The intersection tracking itself can be also seen as a \emph{breadth-first search}
 \footnote{Wiki, [online 2016-03-01], \url{https://en.wikipedia.org/wiki/Breadth-first_search}}
-algorithm on the graph of component elements.
+algorithm over the BIH, following the component elements.
 
-\textbf{breadth first search} algorithm:
-  \begin{enumerate}
-    \item\label{en:first} Get next unprocessed component element $k$.
-    \item Find intersection candidates $\mathcal K$ in bulk mesh (3D elements).
-    \item \label{en:q2}For $K\in \mathcal K$ compute intersection $(k, K)$.  
-    \item Push the intersection neigbours into queues: $(k, L) \to Q_b$, $(l, K) \to Q_c$. 
-    \item While $(l, L) \in Q_b$ check intersection $(l, L)$. Append queues.
-    \item Pop pair from $Q_c$. (move to the next component element: go to \ref{en:q2}).
-    \item If $Q_c$ is empty, go to \ref{en:first}.
-  \end{enumerate}
+% \textbf{breadth first search} algorithm:
+%   \begin{enumerate}
+%     \item\label{en:first} Get next unprocessed component element $k$.
+%     \item Find intersection candidates $\mathcal K$ in bulk mesh (3D elements).
+%     \item \label{en:q2}For $K\in \mathcal K$ compute intersection $(k, K)$.  
+%     \item Push the intersection neigbours into queues: $(k, L) \to Q_b$, $(l, K) \to Q_c$. 
+%     \item While $(l, L) \in Q_b$ check intersection $(l, L)$. Append queues.
+%     \item Pop pair from $Q_c$. (move to the next component element: go to \ref{en:q2}).
+%     \item If $Q_c$ is empty, go to \ref{en:first}.
+%   \end{enumerate}
+
+\paragraph{Initialization}
+We start with selecting an arbitrary 1D or 2D element. Then we search the bulk elements, checking for 
+a collision of bounding boxes, to create a candidate pair. Using only AABB, we need to iterate over
+bulk elements in $O(n)$, $n$ being the number of all elements in our case. Using BIH, we can speed 
+up the search to $O(\log n)$ on average. In later case, we are paying the costs in the construction of BIH,
+which is a quicksort like algorithm running at $O(n\log n)$ on average.
+
+Now that we have provided the first candidate pair, we can look at the scheme in \fig{fig:prolongation} and see us moving from the green box in the left upper corner. If there exists an intersection, we start a new component and
+we can procced to tracking the intersection. Otherwise, we select another 1D or 2D element and start over.
+
+
   
 %
 \begin{figure}[!htb]
