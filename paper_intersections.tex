@@ -297,7 +297,7 @@ see \fig{fig:plucker_products}.
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
 \subsection{Intersection Line-Triangle (1d-2d)}
-\notePE{I would stick to chosen notation - triangle $S_3$, and possibly renamed side $s_i$...}
+\notePE{I would stick to chosen notation - triangle $S_2$, and possibly renamed side $s_i$...}
 Let us consider a line segment $p$ with parametric equation 
 \begin{equation}
     \label{eq:line_parametric}
@@ -352,6 +352,9 @@ The calculation of the intersection proceeds as follows:
     \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
 \end{enumerate}
 
+We shall call every IC, that was created in the coplanar case, \emph{degenerate} since these will later
+special treatment.
+
 Checking the same sign of the inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
 line with respect to the triangle. Adaptive-precision evaluation of the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997}
 and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}. However, we rather apply a fixed tolerance check for the zero 
@@ -369,7 +372,7 @@ The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2
 \subsection{Intersection Line-Tetrahedron (1d-3d)}
 \notePE{degenerate not defined yet.. do you call it coplanar now?}
 In this section we consider an intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
-$S_4$. The used algorithm is based on the 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
+$S_3$. The used algorithm is based on the 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
 intersection with the line segment and consistently propagates topological position of ICs.
 
 \begin{algorithm}
@@ -380,18 +383,18 @@ intersection with the line segment and consistently propagates topological posit
   \SetKw{and}{and}
   \SetKw{continue}{continue}
   \SetKw{break}{break}
-  \KwIn{Tetrahedron $S_4$, line segment $p$.}
+  \KwIn{Tetrahedron $S_3$, line segment $p$.}
   \KwOut{List $I$ of ICs sorted along $p$.}  
   $I=\{\}$\; 
-  \For{unmarked face $f$ of $S_4$}{
+  \For{unmarked face $f$ of $S_3$}{
     $L$ = intersection($p,\ f$)\; \label{line:13-intersection}
     \lIf{ $L$ is none or degenerate}{\continue}
     \If{ $L$ is inside the edge $e$}{
-        set $\tau_{S_4} = (1,e)$\;
+        set $\tau_{S_3} = (1,e)$\;
         mark faces coincident with $e$
     }
     \ElseIf{ $L$ is at the vertex $v$}{
-        set $\tau_{S_4} = (0,v)$\;
+        set $\tau_{S_3} = (0,v)$\;
         mark faces coincident with $v$
     }
     append $L$ to $I$\; \label{line:13-append}
@@ -402,7 +405,7 @@ intersection with the line segment and consistently propagates topological posit
     trim intersection with respect to the line segment $p$
   }
 \end{algorithm}
-Algorithm \ref{algo:13d} first computes line-face intersections for every face of $S_4$.
+Algorithm \ref{algo:13d} first computes line-face intersections for every face of $S_3$.
 Tetrahedron has six edges, so 7 \plucker coordinates and 6 permuted inner products are computed at most. Precomputed coordinates and products are passed into the 1d-2d algorithm which is performed for the whole line $p$ (line \ref{line:13-intersection}).
 If no IC is found, or coplanar case occurs in line-face computation, we continue to the next face. Note, ICs that would be created in coplanar case are to be found as ICs with the other faces, since they lie on edges.
 Next, IC can be on an edge or at a vertex; then we set the correct topological position and mark the adjacent faces
@@ -415,7 +418,7 @@ we do the line segment trimming from the line \ref{line:trimming} further.
 If we have only one IC, we check that it actually lies inside the line segment (otherwise, we throw it away).
 If we have two ICs, and if both lie outside the line segment $p$, we eliminate both of them. 
 If one of the ICs lies out of $p$,
-we use the closest end point of the line segment instead and interpolate barycentric coordinates of the IC on $S_4$. The topological positions are updated as well.
+we use the closest end point of the line segment instead and interpolate barycentric coordinates of the IC on $S_3$. The topological positions are updated as well.
 The result of the algorithm is 0, 1, or 2 ICs, sorted by the parameter $t$ in the direction of the line $p$.
 
 
