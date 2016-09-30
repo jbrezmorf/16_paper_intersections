@@ -686,7 +686,7 @@ add references...
 % http://diglib.eg.org/handle/10.2312/EGWR.EGSR06.139-149
 
 Consider now a complex mesh of combined dimensions consisting of \emph{components}, which are sets of connected
-elements of the same lower dimension (1D, 2D), in the space of connected 3D elements, which we shall call a \emph{bulk}. 
+elements of the same lower dimension (1D, or 2D), in the space of connected 3D elements, which we shall call a \emph{bulk}. 
 Obtaining all of component-bulk intersections is done in two phases: firstly, we look for the first two elements intersecting each other (initialization); secondly, we prolong the intersection by investigating neighbouring elements (intersection tracking).
 
 To construct the Advancing front algorithm, we shall need:
@@ -721,11 +721,8 @@ bulk elements in $O(n)$, $n$ being the number of all elements in our case. Using
 up the search to $O(\log n)$ on average. In later case, we are paying the costs in the construction of BIH,
 which is a quicksort like algorithm running at $O(n\log n)$ on average.
 
-Now that we have provided the first candidate pair, we can look at the scheme in \fig{fig:prolongation} and see us moving from the green box in the left upper corner. If there exists an intersection, we start a new component and
-we can procced to tracking the intersection. Otherwise, we select another 1D or 2D element and start over.
+Now that we have provided the first candidate pair, we can look at the scheme in \fig{fig:prolongation} and see us moving from the green box in the left upper corner. If an intersection exists, we have just started a new component and we can procced to tracking the intersection. Otherwise, we select another 1D or 2D element and start over.
 
-
-  
 %
 \begin{figure}[!htb]
 %   \vspace{0pt}
@@ -735,9 +732,8 @@ we can procced to tracking the intersection. Otherwise, we select another 1D or 
   \label{fig:prolongation}
 \end{figure}
 
-The advancing front algorithm works the same way for both 1D and 2D components and is displayed by the scheme in \fig{fig:prolongation}. The main idea is to compute intersections for a component element with all 
-possible bulk elements, and then move to a~next neighboring component element. For this reason, we define two
-queues of candidate pairs: a~\emph{bulk queue} and a~\emph{component queue} (yellow boxes in \fig{fig:prolongation}). We shall now describe the algorithm in detail.
+Let us now discuss the advancing front algorithm displayed by the scheme in \fig{fig:prolongation}. The main idea is to compute intersections for a component element with all possible bulk elements, and then move to a~next neighboring component element. For this reason, we define two
+queues of candidate pairs: a~\emph{bulk queue} and a~\emph{component queue} (yellow boxes).
 
 On input we consider a candidate pair, for which a non-empty intersection is computed.
 Now we look for new candidate pairs among the neighboring elements (the block Prolongation decide).
@@ -780,6 +776,9 @@ The \emph{bulk queue} is empty when the component element is fully covered by bu
 when there is no bulk neighbor to which we can advance.
 Then we can pop a new candidate pair from \emph{component prolongation queue} and process it.
 When both queues are empty, all intersections of a component have been found and we start over by looking for the first intersection of another component.
+
+\notePE{We can discuss further the covering/closing of the elements and component numbering which is not tested
+thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_13d/prolongation\_13d\_04.msh', where actually 4 components are found (therefore bulk is defined as connected 3D elements).}
 
 % The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
 % queue is emptied at first.
