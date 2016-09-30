@@ -864,6 +864,10 @@ thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_
 \label{sec:benchmarks}
 In this section we present numerical results on several benchmark problems. At first we shall compare 
 the effectivity of our fundamental algorithms for intersections with other approaches.
+\noteJB{I prefer to call them element intersection. Fundamental intersection seems to epic.}
+\noteJB{We compare just against NGH which we should briefly describe. Neither of the algorithms is optimized. The new one deals correctly with special cases and provides 
+barycentric coordinates (so more work for less time).}
+\noteJB{Also write little about Flow123d here. The language etc.}
 
 Next we shall compare our algorithms with different initialization phase (candidate pairs search),
 and using the advancing front method or not. We shall show the results both on a mesh of a real locality
@@ -891,24 +895,23 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
             Pl\"ucker (reuse) & 306
     \end{tabular}
     \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
-                      Only 2D-3D case considered.
+                      Only 2D-3D case considered.}
     \label{tab:fundamental_flops}
-    \notePE{comment on different strategies}}
+    \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
   \end{minipage}
   \hfil
   \begin{minipage}[b]{0.5\textwidth}
     \centering
     \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
     
-    \captionof{figure}{Effectivity of our algorithms using \plucker coordinates in comparison to \notePE{***}.
-                         One can see 1D-3D case on the left, 2D-3D on the right.}
+    \captionof{figure}{Efficiency of \plucker approach compared to the legacy NGH code.}
     \label{fig:fundamental_speed}
     \end{minipage}
 \end{minipage}
 \vspace{2ex}
 
 We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond the presented algorithms
-using \plucker coordinates, red values \notePE{***}. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
+using \plucker coordinates, red values \notePE{***}NGH. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
 
 
 \subsection{General algorithms}
@@ -927,7 +930,8 @@ intersection and advancing front method (shortly AFront) to prolong the intersec
         BIH(AABB) & AABB & BIH(AABB) \\
         AFront & AFront & ---
     \end{tabular}
-    \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.}
+    \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.
+    \noteJB{Just in the text. Possibly use different name for variants.}}
     \label{tab:search_algorithms}
 \end{table}
 
