@@ -234,8 +234,8 @@ technique and usage of AABB and BIH for its initialization. Finally, in Section 
 \section{Element Intersections}
 \label{sec:element intersecitons}
 In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space. 
-In particular we are interested in the intersections of 1D-2D, 1D-3D, 2D-2D, 2D-3D pairs of elements. 
-The fundamental idea is to compute intersection of 1D-2D simplices using the 
+In particular we address intersection algorithms for 1D-2D, 1D-3D, 2D-3D pairs of elements. We have implemented the case 2D-2D as well however the treatment 
+of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1D-2D simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
 
 We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simlices itself the \nfaces and we denote
@@ -347,8 +347,8 @@ The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2
 (item \ref{item:coplanar}) is not necessary and the test in the last point is not performed.
 and degenerate cases higher dimensional cases.
 
-\subsection{Intersection Triangle-Tetrahedron (2D-2D)}
-\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
+%\subsection{Intersection Triangle-Tetrahedron (2D-2D)}
+%\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
 
 \subsection{Intersection Line-Teraherdon (1D-3D)}
 In this section we consider intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
@@ -395,19 +395,17 @@ The result of the algorithm are zero up to two ICs sorted by the parameter $t$ o
 
 
 \subsection{Intersection Triangle-Tetrahedron (2D-3D)}
-The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side polygon, $n\le 7$. The sides of the polygon
+The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side intersection polygon (IP), $n\le 7$. The sides of the polygon
 lie either on sides of $S_2$ or on faces of $S_3$. Thus each vertex (IC) of the polygon
 can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_2$.
-So we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
+To get all ICs, we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
-Computation of the intersection polygon consists of two parts: calculation of side-tetrahedron ICs (Algorithm \ref{algo:colect_23_ip_triangle})
-provides all ICs on the boundary of $S_2$,
-calculation of edge-triangle ICs (Algorithm \ref{algo:collect_23_ip_edges}).
-\notePE{The following sentence is somehow weird.. I would say that we store ICs $I$; to sort $I$ during the computation, we use the two tables; at the end, $I$ is ordered correctly.}
-Correct order of the ICs, stored in the list $I$, is defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. \notePE{The following sentece is a copy of the second sentence is this subsection.} Every side of the intersection polygon 
-lies either on a side of $S_2$, or on a face, or on an edge of $S_3$. Let us denote $M_2$ the set of sides of $S_2$ and $M_3$ the set of volume,
-faces, edges, and vertices of $S_3$. Every side of polygon that lies on $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
-and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$. 
+Computation of IP consists of three stages: calculation of side-tetrahedron ICs (Algorithm \ref{algo:colect_23_ip_triangle}), 
+calculation of edge-triangle ICs (Algorithm \ref{algo:collect_23_ip_edges}), oredering of ICs (Algorithm \ref{algo:order_23}).
+The intersection corners appended to the list $I$ as they are computed however their order on the polygon boundary is 
+defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
+and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are numbered in the same 
+way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interiror with normal pointing to us.
 
 \begin{algorithm}
   \caption{2d-3d intersection, points on triangle boundary}
@@ -418,7 +416,7 @@ and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$.
   \KwIn{input data}
   \KwOut{List of ICs on sorted output data}  
   $F_g(:)=-1,\ F_p(:)=-1$\tcp*{Unset links.} 
-  \For{side $s$ of $S_2$}{ 
+  \For{side $s$ of $S_2$}{ \nllabel{line:one side loop}
     $L$ = intersection($s, S_3$)\;
     \lIf{ $\abs{L} = 0$}{\continue}
     \lIf{ $\abs{L} = 1$}{
@@ -426,9 +424,10 @@ and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$.
         \continue
     }
     \For{$p$ in $L$}{
-        \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
+%        \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
         \nllabel{line:m4_object}
-        $p$ lies on $x\in M_3$\; 
+        $p$ lies on $x\in M_3$\;
+        \lIf{$p$ lies at vertex $v$ of $S_3$}{$x=v$}
         \uIf{$p$ is first in $L$}{
             $F_g[x] = p$,\ $F_p[p] = s$\;
         }
@@ -438,34 +437,26 @@ and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$.
         }
     }
   }  
-  \If{$I[-1] = I[0]$}{
-    $x = F_p[I[-1]]$\;
-    \If{$F_g[x]]=I[-1]$}{$F_g[x]=I[0]$}
-    $F_g[s_2] = I[0]$\;
-    remove $I[-1]$
-  }
+%  \If{$I[-1] = I[0]$}{
+%    $x = F_p[I[-1]]$\;
+%    \If{$F_g[x]]=I[-1]$}{$F_g[x]=I[0]$}
+%    $F_g[s_2] = I[0]$\;
+%    remove $I[-1]$
+%  }
 \end{algorithm}
 
 
-Algorithm \ref{algo:colect_23_ip_triangle} passes through every side $s$ of the triangle $S_2$ and computes the line-tetrahedron intersection $L$.
-In the regular case we process each of the two ICs in $L$. The IC $p$ is added to the list $I$ unless the last point is the same. 
-This condition is effective just for the first IC in $L$ and merges ICs at the same vertex of $S_2$. Then we identify an object $x\in M_3$ the point
-$p$ lies on (line \ref{line:m4_object}). \notePE{I am not sure, if the term 'object' is clear..}
-
-\notePE{Why calling it vertex $v$ instead of IC $p$ here? What is $y$?}
-If the vertex $v$ is between sides $s_1$, $s_2$, 
-we effectively set connections $F_g[s_1] = v$, $F_g[y]=v$, $F_p[v] = s_2$. The backward temporary link on the line \ref{line:back_link43} 
-is used in Algorithm \ref{algo:collect_23_ip_edges} to fix $F_p[p]$ for the second $p$ lying on an edge or a vertex of $S_3$. The condition at the end deals with the case
-in which two sides intersect the same object $x\in M_3$.
-
-
-For the regular intersection $L$, we pass through its ICs, as described above. \notePE{For special cases}, we firstly compute ICs
-on the boundary of $S_2$ using the line-tetrahedron intersection algorithm for every side. We store single point intersections into separate list $J$
-and skip filling the connection tables. This happens when the side touches $S_3$ at its edge or vertex. 
-These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} with better topological information, however
-this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$. 
-Therefore we keep a separate list $J$ of ICs to deal with this case.
-
+Algorithm \ref{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
+and computes the line-tetrahedron intersection $L$.
+If the side is just touching $S_3$ and we get $L$ with single IC. These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} 
+with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
+To this end we save the IC into separate list $J$ and skip filling of the connection tables.
+In the regular case, we process each of the two ICs in $L$ (loop on line \ref{line:one side loop}). The IC $p$ is added to the list $I$,
+vertices of $S_2$ added twice are merged at final stage. Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
+the point $p$ lies on and set the tables $F_g$, $F_p$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
+The backward temporary link on the line \ref{line:back_link43} is used later in Algorithm \ref{algo:collect_23_ip_edges} to allow proper continuation 
+of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
+the same object $x\in M_3$, in such case the back-link is unnecessary and would overwrite the correct link set by previous IC.
 
 \begin{algorithm}  
   \caption{2d-3d intersection, points in triangle interior}
@@ -479,7 +470,7 @@ Therefore we keep a separate list $J$ of ICs to deal with this case.
   \KwOut{all ICs in $I$, complete $F$}  
   
   \lFor{edge $e$ of $S_3$}{$L[e]$ = intersection($e, S_2$)}  \nllabel{line:12edges}
-  \For{unmarked edge $e$ of $S_3$}{
+  \For{edge $e$ of $S_3$ with non-empty $L[e]$}{
     $p=L[e]$\;
     \uIf{ $p$ is inside $e$}{ 
         \nllabel{line:edge_faces}        
@@ -488,7 +479,6 @@ Therefore we keep a separate list $J$ of ICs to deal with this case.
     \Else($p$ at the vertex $v$ of $S_3$){       
             $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
             \nllabel{line:mark_edges}
-            mark all edges coincident with $p$
     }    
     \uIf{ $p$ is on boundary of $S_2$ }{
          $p$ lies on edge or at vertex $x \in M_3$\;
@@ -499,14 +489,30 @@ Therefore we keep a separate list $J$ of ICs to deal with this case.
     }
     \Else{
          append $p$ to $I$\;
-         $F_g[f_0]=p$\tcp*{overwrite the backlink}
-         $F_p[p]=f_1$\;         
+         $F_g[f_0]=p,\ F_p[p]=f_1$\tcp*{overwrite the backlink}
     }   
   }  
-  
-  \lIf{$\abs{I} < 3$}{ return $J$}
-  \lElse{ return $I$ sorted according to connectivity in $F_g$ and $F_p$}
 \end{algorithm}
+
+Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
+First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position on vertex or edge of $S_3$ already computed 
+in Algorithm \ref{algo:colect_23_ip_triangle}. Then we pass through once again skipping edges with none or degenerate $L[e]$.
+For every IC $p=L[e]$ we first get its (generalized) faces that are before and after the IC on IP. For an IC inside the edge $e$
+the function \emph{edge faces}, returns its adjacent faces $f_0$, $f_1$ (see Fig. \ref{fig:edge_faces}). 
+Their order is given by the sign permuted inner products in 1d-2d intersection. The order of faces match 
+the order of sides of IP if the sign is negative. If the sign is positive the function \emph{edge faces} returns face pair $(f_1, f_0)$.
+\begin{figure}[!htb]
+  \begin{center}        
+    \includegraphics[width=0.3\textwidth]{\figpath edge_faces.pdf}
+  \end{center}
+  \caption{Order of faces adjacent to the oriented edge $e$ pointing up.}
+  \label{fig:edge_faces}
+\end{figure}
+
+The function \emph{vertex faces} (Algorithm \ref{algo:vertex_faces}, described later)
+returns a pair of generalized faces (face or edge) possibly adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$.
+On line \ref{line:mark_edges} we mark all edges coincident with the vertex, since if they have any other intersection corner they are degenerate and 
+not processed anyway.
 
 \begin{algorithm}
   \caption{2d-3d intersection, vertex faces}  
@@ -545,16 +551,6 @@ Therefore we keep a separate list $J$ of ICs to deal with this case.
     \return anything\;
   }  
 \end{algorithm}
-
-Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
-The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position on vertex or edge of $S_3$ already computed in Algorithm \ref{algo:colect_23_ip_triangle}. 
-Every edge $e$ of $S_3$ is oriented so that the pair of adjacent faces $f_0$, $f_1$ appears in the same order on the intersection polygon when the 
-IC on $e$ has a negative sign (see Figure \ref{fig:plucker_products}). The function \emph{edge faces}, used on line \ref{line:edge_faces} and later on,
-uses the sign of the intersection to return the pair of faces ordered correctly. 
-Similarly the function \emph{vertex faces} (Algorithm \ref{algo:vertex_faces}, described later)
-returns a pair of generalized faces (face or edge) possibly adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$.
-On line \ref{line:mark_edges} we mark all edges coincident with the vertex, since if they have any other intersection corner they are degenerate and 
-not processed anyway.
 
 
 \subsubsection{Vertex Faces Algorithm}
@@ -601,23 +597,18 @@ Finally in the third part (Algorithm \ref{algo:order_23}), the table $F$ allows 
 
 
 \begin{algorithm}
-  \caption{2d-3d intersection, finish sort of points}  
+  \caption{2d-3d intersection, order the points}  
   \label{algo:order_23}
   
   \SetKw{To}{to}
   \DontPrintSemicolon
   \KwIn{all points in $I$}
   \KwOut{polygon in $K$ in correct order}  
-  $P=(1,\dots, n-1,0)$\tcp{array of sucessors}
-  \lFor{ $f$ is face of $S_3$}{$P[ F[1,f] ] = F[0, f]$}
-  $i=0$\;  
-  \lFor{$n=0$ \To $\abs{I}-1$}{
-    $K[n]=I[i]$
-    $i=P[i]$
-  }    
-  \label{algo:order_23}
+  
+  \lIf{$\abs{I} < 3$}{ return $J$}
+  \lElse{ return $I$ sorted according to connectivity in $F_g$ and $F_p$}
 \end{algorithm}
-
+\noteJB{Write correct algo with deduplication of vertices.}
   
  List $in[f]$ contains index of the intersection corner that follows after $f$ on the boundary of traced polygon, 
  similarly $out[f]$ stores index of the intersection corner that preeceeds the face $f$.
@@ -873,6 +864,10 @@ thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_
 \label{sec:benchmarks}
 In this section we present numerical results on several benchmark problems. At first we shall compare 
 the effectivity of our fundamental algorithms for intersections with other approaches.
+\noteJB{I prefer to call them element intersection. Fundamental intersection seems to epic.}
+\noteJB{We compare just against NGH which we should briefly describe. Neither of the algorithms is optimized. The new one deals correctly with special cases and provides 
+barycentric coordinates (so more work for less time).}
+\noteJB{Also write little about Flow123d here. The language etc.}
 
 Next we shall compare our algorithms with different initialization phase (candidate pairs search),
 and using the advancing front method or not. We shall show the results both on a mesh of a real locality
@@ -900,24 +895,23 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
             Pl\"ucker (reuse) & 306
     \end{tabular}
     \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
-                      Only 2D-3D case considered.
+                      Only 2D-3D case considered.}
     \label{tab:fundamental_flops}
-    \notePE{comment on different strategies}}
+    \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
   \end{minipage}
   \hfil
   \begin{minipage}[b]{0.5\textwidth}
     \centering
     \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
     
-    \captionof{figure}{Effectivity of our algorithms using \plucker coordinates in comparison to \notePE{***}.
-                         One can see 1D-3D case on the left, 2D-3D on the right.}
+    \captionof{figure}{Efficiency of \plucker approach compared to the legacy NGH code.}
     \label{fig:fundamental_speed}
     \end{minipage}
 \end{minipage}
 \vspace{2ex}
 
 We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
-using \plucker coordinates, red values \notePE{***}. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
+using \plucker coordinates, red values \notePE{***}NGH. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
 
 
 \subsection{General algorithms}
@@ -936,7 +930,8 @@ intersection and advancing front method (shortly AFront) to prolong the intersec
         BIH(AABB) & AABB & BIH(AABB) \\
         AFront & AFront & ---
     \end{tabular}
-    \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.}
+    \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.
+    \noteJB{Just in the text. Possibly use different name for variants.}}
     \label{tab:search_algorithms}
 \end{table}
 
