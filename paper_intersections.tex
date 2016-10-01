@@ -960,8 +960,10 @@ Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be abou
 \subsection{Element Intersection Algorithms}
 The first benchmark focuses on the 1d-3d and 2d-3d element intersections. We randomly generated
 100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
-In some of the empty cases, the bounding boxes did not collide, so the actual intersection algorithms were skipped. 
-A single element pair was computed 100 times to obtain reasonable computational time.
+Only the pairs with non-colliding bounding boxes were included to the timing.  
+Every element pair was computed 100 times to obtain reasonable computational time.
+\noteJB{According to the results the time of single pair is on average 2e-5s. Normal system times have resolution about 20ms, hi-resolution timers
+used in profiler have resolution about 1ms. So we need at least 10000 calls per single pair to get meaningful results.}
 
 % \vspace{2ex}
 % \begin{minipage}{\textwidth}
@@ -1004,8 +1006,8 @@ A single element pair was computed 100 times to obtain reasonable computational 
 \end{figure}
 
 We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
-using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1d-3d case and 2 in 2d-3d. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
-\notePE{Improve and complete...}
+using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1d-3d case and 2 in 2d-3d. 
+\noteJB{Just the opposite what we expect. Just by chance?}
 
 \subsection{General algorithms}
 In previous sections, we have suggested an intersection algorithm that uses axes aligned bounding boxes, BIH to find initial
