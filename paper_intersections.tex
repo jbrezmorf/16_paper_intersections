@@ -283,16 +283,32 @@ The sign of the permuted inner product gives us the relative position of the two
 see \fig{fig:plucker_products}.
 
 
-
 \begin{figure}[!htb]
-  \begin{center}        
-    \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
-%    \includegraphics{\figpath plucker_products.pdf}
-  \end{center}
-  \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines. Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
-           \notePE{circle dot permuted inner product}}
-  \label{fig:plucker_products}
+    \centering    
+    \subfloat[$\pi_p\odot \pi_i < 0 \;\forall i$]{
+        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_a.pdf}
+    }
+    \subfloat[$\pi_p\odot \pi_i = 0 \, \exists i$ \newline special case]{
+        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_b.pdf}
+    }
+    \subfloat[$\pi_p\odot \pi_i > 0 \;\forall i$]{
+        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_c.pdf}
+    }
+    \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines.          
+            Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+    }
+    \label{fig:plucker_products}
 \end{figure}
+
+% \begin{figure}[!htb]
+%   \begin{center}        
+%     \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
+% %    \includegraphics{\figpath plucker_products.pdf}
+%   \end{center}
+%   \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines. Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+%            \notePE{circle dot permuted inner product}}
+%   \label{fig:plucker_products}
+% \end{figure}
 
 
 %Notice the condition on the orientation of the triangle sides. To always satisfy it, we use a
@@ -754,7 +770,7 @@ and then move to a~next neighboring component element. So the bulk queue is empt
 
 First, we mark all component elements $c\in\mathcal T_c$ as unvisited. 
 For every unvisited element $c\in \mathcal T_c$, 
-we find some intersection candidate pairs $\{$(c,b)$, $b\in\mathcal T_b$\}$ and
+we find some intersection candidate pairs $\{(c,b), b\in\mathcal T_b\}$ and
 into the queue $Q_c$.
 Then we increment the \emph{component number} $\gamma$, which we use to 
 mark all intersection polygons we shall find until the queue $Q_c$ becomes empty.
@@ -1114,6 +1130,7 @@ like methods for problems in porous media.
 The paper was supported in part by the Project OP VaVpI Centre for Nanomaterials, Advanced Technologies  and Innovations
 CZ.1.05/2.1.00/01.0005.
 
+The work of P. Exner was supported by the Ministry of Education of the Czech Republic within the SGS project no. 21176/115 of the Technical University of Liberec.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
