@@ -47,6 +47,9 @@
 %% please give \usepackage{epsfig}
 \usepackage{subfig}
 
+% alphabetical enumeration
+\usepackage{enumitem}
+
 %tables
 \usepackage{booktabs}
 \usepackage[vlined, linesnumbered, ruled]{algorithm2e}
@@ -431,12 +434,14 @@ can arise either from side-face intersection, or from edge-triangle intersection
 To get all ICs, we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner products, one for every side-edge pair.
 Computation of IP consists of three stages: calculation of side-tetrahedron ICs (Section \ref{sec:sides}), 
-calculation of edge-triangle ICs (Section~\ref{sec:edges}), oredering of ICs (Section~\ref{sec:ordering}).
-The intersection corners are appended to the list $I$ as they are computed however their order on the polygon boundary is 
+calculation of edge-triangle ICs (Section~\ref{sec:edges}), ordering of ICs (Section~\ref{sec:ordering}).
+The intersection corners are appended to the list $I$ as they are computed, however their order on the polygon boundary is 
 defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
 and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
-There are special cases when the IP is degenerated to a line or a point. If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
+There are special cases when the IP is degenerated to a line or a point. 
+\notePE{next sentence: how should I understand 'may possibly be'; 'an IC' instead of 'some IC'}
+If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
 
 
 \subsubsection{Intersections on sides of $S_2$}
@@ -460,10 +465,9 @@ There are special cases when the IP is degenerated to a line or a point. If some
     }
     \For{$p$ in $L$}{
 %        \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
-        \nllabel{line:m4_object}
-        $p$ lies on $x\in M_3$\;
-        \lIf{$p$ lies at vertex $v$ of $S_3$}{$x=v$}
-        \uIf{$p$ is first in $L$}{
+        $p$ lies on $x\in M_3$\; \nllabel{line:m4_object}
+        \lIf{$p$ lies at the vertex $v$ of $S_3$}{$x=v$}
+        \uIf{$p$ is the first in $L$}{
             $F_g[x] = p$,\ $F_p[p] = s$\;
         }
         \Else($p$ is the last in $L$){
@@ -482,15 +486,17 @@ There are special cases when the IP is degenerated to a line or a point. If some
 
 Algorithm \ref{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
 and computes the line-tetrahedron intersection $L$.
-If the side is just touching $S_3$ and we get $L$ with single IC. These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} 
+If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} 
 with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
 To this end we save the IC into separate list $J$ and skip filling of the connection tables.
+\notePE{here it is weird... there is no line appending the IC into resulting list.. Which is the resulting list??
+I find the reference to 'line:one side loop' also incorrect..}
 In the regular case, we process each of the two ICs in $L$ (loop on line \ref{line:one side loop}). The IC $p$ is added to the list $I$,
 vertices of $S_2$ added twice are merged at final stage. Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
 the point $p$ lies on and set the tables $F_g$, $F_p$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
 The backward temporary link on the line \ref{line:back_link43} is used later in Algorithm \ref{algo:collect_23_ip_edges} to allow proper continuation 
 of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
-the same object $x\in M_3$, in such case the back-link is unnecessary and would overwrite the correct link set by previous IC.
+the same object $x\in M_3$, in such case the backlink is unnecessary and would overwrite the correct link set by previous IC.
 
 
 
@@ -519,7 +525,7 @@ the same object $x\in M_3$, in such case the back-link is unnecessary and would 
             $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
             \nllabel{line:mark_edges}
     }    
-    \uIf{ $p$ is on boundary of $S_2$ }{
+    \uIf{ $p$ is on the boundary of $S_2$ }{
          $p$ lies on edge or at vertex $x \in M_3$\;
          $q=F_g[x]$\tcp*{$q$ is already computed $p$}
          \lIf{$F_p[q]=x$}{$F_p[q]=f_1$} \nllabel{line:successor}
@@ -542,17 +548,17 @@ the same object $x\in M_3$, in such case the back-link is unnecessary and would 
 \end{figure}
 
 Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
-First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position on vertex or edge of $S_3$ already computed 
-in Algorithm \ref{algo:colect_23_ip_triangle}. Then we pass through once again skipping edges with none or degenerate $L[e]$.
-For every IC $p=L[e]$ we first get its (generalized) faces that would appear before and after the IC on IP assuming that $p$ is inside $S_2$. 
+First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position at the vertex or on the edge of $S_3$ already computed 
+in Algorithm \ref{algo:colect_23_ip_triangle}. Then we pass through once again skipping the edges with none or degenerate $L[e]$.
+For every IC $p=L[e]$ we first get its (generalized) faces that would appear before and after the IC on IP, assuming that $p$ is inside $S_2$. 
 
-For an IC inside the edge $e$
-the function \emph{edge faces}, returns its adjacent faces $f_0$, $f_1$ (see Fig. \ref{fig:edge_faces}). 
-Their order is given by the sign permuted inner products in 1d-2d intersection. The order of faces match 
+The function \emph{edge faces} returns the adjacent faces $f_0$, $f_1$ to the edge $e$, on which the IC lies (see the situation in \fig{fig:edge_faces}). 
+The faces are sorted using the sign of the permuted inner product in 1d-2d intersection. The order of faces matches 
 the order of sides of IP if the sign is negative. If the sign is positive the function \emph{edge faces} returns face pair $(f_1, f_0)$.
 If the IC is at the vertex $v$ of $S_3$, the function \emph{vertex faces} described later (Algorithm \ref{algo:vertex_faces}) is used.
 It returns a pair of generalized faces (face or edge) adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$. 
-If IC $p$ is inside $S_2$, we add it into $I$ and set the connection tables (line \ref{line:insideS2}). However,
+If IC $p$ is inside $S_2$, we add it into $I$ and set the connection tables (line \ref{line:insideS2}). 
+However,
 if $p$ is on boundary of $S_2$ it is already in $I$. Denoting $x$ the \nface of $S_3$ the IC lies on, we use the back-link from $x$ to 
 IC $q\in I$ and if $q$ points back to $x$ we set the new successor $f_1$ to it (line \ref{line:successor}). 
 Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}). 
@@ -641,7 +647,7 @@ we pass all ICs in $I$.
 
   
 
-\section{Global mesh intersection algorithm}
+\section{Global Mesh Intersection Algorithm}
 \label{sec:front_advancing}
 Having the algorithms for element-element intersections at our disposal we can proceed to the mesh intersection algorithm. 
 We consider the composed mesh $\mathcal T$ containing the 3d mesh $\mathcal T_1$ that we shall call a bulk mesh $\mathcal T_b$. Any other 
@@ -670,21 +676,22 @@ secondly, we prolong the intersection by investigating neighbouring elements (fr
 \subsection{Initialization}
 \label{sec:initialization}
 \noteJB{Possibly move this afte Advancing front section since it is in fact single step in the main loop.}
-We choose an arbitrary element of the component mesh and check it intersection with all elements of the bulk mesh.
-The process is accelerated by computing the axis aligned bounding box (AABB) for every element and use intersection of the bounding boxes
+We choose an arbitrary element of the component mesh and check its intersection with all elements of the bulk mesh.
+This process is accelerated by computing the axis aligned bounding box (AABB) for every element and use intersection of the bounding boxes
 as a fast indicator for possible intersection of the elements. This step takes $O(N)$ time with respect to the number of elements of the bulk mesh $N$.
-For the small number of components $k$ and if they are contained inside the bulk mesh the total time of initialization may be still linear $O(kn)$. However,
-for more complex cases we organize the bounding boxes of the bulk mesh into the bounding interval hierarchy (BIH) \cite{EGWR:EGSR06:139-149} 
+If the number of components $k$ is small and if the components are contained inside the bulk mesh, the total time of initialization may still be linear $O(kN)$. However,
+for more complex cases we organize the bounding boxes of the bulk mesh into the bounding interval hierarchy (BIH) \cite{EGWR:EGSR06:139-149},
 a data structure in principle equivalent 
 to R-trees \cite{guttman_r-trees:_1984}, \cite{nam_comparative_2004}. The creation time is $O(N\log(N/n))$ and the lookup time $O(\log(N/n))$ where $n$ is number
 of the bulk elements in the leaf nodes of the tree.
  
 \subsection{Advancing Front Method}
 \label{front}
-The advancing front algorithm requires and employ the neigbouring information for the elements within the component mesh $\mathcal T_c$ 
+The advancing front algorithm requires the neigbouring information for the elements within the component mesh $\mathcal T_c$ 
 as well as within the bulk mesh $\mathcal T_b$. It can be viewed as the breadth first search algorithm for a graph where graph vertices are 
-intersection polygons and graph edges are sides shared by two polygons. Side every side of IP is on the boundary of either 
-component or the bulk element, we can distinguish bulk and component edges and correspondingly the \emph{component queue} $Q_c$ and the \emph{bulk queue} $Q_b$.
+intersection polygons and graph edges are sides shared by two polygons. Since every side of IP is on the boundary of either 
+the component element or the bulk element, we can distinguish bulk and component edges. 
+Correspondingly the candidate paris are enqueued into \emph{component queue} $Q_c$ and the \emph{bulk queue} $Q_b$, respectively.
 
 \begin{algorithm}
   \caption{Advancing front algorithm}  
@@ -728,48 +735,54 @@ component or the bulk element, we can distinguish bulk and component edges and c
   
 \end{algorithm}
 
-
 %
 \begin{figure}[!htb]
 %   \vspace{0pt}
   \centering    
-    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip.pdf}
-    %\input{\figpath prolongation_scheme_ip.pdf_tex}
+    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip_new.pdf}
   \caption{Advancing front algorithm for 1d-2d and 2d-3d intersections.}
   \label{fig:prolongation}
 \end{figure}
 
-The scheme of the advancing front algorithm is displayed by the scheme in \fig{fig:prolongation}. 
 First, we mark all component elements $c\in\mathcal T_c$ unvisited. The for every unvisited element $c\in \mathcal T_c$, we mark it visited
 then find intersection candidate pair $(c,b)$, $b\in\mathcal T_b$ 
 and initialize the front tracking for every unvisited .
-The main idea is to compute intersections for a component element with all possible bulk elements, and then move to a~next neighboring component element. 
-So the bulk queue is emptied before the component queue (see yellow boxes).
 
-On the input we consider a candidate pair provided be the initialization (top-left corner).
-Now we look for new candidate pairs among the neighboring elements (the block Prolongation decide).
+The key idea behind the two queues is to compute intersections for a component element with all possible bulk elements at first, and then move to a~next neighboring component element. So the bulk queue is emptied before the component queue.
+
+On the input, we consider a candidate pair provided by the initialization (the top-left corner of the scheme).
+If a nonempty intersection is found, we look for new candidate pairs among the neighboring elements
+(see the white block 'Cycle over ICs').
 Therefore, we iterate over the intersection corners and further exploit their topological position on the component element $c$ and the bulk element $b$.
 There are 3 possible cases (applies both for 1d-3d and 2d-3d), how the intersection might be prolonged:
-\begin{itemize}
+\begin{enumerate}[label=(\alph*)]
     \item \textbf{IC on the boundary of $c$  and inside $b$} \\
             We find all the sides $S$ coincident with the \nface of $c$ on which IC lies. Then we get all component
-            elements $C'$ neighbouring with $c$ over any side$s\in S$. And finally, we push all pairs $(c',b)$, $c'\in C'$ 
+            elements $C'$ neighboring with $c$ over any side $s\in S$. And finally, we push all pairs $(c',b)$, $c'\in C'$ 
             into the component queue.
-            Note, that $c$ can have more then one neighbour component elements over the single side $s$, i.e. branches are allowed.
-    \item \textbf{IC on the boundary of both $c$ and $b$} \\
+            Note that $c$ can have more then one neighbour component elements over the single side $s$, i.e. branches are allowed.
+    \item \textbf{IC inside of $c$ anf on the boundary of $b$} \label{enum:prolong2}\\
             We find all the faces $F$ coincident with the \nface of $b$ on which IC lies. 
-            Then we get all neighbours $B'$ through all faces in $F$ as in the previous case.
-            We push pairs $(c, b')$, $b'\in B'$ into the bulk queue and pairs $(c', b')$, $c'\in C'$, $b'\in B'$ into the component queue.
-    \item \textbf{IC inside of $c$ anf on the boundary of $b$)} \\
-            We proceed as in previous case, and push pairs $(c, b')$, $b'\in B'$ into the bulk queue.
-\end{itemize}
-\noteJB{Can we just use two (not excluded) cases one for IB on boundary of $c$ second for CI on boundary of $b$ ?}
-
-We also see that the candidate pairs are of three types: $(c, b')$, $(c', b)$, $(c',b')$
-from which only the first one goes into the bulk queue, trying to cover current component element $c$ before we proceed to the next one.
-
-When the pair is taken from either of the queues we check if the pair was computed and possibly skip it. 
+            Then we get all bulk elements $B'$ neighboring with $b$ over any face $f\in F$,
+            analogically to the previous case.
+            Finally, we push the new candidate pairs $(c, b')$, $b'\in B'$ into the bulk queue.
+    \item \textbf{IC on the boundary of both $c$ and $b$} \\
+            This situation includes both previously described cases. Therefore, we obtain new candidate pairs
+            $(c', b)$, $c'\in C'$ and $(c, b')$, $b'\in B'$ and push them into the component queue and the bulk queue, respectively.
+\end{enumerate}
+% \noteJB{Can we just use two (not excluded) cases one for IB on boundary of $c$ second for CI on boundary of $b$ ?}
+When the pair is taken from either of the queues, we check whether the pair has been already computed and possibly skip it. 
 To this end every component element keeps a hash of the bulk elements with which we have called the intersection test.
+
+At the end, we see that the candidate pairs are of two types: $(c, b')$ and $(c', b)$,
+from which the first one goes into the bulk queue, trying to fully cover current component element 
+$c$ before we proceed to the next one. We are able recognize the case when the component element 
+does not lie inside the bulk elements with its full volume -- we end up in situation \ref{enum:prolong2},
+but there are no more bulk neighboring elements to prolong the intersection to. Then we mark this component
+element as \emph{open}, so it can be later found by initialization algorithm and possibly
+covered by other bulk elements but as different component.
+
+
 
 \subsection{Intersections between component meshes}
 \label{sec:components}
