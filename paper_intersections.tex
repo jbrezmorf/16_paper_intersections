@@ -430,12 +430,14 @@ can arise either from side-face intersection, or from edge-triangle intersection
 To get all ICs, we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner products, one for every side-edge pair.
 Computation of IP consists of three stages: calculation of side-tetrahedron ICs (Section \ref{sec:sides}), 
-calculation of edge-triangle ICs (Section~\ref{sec:edges}), oredering of ICs (Section~\ref{sec:ordering}).
-The intersection corners are appended to the list $I$ as they are computed however their order on the polygon boundary is 
+calculation of edge-triangle ICs (Section~\ref{sec:edges}), ordering of ICs (Section~\ref{sec:ordering}).
+The intersection corners are appended to the list $I$ as they are computed, however their order on the polygon boundary is 
 defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
 and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
-There are special cases when the IP is degenerated to a line or a point. If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
+There are special cases when the IP is degenerated to a line or a point. 
+\notePE{next sentence: how should I understand 'may possibly be'; 'an IC' instead of 'some IC'}
+If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
 
 
 \subsubsection{Intersections on sides of $S_2$}
@@ -459,10 +461,9 @@ There are special cases when the IP is degenerated to a line or a point. If some
     }
     \For{$p$ in $L$}{
 %        \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
-        \nllabel{line:m4_object}
-        $p$ lies on $x\in M_3$\;
-        \lIf{$p$ lies at vertex $v$ of $S_3$}{$x=v$}
-        \uIf{$p$ is first in $L$}{
+        $p$ lies on $x\in M_3$\; \nllabel{line:m4_object}
+        \lIf{$p$ lies at the vertex $v$ of $S_3$}{$x=v$}
+        \uIf{$p$ is the first in $L$}{
             $F_g[x] = p$,\ $F_p[p] = s$\;
         }
         \Else($p$ is the last in $L$){
@@ -481,15 +482,17 @@ There are special cases when the IP is degenerated to a line or a point. If some
 
 Algorithm \ref{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
 and computes the line-tetrahedron intersection $L$.
-If the side is just touching $S_3$ and we get $L$ with single IC. These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} 
+If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} 
 with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
 To this end we save the IC into separate list $J$ and skip filling of the connection tables.
+\notePE{here it is weird... there is no line appending the IC into resulting list.. Which is the resulting list??
+I find the reference to 'line:one side loop' also incorrect..}
 In the regular case, we process each of the two ICs in $L$ (loop on line \ref{line:one side loop}). The IC $p$ is added to the list $I$,
 vertices of $S_2$ added twice are merged at final stage. Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
 the point $p$ lies on and set the tables $F_g$, $F_p$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
 The backward temporary link on the line \ref{line:back_link43} is used later in Algorithm \ref{algo:collect_23_ip_edges} to allow proper continuation 
 of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
-the same object $x\in M_3$, in such case the back-link is unnecessary and would overwrite the correct link set by previous IC.
+the same object $x\in M_3$, in such case the backlink is unnecessary and would overwrite the correct link set by previous IC.
 
 
 
@@ -518,7 +521,7 @@ the same object $x\in M_3$, in such case the back-link is unnecessary and would 
             $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
             \nllabel{line:mark_edges}
     }    
-    \uIf{ $p$ is on boundary of $S_2$ }{
+    \uIf{ $p$ is on the boundary of $S_2$ }{
          $p$ lies on edge or at vertex $x \in M_3$\;
          $q=F_g[x]$\tcp*{$q$ is already computed $p$}
          \lIf{$F_p[q]=x$}{$F_p[q]=f_1$} \nllabel{line:successor}
@@ -541,17 +544,17 @@ the same object $x\in M_3$, in such case the back-link is unnecessary and would 
 \end{figure}
 
 Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
-First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position on vertex or edge of $S_3$ already computed 
-in Algorithm \ref{algo:colect_23_ip_triangle}. Then we pass through once again skipping edges with none or degenerate $L[e]$.
-For every IC $p=L[e]$ we first get its (generalized) faces that would appear before and after the IC on IP assuming that $p$ is inside $S_2$. 
+First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and possibly those ICs with special position at the vertex or on the edge of $S_3$ already computed 
+in Algorithm \ref{algo:colect_23_ip_triangle}. Then we pass through once again skipping the edges with none or degenerate $L[e]$.
+For every IC $p=L[e]$ we first get its (generalized) faces that would appear before and after the IC on IP, assuming that $p$ is inside $S_2$. 
 
-For an IC inside the edge $e$
-the function \emph{edge faces}, returns its adjacent faces $f_0$, $f_1$ (see Fig. \ref{fig:edge_faces}). 
-Their order is given by the sign permuted inner products in 1d-2d intersection. The order of faces match 
+The function \emph{edge faces} returns the adjacent faces $f_0$, $f_1$ to the edge $e$, on which the IC lies (see the situation in \fig{fig:edge_faces}). 
+The faces are sorted using the sign of the permuted inner product in 1d-2d intersection. The order of faces matches 
 the order of sides of IP if the sign is negative. If the sign is positive the function \emph{edge faces} returns face pair $(f_1, f_0)$.
 If the IC is at the vertex $v$ of $S_3$, the function \emph{vertex faces} described later (Algorithm \ref{algo:vertex_faces}) is used.
 It returns a pair of generalized faces (face or edge) adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$. 
-If IC $p$ is inside $S_2$, we add it into $I$ and set the connection tables (line \ref{line:insideS2}). However,
+If IC $p$ is inside $S_2$, we add it into $I$ and set the connection tables (line \ref{line:insideS2}). 
+However,
 if $p$ is on boundary of $S_2$ it is already in $I$. Denoting $x$ the \nface of $S_3$ the IC lies on, we use the back-link from $x$ to 
 IC $q\in I$ and if $q$ points back to $x$ we set the new successor $f_1$ to it (line \ref{line:successor}). 
 Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}). 
