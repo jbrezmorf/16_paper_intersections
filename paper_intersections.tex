@@ -793,6 +793,26 @@ of the current $c$ will be seen as different component with increased component 
 
 \subsection{Intersections between component meshes}
 \label{sec:components}
+We consider here the situation that components are in the interior of 3D bulk mesh. After we compute
+all component-bulk intersections, we use it to easily find all the component-component intersection candidates.
+If the bulk element intersects more than one component element, than we can create candidates from these.
+
+Let us start with description of how we store the intersection results, which will be of great importance here.
+For each element intersection, we save the following data: reference to component and bulk element, barycentric coordinates on both and index of the component. These objects are stored in separate vectors for each pair 
+of dimensions. Further we define a matrix (\emph{intersection map}) which has as many rows as there are elements in the mesh.
+At each row (element), we save the references to all other elements, having intersection with element corresponding to this row, and references to the actual intersection data.
+
+The algorithm for 2d-2d intersections goes as follows. We iterate over all 2d-3d intersections, respectively over
+the bulk elements having some intersections with 2d components. We look at the intersection map at the
+bulk element row and collect all elements that have 2d-3d intersection with it.
+Now comes in play the component number $\gamma$. If $\gamma$ is equal for both component elements, then 
+these are part of a single continuous component and we do not compute any intersection.
+Otherwise we obtain a new candidate pair, for which IP can be computed.
+
+The algorithm for 1d-2d is analogical, only we do not have to check the component number.
+Note that this way, we do not obtain any intersection in the exterior of bulk mesh.
+If such problem is of our interest, we find the candidate pairs using the search algorithms as in
+initialization phase of advancing front method.
 
 
 % After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
