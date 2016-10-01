@@ -139,7 +139,7 @@
 %% \fntext[label3]{}
 
 %\title{Algorithm for Intersections of Nonmatching Grids of Different Dimensions}
-\title{Fast Algorithms for Intersection of Non-matching Grids Using \plucker coordinates.}
+\title{Fast Algorithms for Intersection of Non-matching Grids Using \plucker Coordinates.}
 
 
 %% use optional labels to link authors explicitly to addresses:
@@ -162,15 +162,15 @@
 The XFEM and Mortar methods can be used in combination with non-matching or non-conforming grids 
 to deal with problems on complex geometries. However the information about the mesh intersection must be provided.
 We present algorithms for intersections between 1d and 2d unstructured multi component meshes 
-and their intersections a background unstructured 3d mesh. A common algorithm 
-based on the advancing front technique is used for the efficient selection of candidate pairs of 
+and their intersections with a background unstructured 3d mesh. A common algorithm 
+based on the advancing front technique is used for the efficient selection of candidate pairs among 
 simplicial elements. Bounding interval hierarchy (BIH) of axes aligned bounding boxes (AABB) of elements
 is used to initialize the front tracking algorithm. The family of element intersection algorithms
-is build upon a line-triangle intersection algorithm based on the \plucker
-coordinates. These algorithms combined with the advancing front technique can reuse calculations 
-done on the neigbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
+is built upon a line-triangle intersection algorithm based on the \plucker
+coordinates. These algorithms combined with the advancing front technique can reuse the results of calculations 
+performed on the neigbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
 on each of the intersecting elements are provided for every intersection point. Benchmarks 
-of the element intersection algorithms are provided and three variants of the global intersection 
+of the element intersection algorithms are presented and three variants of the global intersection 
 algorithm are compared on the meshes raising from a hydrogeological application.
 \end{abstract}
 
@@ -200,9 +200,6 @@ advancing front method
 
 %% main text
 \section{Introduction}
-\notePE{How did you decided for 'non-matching' term? Instead of e.g. incompatible or non-conforming?}
-\noteJB{Non-matching grid seems to be the most common.}
-
 The grid intersection algorithms are crucial for several techniques that try to overcome some limitations of the classical finite element method.
 The Chimera method \cite{brezzi_analysis_2001}, also called overset grid, and similar Nitche method \cite{massing_efficient_2013}
 allow solution of the problems with changing geometry as in the fluid-structure problems. 
@@ -210,15 +207,15 @@ The Mortar method \cite{belgacem_mortar_1999} allows domain decomposition, indep
 However our primal motivation is usage of XFEM methods \cite{fries_extended/generalized_2010} and non-matching meshes of mixed dimension in groundwater models.
 
 The realistic models of groundwater processes including the transport processes and geomechanics have to deal with 
-a complex nature of geological formations including the fractures and wells. Although of small scale, these features may have significant impact 
+a complex nature of geological formations including fractures and wells. Although of a small scale, these features may have significant impact 
 on the global behavior of the system and their representation in the numerical model is imperative.
 One possible approach is to model fractures and wells as lower dimensional objects and introduce their coupling with the surrounding continuum. 
 The discretization then leads to the meshes of mixed dimensions, i.e. composed of elements of different dimension. This approach 
 called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
 \cite{martin_modeling_2005}, \cite{fumagalli_numerical_2011}, \cite{brezina_analysis_2015} and 
 already adopted by some groundwater simulation software, e.g FeFlow \cite{trefry_feflow:_2007} and Flow123d \cite{flow123d}.
-Nevertheless as the complexity of the geometry increase (e.g. when lot of fractures are randomly generated) the compatible meshing becomes painful or even 
-impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently getting a non-matching 
+Nevertheless as the complexity of the geometry increase (e.g. when lots of fractures are randomly generated) the compatible meshing becomes painful or even 
+impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently, getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
 around the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
@@ -227,34 +224,36 @@ in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected
 Further we assume only single 3d mesh $\mathcal{T}_1$.
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
 and to compute that intersection. The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. 
-Second, compute the intersection for particular pair.
+Second, compute the intersection of a particular pair.
 
-According to our knowledge there are lot of works using non-matching grids yet only few of them discuss algorithms how to compute their intersections. 
+According to our knowledge, there are lots of works using non-matching grids, yet only few of them discuss algorithms how to compute their intersections. 
 Gander and Japhet \cite{gander_algorithm_2013} present the PANG algorithm for 2d-2d and 3d-3d intersections that can be used e.g. for mesh overlapping methods.
 They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the DUNE library \cite{bastian_towards_2005}.
 Massing, Larson, and Logg \cite{massing_efficient_2013} present an algorithm for 2d-3d intersections as part of their implementation of the Nitche method 
 which is part of the Doplhin project \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
 to get intersection candidate pairs of elements, the GTS library \cite{gtslib} is used for 2d-3d intersections. 
-Finally, there is the work of Elsheikh and Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
+Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
 calculation and imprinting of the intersection curves. They exploit binary space partitioning for search of initial intersection and 
 the advancing front method for intersection curve tracking. 
 
-In this paper we present a new approach to calculation intersections of simplicial elements of different dimensions based on the \plucker coordinates
+In this paper we present a new approach to intersection calculation of simplicial elements of different dimensions based on the \plucker coordinates,
 further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. Element intersections based on 
 \plucker coordinates are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neigbouring
-elements and reduce the number of arithmetic operations. The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
-1d-2d, 1d-3d and 2d-3d intersections of simplices are described. In Section \ref{sec:front advancing} we discuss our implementation of the advancing front 
-technique and usage of AABB and BIH for its initialization. Finally, in Section \ref{sec:benchmarks}, we provide benchmarks and comparison of individual algorithms.
+elements and reduce the number of arithmetic operations. 
+
+The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
+1d-2d, 1d-3d and 2d-3d intersections of simplices are described. In Section \ref{sec:front_advancing} we discuss our implementation of the advancing front 
+technique and usage of AABB and BIH for its initialization. Finally, in Section \ref{sec:benchmarks}, we present benchmarks and comparison of individual algorithms.
 
 
 \section{Element Intersections}
 \label{sec:element intersecitons}
-In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3D ambient space. 
-In particular we address intersection algorithms for 1D-2D, 1D-3D, 2D-3D pairs of elements. We have implemented the case 2D-2D as well however the treatment 
-of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1D-2D simplices using the 
+In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3d ambient space. 
+In particular we address intersection algorithms for 1d-2d, 1d-3d, 2d-3d pairs of elements. We have implemented the case 2d-2d as well, however the treatment 
+of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1d-2d simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
 
-We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simlices itself the \nfaces and we denote
+We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simplices itself the \nfaces and we denote
 $M_i$ the set of all \nfaces of the simplex $S_i$.
 In general, an intersection can be a point, a line segment or a polygon called \emph{intersection polygon} (IP) in common.
 The intersection polygon is represented as a list of its corners called \emph{intersection corners} (IC). The IP data structure keeps also 
@@ -265,14 +264,14 @@ reference to the intersecting simplices. A data structure of a single IC consist
  \item the local index $i_K$ of that \nface on $K$,
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
-we call the topological position of the IC on $K$.
+is called the topological position of the IC on $K$.
 
 
 \subsection{\plucker Coordinates}
-\plucker coordinates represent a line in 3D space.
+\plucker coordinates represent a line in 3d space.
 Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}$, 
 the \plucker coordinates of $p$ are defined as
-\[ \pi_p = (\vc{u}_p, \vc{v}_p) = (\vc{u}_p, \vc{u}_p\times A). \]
+\[ \pi_p = (\vc{u}_p, \vc{v}_p) = (\vc{u}_p, \vc{u}_p\times \vc A). \]
 Further we use a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
@@ -297,7 +296,8 @@ see \fig{fig:plucker_products}.
 %The barycentric coordinates of the intersection corner can be computed directly from the \plucker products
 %and then we can easily obtain its real coordinates (see \cite{fris_dp_2015} for derivations and details).
 
-\subsection{Intersection Line-Triangle (1D-2D)}
+\subsection{Intersection Line-Triangle (1d-2d)}
+\notePE{I would stick to chosen notation - triangle $S_2$, and possibly renamed side $s_i$...}
 Let us consider a line segment $p$ with parametric equation 
 \begin{equation}
     \label{eq:line_parametric}
@@ -307,8 +307,8 @@ and a triangle $T$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$
 with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. 
 \begin{lemma}
 The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
-is an intersection point $X$ on the $p$ and inside the triangle $T$. 
-The barycentric coordinates of $X$ on $T$ are
+is an intersection point $\vc X$ on the $p$ and inside the triangle $T$. 
+The barycentric coordinates of $\vc X$ on $T$ are
 \begin{equation}
   \label{eq:bary_centric}
    w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }.
@@ -316,7 +316,7 @@ The barycentric coordinates of $X$ on $T$ are
 \end{lemma}
 \begin{proof}
 Using the barycentric coordinates the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
-The line $p$ have \plucker coordinates $(\vc u, \vc u \times \vc X)$ since these are invariant to change of the initial point. 
+The line $p$ has \plucker coordinates $(\vc u, \vc u \times \vc X)$ since these are invariant to change of the initial point. 
 Combining these two expressions we get
 \[
    \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times \vc V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
@@ -326,9 +326,9 @@ Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2
 \[
    \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc v_1 \times \vc v_2).
 \]
-The point $X$ is inside of $T$ if and only if $w_i>0$ for all $i=0,1,2$.
+The point $\vc X$ is inside of $T$ if and only if $w_i>0$ for all $i=0,1,2$.
 \end{proof}
-Having the barycentric coordinates of $X$ on $T$, we can compute also its local coordinate on $p$ from its parametric form:
+Having the barycentric coordinates of $\vc X$ on $T$, we can compute also its local coordinate on $p$ from its parametric form:
 \begin{equation}
    \label{eq:line}
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
@@ -339,20 +339,23 @@ The calculation of the intersection proceeds as follows:
 \begin{enumerate}
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_i$, $\pi_s \odot \pi_i$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
-    \item If any $w_i$ is less then $\epsilon$ there is no intersection, return empty IP.  
-    \item If all $w_i$ are greater then $\epsilon$, we set $\tau_T = (2, 0)$ for the IC.
-    \item If one $w_i$ is less then $\epsilon$, intersection on edge $s_i$, we set $\tau_T =(1,i)$.
-    \item If two $w_i$ are less then $\epsilon$, intersection in the vertex $V_i$, we set $\tau_T=(0,,i)$.
-    \item \label{item:coplanar} If all $w_i$ are less then $\epsilon$, the line is coplanar with the triangle, both objects are 
+    \item If any $w_i$ is less than $\epsilon$, there is no intersection, return empty IP.  
+    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_T = (2, 0)$ for the IC.
+    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_T =(1,i)$.
+    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_T=(0,i)$.
+    \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
         projected to the plane $x_i=0$ where $i$ is the index of maximal component of the triangle's normal vector.
-        Every pair $p$, $s_i$ is checked for an intersection on $T$ boundary either inside $s_i$ or in a vertex $V_i$ setting the topological info $\tau_T$ to 
-        $(1, i)$ or $(0, i)$ respectively. At most two ICs are obtained.
+        Every pair $p$, $s_i$ is checked for an intersection on $T$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_T$ to 
+        $(1, i)$ or $(0, i)$, respectively. At most two ICs are obtained.
     \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
     \item If $t\in (-\epsilon, \epsilon)$ or $t\in (1-\epsilon, 1+\epsilon)$, we set $\tau_p = (0,0)$ or $\tau_p = (0,1)$, respectively.
     \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
 \end{enumerate}
 
-The check for the same sign of the inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
+We shall call every IC, that was created in the coplanar case, \emph{degenerate} since these will later
+special treatment.
+
+Checking the same sign of the inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
 line with respect to the triangle. Adaptive-precision evaluation of the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997}
 and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}. However, we rather apply a fixed tolerance check for the zero 
 barycentric coordinates and consistently keep the topological positions in this and related algorithms. \noteJB{Can we make the algorithm 
@@ -360,16 +363,17 @@ barycentric coordinates and consistently keep the topological positions in this 
 Seems that our problem is more local than the line example that was proven to be NP-hard.}
 
 The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2d intersection algorithm, in particular the search for ICs in the coplanar case 
-(item \ref{item:coplanar}) is not necessary and the test in the last point is not performed.
-and degenerate cases higher dimensional cases.
+(item \ref{item:coplanar}) is not necessary, and the test in the last point is not performed.
+%and degenerate cases higher dimensional cases.
 
-%\subsection{Intersection Triangle-Tetrahedron (2D-2D)}
+%\subsection{Intersection Triangle-Tetrahedron (2d-2d)}
 %\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
 
-\subsection{Intersection Line-Teraherdon (1D-3D)}
-In this section we consider intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
-$S_3$. The used algorithm is based on 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
-intersection with a line segment and consistently propagates topological position of ICs.
+\subsection{Intersection Line-Tetrahedron (1d-3d)}
+\notePE{degenerate not defined yet.. do you call it coplanar now?}
+In this section we consider an intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
+$S_3$. The used algorithm is based on the 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
+intersection with the line segment and consistently propagates topological position of ICs.
 
 \begin{algorithm}
   \caption{1d-3d intersection}
@@ -380,47 +384,56 @@ intersection with a line segment and consistently propagates topological positio
   \SetKw{continue}{continue}
   \SetKw{break}{break}
   \KwIn{Tetrahedron $S_3$, line segment $p$.}
-  \KwOut{List of ICs on sorted along $p$.}  
-  $I=\{\}$ 
+  \KwOut{List $I$ of ICs sorted along $p$.}  
+  $I=\{\}$\; 
   \For{unmarked face $f$ of $S_3$}{
-    $L$ = intersection($p,\ f$)\;
+    $L$ = intersection($p,\ f$)\; \label{line:13-intersection}
     \lIf{ $L$ is none or degenerate}{\continue}
-    \lIf{ $L$ is inside the edge $e$}{
-        set $\tau_{S_4} = (1,e)$\;
+    \If{ $L$ is inside the edge $e$}{
+        set $\tau_{S_3} = (1,e)$\;
         mark faces coincident with $e$
     }
     \ElseIf{ $L$ is at the vertex $v$}{
-        set $\tau_{S_4} = (0,v)$\;
+        set $\tau_{S_3} = (0,v)$\;
         mark faces coincident with $v$
     }
-    append $L$ to $I$
-    \lIf{$\abs{I}=2$}{\break} 
+    append $L$ to $I$\; \label{line:13-append}
+    \lIf{$\abs{I}=2$}{\break}
   }
-  \lIf{$\abs{I}=1$ \and   $I$ is outside of $p$}{ erase $I$}
+  \lIf{$\abs{I}=1$ \and   $I$ is outside of $p$}{ erase $I$} \label{line:trimming}
   \ElseIf{$\abs{I}=2$}{    
-    trim intersection with respect to the line segment $p$ \label{line:trimming}
+    trim intersection with respect to the line segment $p$
   }
 \end{algorithm}
-Algorithm \ref{algo:13d} first compute line-face intersections for every face of $S_4$ avoiding duplicate computation of ICs on edges and at vertices and
-skipping remaining faces once two ICs are found. Tetrahedron has six edges, so 7 \plucker coordinates and 6 inner products are computed at most. Precomputed 
-coordinates and products are passed the 1D-2D algorithm which is performed fro the whole line $p$. After collecting line-tetrahedron ICs,
-we do the line segment trimming \ref{line:trimming}. If both ICs are out of the line segment $p$ we eliminate both of them. If one of the ICs if out of $p$
-we use the closest end point of the line segment instead and interpolate barycentric coordinates of the IC on $S_4$. The topological positions are updated as well.
-The result of the algorithm are zero up to two ICs sorted by the parameter $t$ of the line $p$.
+Algorithm \ref{algo:13d} first computes line-face intersections for every face of $S_3$.
+Tetrahedron has six edges, so 7 \plucker coordinates and 6 permuted inner products are computed at most. Precomputed coordinates and products are passed into the 1d-2d algorithm which is performed for the whole line $p$ (line \ref{line:13-intersection}).
+If no IC is found, or coplanar case occurs in line-face computation, we continue to the next face. Note, ICs that would be created in coplanar case are to be found as ICs with the other faces, since they lie on edges.
+Next, IC can be on an edge or at a vertex; then we set the correct topological position and mark the adjacent faces
+to be skipped, since there cannot be another IC (and coplanar case has been checked already).
+Finally at the line \ref{line:13-append}, we append the IC to the result and check whether the maximal amount of 
+ICs has been reached.
+
+After collecting line-tetrahedron ICs,
+we do the line segment trimming from the line \ref{line:trimming} further. 
+If we have only one IC, we check that it actually lies inside the line segment (otherwise, we throw it away).
+If we have two ICs, and if both lie outside the line segment $p$, we eliminate both of them. 
+If one of the ICs lies out of $p$,
+we use the closest end point of the line segment instead and interpolate barycentric coordinates of the IC on $S_3$. The topological positions are updated as well.
+The result of the algorithm is 0, 1, or 2 ICs, sorted by the parameter $t$ in the direction of the line $p$.
 
 
 
-\subsection{Intersection Triangle-Tetrahedron (2D-3D)}
+\subsection{Intersection Triangle-Tetrahedron (2d-3d)}
 The intersection of a triangle $S_2$ and a tetrahedron $S_3$ is an $n$-side intersection polygon (IP), $n\le 7$. The sides of the polygon
 lie either on sides of $S_2$ or on faces of $S_3$. Thus each vertex (IC) of the polygon
 can arise either from side-face intersection, or from edge-triangle intersection, or be a vertex of $S_2$.
 To get all ICs, we have to compute at most 12 side-face intersections and at most 6 edge-triangle intersections. However,
-to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner produts, one for every side-edge pair.
+to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner products, one for every side-edge pair.
 Computation of IP consists of three stages: calculation of side-tetrahedron ICs (Section \ref{sec:sides}), 
 calculation of edge-triangle ICs (Section~\ref{sec:edges}), oredering of ICs (Section~\ref{sec:ordering}).
 The intersection corners are appended to the list $I$ as they are computed however their order on the polygon boundary is 
 defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
-and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are oredered in the same 
+and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
 There are special cases when the IP is degenerated to a line or a point. If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
 
@@ -573,7 +586,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
         append IC of $v$ to $J$, \return anything
     }
   }  
-  \uElseIf{ $s$ have edge $e$ with sign oposite to other two}{ \nllabel{line:different_sign}
+  \uElseIf{ $s$ have edge $e$ with sign opposite to other two}{ \nllabel{line:different_sign}
     \return edge faces($e$)\;
   }
   
@@ -628,7 +641,7 @@ we pass all ICs in $I$.
   
 
 \section{Global mesh intersection algorithm}
-\noteJB{References already in introduction, possible references to some computer graphics book for AABB and BIH}
+\label{sec:front_advancing}
 Having the algorithms for element-element intersections we can proceed to the mesh intersection algorithm. 
 We first compute all component-bulk mesh intersections that is (1d-3d and 2d-3d) and then the 1d-2d and 2d-2d intersections use the 3d mesh
 to get the intersection pair candidates.  Element intersections for the particular component and bulk mesh 
@@ -640,7 +653,7 @@ secondly, we prolong the intersection by investigating neighbouring elements (fr
 % \textbf{breadth first search} algorithm:
 %   \begin{enumerate}
 %     \item\label{en:first} Get next unprocessed component element $k$.
-%     \item Find intersection candidates $\mathcal K$ in bulk mesh (3D elements).
+%     \item Find intersection candidates $\mathcal K$ in bulk mesh (3d elements).
 %     \item \label{en:q2}For $K\in \mathcal K$ compute intersection $(k, K)$.  
 %     \item Push the intersection neigbours into queues: $(k, L) \to Q_b$, $(l, K) \to Q_c$. 
 %     \item While $(l, L) \in Q_b$ check intersection $(l, L)$. Append queues.
@@ -669,7 +682,7 @@ the \emph{bulk queue} and the \emph{component queue}.
 %   \vspace{0pt}
   \centering    
     \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip.pdf}
-  \caption{Advancing front algorithm for 1D-2D and 2D-3D intersections.}
+  \caption{Advancing front algorithm for 1d-2d and 2d-3d intersections.}
   \label{fig:prolongation}
 \end{figure}
 
@@ -680,7 +693,7 @@ So the bulk queue is emptied before the component queue (see yellow boxes).
 On the input we consider a candidate pair provided be the initialization (top-left corner).
 Now we look for new candidate pairs among the neighboring elements (the block Prolongation decide).
 Therefore, we iterate over the intersection corners and further exploit their topological position on the component element $C$ and the bulk element $B$.
-There are 3 possible cases (applies both for 1D-3D and 2D-3D), how the intersection might be prolonged:
+There are 3 possible cases (applies both for 1d-3d and 2d-3d), how the intersection might be prolonged:
 \begin{itemize}
     \item \textbf{IC on the boundary of $C$  and inside $B$} \\
             We find all the sides coincident with the \nface of IC on $C$ component element in which the IP lies (IP can be at node and connect more sides).
@@ -705,11 +718,11 @@ from which only the first one goes into the bulk queue, trying to cover the whol
 
 % After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
 % two queues with element pairs as candidates for further intersection. If the intersection edge 
-% (point of line in 1D, edge of polygon in 2D) is inside the tetrahedron, not on its surface, we
+% (point of line in 1d, edge of polygon in 2d) is inside the tetrahedron, not on its surface, we
 % get a neighbouring element of the component and push it back together with the current tetrahedron into 
 % \emph{component prolongation queue}. If the intersection edge is inside the \emph{slave} element 
 % (line or triangle), i.e. is on the surface of tetrahedron, we get a neighbouring element of the tetrahedron
-% and push it back together with the current slave element into \emph{3D prolongation queue}.
+% and push it back together with the current slave element into \emph{3d prolongation queue}.
 
 
 Then we empty the two queues. 
@@ -720,78 +733,78 @@ Then we can pop a new candidate pair from \emph{component prolongation queue} an
 When both queues are empty, all intersections of a component have been found and we start over by looking for the first intersection of another component.
 
 \notePE{We can discuss further the covering/closing of the elements and component numbering which is not tested
-thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_13d/prolongation\_13d\_04.msh', where actually 4 components are found (therefore bulk is defined as connected 3D elements).}
+thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_13d/prolongation\_13d\_04.msh', where actually 4 components are found (therefore bulk is defined as connected 3d elements).}
 
-% The algorithm is now unified for 1D and 2D in contrast to \cite{fris_dp_2015}, where the component prolongation
+% The algorithm is now unified for 1d and 2d in contrast to \cite{fris_dp_2015}, where the component prolongation
 % queue is emptied at first.
 
-% \subsubsection{1D-3D prolongation}
+% \subsubsection{1d-3d prolongation}
 % 1d-3d prolongation logic
 % IC is:
-% - 1D element node
+% - 1d element node
 %     - inside tetrahedron
-%         - get the neighboring 1D element
-%         - push to component queue candidate pair [1D neigbor -- tetrahedron]
+%         - get the neighboring 1d element
+%         - push to component queue candidate pair [1d neigbor -- tetrahedron]
 %     - on the surface of tetrahedron
 %         - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
 %         - get the tetrahedron neighbors on the faces
 %         - push to bulk queue new candidates pairs:
-%             - [current 1D element -- tetrahedron neighbor]
-%             - [1D neighbor -- tetragedron neighbor]
+%             - [current 1d element -- tetrahedron neighbor]
+%             - [1d neighbor -- tetragedron neighbor]
 %             - check whether the candidate pair has not been computed yet
 %             (- if no new prolongation, push empty pair; means IC is on the boundary; 
 %                the element is not closed then -- not fully covered with tetrahedrons)
-% - inside 1D element
+% - inside 1d element
 %     - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
 %     - get the tetrahedron neighbors on the faces
-%     - push to bulk queue candidate pair [current 1D element -- tetrahedron neighbor]
+%     - push to bulk queue candidate pair [current 1d element -- tetrahedron neighbor]
 %     - check whether the candidate pair has not been computed yet
 %     (- if no new prolongation, push empty pair; same meaning as above)
 
 % A new candidate pair of elements is found during prologantion, based on the topological information of the intersection corner. There are 3 possible cases:
 
 % \begin{itemize}
-%     \item \textbf{IC lies at 1D element node and inside 3D element} \\
-%             We find the neighboring 1D element over the node and push a new candidate pair [1D neighbor -- current 3D element] into component queue.
-%     \item \textbf{IC lies at 1D element node and on the surface of 3D element} \\
-%             We find all the faces of 3D element in which the IC lies (1 face, or 2 faces (IC on an edge), 
-%             or 3 faces (IC at a node)). We find the corresponding neghboring 3D elements over the faces and
-%             push the following new candidates pairs into the bulk queue: [current 1D element -- 3D neighbor], [1D neighbor -- 3D neighbor].
+%     \item \textbf{IC lies at 1d element node and inside 3d element} \\
+%             We find the neighboring 1d element over the node and push a new candidate pair [1d neighbor -- current 3d element] into component queue.
+%     \item \textbf{IC lies at 1d element node and on the surface of 3d element} \\
+%             We find all the faces of 3d element in which the IC lies (1 face, or 2 faces (IC on an edge), 
+%             or 3 faces (IC at a node)). We find the corresponding neghboring 3d elements over the faces and
+%             push the following new candidates pairs into the bulk queue: [current 1d element -- 3d neighbor], [1d neighbor -- 3d neighbor].
 %             If the candidates pair has been investigated already, we skip it.
-%     \item \textbf{IC lies inside 1D element (therefore must be on the surface of 3D element)} \\
-%             The same as before, but we push only [current 1D element -- 3D neighbor] candidates pairs, since
-%             there is no 1D neighbor.
+%     \item \textbf{IC lies inside 1d element (therefore must be on the surface of 3d element)} \\
+%             The same as before, but we push only [current 1d element -- 3d neighbor] candidates pairs, since
+%             there is no 1d neighbor.
 % \end{itemize}
 
 
 
 % 2d-3d prolongation logic CURRENT
 % IC is:
-% - inside 2D element side
-%     - inside 3D element
-%         - get the neighboring 2D elements over the side
-%         - push to component queue candidates pair [2D neigbor -- current 3D element]
-% - inside the face of 3D element
-%     - get the neighboring 3D element over the face
-%     - push to bulk queue candidate pair [2D neighbor -- 3D element]
+% - inside 2d element side
+%     - inside 3d element
+%         - get the neighboring 2d elements over the side
+%         - push to component queue candidates pair [2d neigbor -- current 3d element]
+% - inside the face of 3d element
+%     - get the neighboring 3d element over the face
+%     - push to bulk queue candidate pair [2d neighbor -- 3d element]
 % 
 % 2d-3d prolongation logic WITH FUTURE CORRECTIONS
 % IC is:
-% - on 2D element side
-%     - find 2D element sides (if at node) and the corresponding neighbors
-%     - inside 3D element
-%         - push to component queue candidates pairs [2D neigbor -- current 3D element]
-%     - on the surface of 3D element
+% - on 2d element side
+%     - find 2d element sides (if at node) and the corresponding neighbors
+%     - inside 3d element
+%         - push to component queue candidates pairs [2d neigbor -- current 3d element]
+%     - on the surface of 3d element
 %         - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
-%         - get the 3D neighbors over the faces
+%         - get the 3d neighbors over the faces
 %         - push to bulk queue new candidates pairs
-%             - [current 2D element -- 3D neighbor]
-%             - [2D neighbor -- 3D neighbor] (all combinations)
+%             - [current 2d element -- 3d neighbor]
+%             - [2d neighbor -- 3d neighbor] (all combinations)
 %             - check whether the candidate pair has not been computed yet
-% - inside the 2D element (=> on the surface of 3D element)
+% - inside the 2d element (=> on the surface of 3d element)
 %     - get all faces in which the IC lies (1 face, or 2 faces (edge), or 3 faces (node))
-%     - get the 3D neighbors over the faces
-%     - push to bulk queue new candidates pairs [current 2D element -- 3D neighbor]
+%     - get the 3d neighbors over the faces
+%     - push to bulk queue new candidates pairs [current 2d element -- 3d neighbor]
 %     - check whether the candidate pair has not been computed yet
 
 
@@ -822,7 +835,7 @@ Flow123d provides models for (un)saturated groundwater flow, transport of solute
 coupled with first order reactions and heat transfer in fractured porous media. 
 The speciality of the software is that it enables
 computations on complex meshes consisting of simplicial elements of different dimensions. However,
-non-matching meshes are at the moment available only in experimental 1D-2D flow model, using mortar like coupling.
+non-matching meshes are at the moment available only in experimental 1d-2d flow model, using mortar like coupling.
 % This work is the first greater step on the way to dimensional coupling models on non-matching meshes 
 % in Flow123d.
 
@@ -837,7 +850,7 @@ We must note, that neither the old algorithms nor the new ones are optimised at 
 Note, that we use Armadillo~\cite{armadillo_2016}, a C++ linear algebra library, for linear algebra operations. Most importantly, all coordinates are represented as Armadillo vectors, so we can use dot and cross product and further vector and matrix operations provided by the library.
 
 \subsection{Element Intersection Algorithms}
-The first benchmark focuses on the 1D-3D and 2D-3D element intersections. We randomly generated
+The first benchmark focuses on the 1d-3d and 2d-3d element intersections. We randomly generated
 100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
 In some of the empty cases, the bounding boxes did not collide, so the actual intersection algorithms were skipped. A single element pair was computed 100 times to obtain reasonable computational time.
 
@@ -849,7 +862,7 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
 %     \centering
 %     \renewcommand{\arraystretch}{1.2}
 %     \begin{tabular}[b]{l|l}
-%             algorithm, 2D-3D& FLOPs\\
+%             algorithm, 2d-3d& FLOPs\\
 %                       & estimate\\
 %             \hline\\
 %             parametric plane & 585\\
@@ -858,7 +871,7 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
 %             Pl\"ucker (reuse) & 306
 %     \end{tabular}
 %     \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
-%                       Only 2D-3D case considered.}
+%                       Only 2d-3d case considered.}
 %     \label{tab:fundamental_flops}
 %     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
 %   \end{minipage}
@@ -878,7 +891,7 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
     \centering
     \renewcommand{\arraystretch}{1.2}
     \begin{tabular}[b]{l|l}
-            algorithm, 2D-3D& FLOPs\\
+            algorithm, 2d-3d& FLOPs\\
                       & estimate\\
             \hline\\
             parametric plane & 585\\
@@ -887,7 +900,7 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
             Pl\"ucker (reuse) & 306
     \end{tabular}
     \caption{Estimation of floating point operations count and comparison of different approaches.
-             Only 2D-3D case considered.}
+             Only 2d-3d case considered.}
     \label{tab:fundamental_flops}
     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
 \end{table}
@@ -900,7 +913,7 @@ In some of the empty cases, the bounding boxes did not collide, so the actual in
 \end{figure}
 
 We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
-using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1D-3D case and 2 in 2D-3D. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
+using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1d-3d case and 2 in 2d-3d. Further we provide estimated count of floating point operations for different approaches in the Table \ref{tab:fundamental_flops}.
 \notePE{Improve and complete...}
 
 \subsection{General algorithms}
@@ -993,7 +1006,7 @@ to the presence of more components. Having more fractures inside the bulk would 
 \label{sec:conclusins}
 
 TODO:
-- line intersection tracking for accelerate 2D-2D intersections
+- line intersection tracking for accelerate 2d-2d intersections
 - better handling of special cases in paarticular in relation to prolongations
 - better calculation reuse (pass with prolongations)
 - optimisation of element intersection - skip unnecessary calculations
@@ -1045,8 +1058,8 @@ fracture instead of pressure traces. This allows conforming discretization and e
 
 \cite{reichenberger_mixed-dimensional_2006} Finite volume method, fully implicit two phase flow. Cite usage of FRAC3D generator. 
 
-\cite{sladkova_bakalarka} Space-time DG with adaptive mesh, need integration of product of functions on different meshes (in 2D). An algorithm 
-for computing triangle-triangle intersections in 2D.
+\cite{sladkova_bakalarka} Space-time DG with adaptive mesh, need integration of product of functions on different meshes (in 2d). An algorithm 
+for computing triangle-triangle intersections in 2d.
 
 \cite{pichot_generalized_2012} DFN + MHFEM. Mortar method for intersections. Focused on formulation not on intersections. 
 
@@ -1078,7 +1091,7 @@ geometric predicates. Store topological information about the intersection corne
 dicuss mesh optimization after subdivision.
 
 
-\cite{gander_algorithm_2013} Full algorithm for 2d=3D called PANG. Implemented in DUNE in 2010 (Bastian). Other software (Hecht, MpCCI). 
+\cite{gander_algorithm_2013} Full algorithm for 2d=3d called PANG. Implemented in DUNE in 2010 (Bastian). Other software (Hecht, MpCCI). 
 Triangle-Triangle and Tetra-Triangle intersections done similarly as in aur approach: set of points including vertices and then sort them countercolckwise.
 Local intersection algorithm do not provide neighbouring information so the traversal algorithm do not use it.
 
