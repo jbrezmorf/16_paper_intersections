@@ -283,16 +283,32 @@ The sign of the permuted inner product gives us the relative position of the two
 see \fig{fig:plucker_products}.
 
 
-
 \begin{figure}[!htb]
-  \begin{center}        
-    \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
-%    \includegraphics{\figpath plucker_products.pdf}
-  \end{center}
-  \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines. Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
-           \notePE{circle dot permuted inner product}}
-  \label{fig:plucker_products}
+    \centering    
+    \subfloat[$\pi_p\odot \pi_i < 0 \;\forall i$]{
+        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_a.pdf}
+    }
+    \subfloat[$\pi_p\odot \pi_i = 0 \, \exists i$ \newline special case]{
+        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_b.pdf}
+    }
+    \subfloat[$\pi_p\odot \pi_i > 0 \;\forall i$]{
+        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_c.pdf}
+    }
+    \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines.          
+            Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+    }
+    \label{fig:plucker_products}
 \end{figure}
+
+% \begin{figure}[!htb]
+%   \begin{center}        
+%     \includegraphics[width=0.7\textwidth]{\figpath plucker_product.pdf}
+% %    \includegraphics{\figpath plucker_products.pdf}
+%   \end{center}
+%   \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines. Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+%            \notePE{circle dot permuted inner product}}
+%   \label{fig:plucker_products}
+% \end{figure}
 
 
 %Notice the condition on the orientation of the triangle sides. To always satisfy it, we use a
