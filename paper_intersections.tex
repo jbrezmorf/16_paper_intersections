@@ -692,28 +692,29 @@ So the bulk queue is emptied before the component queue (see yellow boxes).
 
 On the input we consider a candidate pair provided be the initialization (top-left corner).
 Now we look for new candidate pairs among the neighboring elements (the block Prolongation decide).
-Therefore, we iterate over the intersection corners and further exploit their topological position on the component element $C$ and the bulk element $B$.
+Therefore, we iterate over the intersection corners and further exploit their topological position on the component element $c$ and the bulk element $b$.
 There are 3 possible cases (applies both for 1d-3d and 2d-3d), how the intersection might be prolonged:
 \begin{itemize}
-    \item \textbf{IC on the boundary of $C$  and inside $B$} \\
-            We find all the sides coincident with the \nface of IC on $C$ component element in which the IP lies (IP can be at node and connect more sides).
-            Next, we find the component neighboring elements over the sides and push all new candidate pairs
-            [component neighbor -- current bulk element] into the component queue.
-            Note, that there can be more than one neighbor on a side, if the component has branches.
-    \item \textbf{IC on the boundary of both $C$ and $B$} \\
-            We find all the faces of bulk element in which the IP lies (1 face, or 2 faces (IP on an edge), 
-            or 3 faces (IP at a node)). We find the corresponding neighboring bulk elements over the faces and
-            push the new candidate pairs [current component element -- bulk neighbor] into the bulk queue and [component neighbor -- bulk neighbor] into the component queue.
-    \item \textbf{IC inside the component element and on the boundary of the bulk element)} \\
-            We proceed as in previous case, but we push only [current component element -- bulk neighbor] candidate pairs, since there is no component neighbor.
+    \item \textbf{IC on the boundary of $c$  and inside $b$} \\
+            We find all the sides $S$ coincident with the \nface of $c$ on which IC lies. Then we get all component
+            elements $C'$ neighbouring with $c$ over any side$s\in S$. And finally, we push all pairs $(c',b)$, $c'\in C'$ 
+            into the component queue.
+            Note, that $c$ can have more then one neighbour component elements over the single side $s$, i.e. branches are allowed.
+    \item \textbf{IC on the boundary of both $c$ and $b$} \\
+            We find all the faces $F$ coincident with the \nface of $b$ on which IC lies. 
+            Then we get all neighbours $B'$ through all faces in $F$ as in the previous case.
+            We push pairs $(c, b')$, $b'\in B'$ into the bulk queue and pairs $(c', b')$, $c'\in C'$, $b'\in B'$ into the component queue.
+    \item \textbf{IC inside of $c$ anf on the boundary of $b$)} \\
+            We proceed as in previous case, and push pairs $(c, b')$, $b'\in B'$ into the bulk queue.
 \end{itemize}
+\noteJB{Can we just use two (not excluded) cases one for IB on boundary of $c$ second for CI on boundary of $b$ ?}
 
-If the candidate pair has been found already, we skip it.
-We also see that the candidate pairs are of three types:
-[current component element -- bulk neighbor],
-[component neighbor -- current bulk element], 
-[component neighbor -- bulk neighbor],
-from which only the first one goes into the bulk queue, trying to cover the whole component element.
+We also see that the candidate pairs are of three types: $(c, b')$, $(c', b)$, $(c',b')$
+from which only the first one goes into the bulk queue, trying to cover current component element $c$ before we proceed to the next one.
+
+When the pair is taken from either of the queues we check if the pair was computed and possibly skip it. 
+To this end every component element keeps a hash of the bulk elements with which we have called the intersection test.
+
 
 
 % After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
@@ -725,15 +726,16 @@ from which only the first one goes into the bulk queue, trying to cover the whol
 % and push it back together with the current slave element into \emph{3d prolongation queue}.
 
 
-Then we empty the two queues. 
-We pop out new candidate pairs from the \emph{bulk queue} as long as it is not empty and for every new intersection computed, we repeat the previous part (means that we can further fill both queues).
-The \emph{bulk queue} is empty when the component element is fully covered by bulk elements, or
-when there is no bulk neighbor to which we can advance.
-Then we can pop a new candidate pair from \emph{component prolongation queue} and process it.
-When both queues are empty, all intersections of a component have been found and we start over by looking for the first intersection of another component.
+%Then we empty the two queues. 
+%We pop out new candidate pairs from the \emph{bulk queue} as long as it is not empty and for every new intersection computed, 
+%we repeat the previous part (means that we can further fill both queues).
+%The \emph{bulk queue} is empty when the component element is fully covered by bulk elements, or
+%when there is no bulk neighbor to which we can advance.
+%Then we can pop a new candidate pair from \emph{component prolongation queue} and process it.
+%When both queues are empty, all intersections of a component have been found and we start over by looking for the first intersection of another component.
 
-\notePE{We can discuss further the covering/closing of the elements and component numbering which is not tested
-thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_13d/prolongation\_13d\_04.msh', where actually 4 components are found (therefore bulk is defined as connected 3d elements).}
+%\notePE{We can discuss further the covering/closing of the elements and component numbering which is not tested
+%thoroughly at the moment. We can show in a figure the case in 'prolong\_meshes\_13d/prolongation\_13d\_04.msh', where actually 4 components are found (therefore bulk is defined as connected 3d elements).}
 
 % The algorithm is now unified for 1d and 2d in contrast to \cite{fris_dp_2015}, where the component prolongation
 % queue is emptied at first.
