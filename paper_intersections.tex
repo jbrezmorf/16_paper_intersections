@@ -668,15 +668,15 @@ we pass all ICs in $I$.
 \label{sec:front_advancing}
 Having the algorithms for element-element intersections at our disposal we can proceed to the mesh intersection algorithm. 
 We consider the composed mesh $\mathcal T$ containing the 3d mesh $\mathcal T_1$ that we shall call a bulk mesh $\mathcal T_b$. Any other 
-mesh $\mathcal T_i$, with dimensions $d_i < 3$, $i=1,\dots, N_{\mathcal T}$ we shall call a component mesh. 
-We first compute all component-bulk mesh intersections that is (1d-3d and 2d-3d) using the advancing front algorithm which is described in Sections 
+mesh $\mathcal T_i$, with dimension $d_i < 3$, $i=1,\dots, N_{\mathcal T}$, we shall call a component mesh. 
+We first compute all component-bulk mesh intersections that is (1d-3d and 2d-3d) using the advancing front algorithm which we shell describe in Sections 
 \ref{sec:initialization}, \ref{sec:front} and then the 1d-2d and 2d-2d 
-intersections use the bulk mesh to get the intersection pair candidates, the Section \ref{sec:components}.
+intersections are computed using the bulk mesh to get the intersection pair candidates. This step is described in Section \ref{sec:components}.
 
-Let us consider a single pair of the component mesh $\mathcal T_c$ and the bulk mesh $\mathcal T_b$. 
-Element intersections for this pair of meshes are obtained in two phases: firstly, we look for the first two elements intersecting each other (initialization); 
-secondly, we prolong the intersection by investigating neighbouring elements (front tracking).
-\noteJB{Not sure that "prolong" is the right verb.}
+Let us consider a single pair of the component mesh $\mathcal T_c$ and the bulk mesh~$\mathcal T_b$. 
+Element intersections for this pair of meshes are obtained in two phases: firstly, we look for the 
+first pair $(c,b)$ of the component and the bulk element with a non-empty intersection (the initialization); 
+secondly, we prolong the intersection by investigating neighbouring elements (the front tracking).
 
 
 % \textbf{breadth first search} algorithm:
@@ -692,68 +692,72 @@ secondly, we prolong the intersection by investigating neighbouring elements (fr
 
 \subsection{Initialization}
 \label{sec:initialization}
-\noteJB{Possibly move this afte Advancing front section since it is in fact single step in the main loop.}
-We choose an arbitrary element of the component mesh and check its intersection with all elements of the bulk mesh.
-This process is accelerated by computing the axis aligned bounding box (AABB) for every element and use intersection of the bounding boxes
-as a fast indicator for possible intersection of the elements. This step takes $O(N)$ time with respect to the number of elements of the bulk mesh $N$.
-If the number of components $k$ is small and if the components are contained inside the bulk mesh, the total time of initialization may still be linear $O(kN)$. However,
-for more complex cases we organize the bounding boxes of the bulk mesh into the bounding interval hierarchy (BIH) \cite{EGWR:EGSR06:139-149},
-a data structure in principle equivalent 
-to R-trees \cite{guttman_r-trees:_1984}, \cite{nam_comparative_2004}. The creation time is $O(N\log(N/n))$ and the lookup time $O(\log(N/n))$ where $n$ is number
-of the bulk elements in the leaf nodes of the tree.
+Given a component element $c$, we have to find an intersecting bulk element $b$.
+If this step is done only few times the optimal way it to iterate overt the bulk mesh and test every element for the intersection.
+This process may be accelerated using the axis aligned bounding box (AABB) for every element and use intersection of the bounding boxes
+as a fast indicator for possible intersection of the elements. This step takes time $O(N)$ with respect to the number of elements of the bulk mesh $N$.
+If the number of components $k$ is small and if the components are contained inside the bulk mesh, the total time of the initialization 
+may still be linear $O(kN)$. However, for more complex cases we organize the bounding boxes of the bulk mesh into the bounding interval
+hierarchy (BIH) \cite{EGWR:EGSR06:139-149} a data structure in principle equivalent 
+to the R-trees \cite{guttman_r-trees:_1984}, \cite{nam_comparative_2004}. The construction of a BIH takes time $O(N\log(N/n))$ 
+and the lookup time is $O(\log(N/n))$ where $n$ is the number of the bulk elements in the leaf nodes of the tree.
  
 \subsection{Advancing Front Method}
 \label{sec:front}
 The advancing front algorithm requires the neigbouring information for the elements within the component mesh $\mathcal T_c$ 
-as well as within the bulk mesh $\mathcal T_b$. It can be viewed as the breadth first search algorithm for a graph where graph vertices are 
-intersection polygons and graph edges are sides shared by two polygons. Since every side of IP is on the boundary of either 
+as well as within the bulk mesh $\mathcal T_b$. It can be viewed as the breadth first search algorithm for a graph where the graph vertices are 
+the intersection polygons and the graph edges are the sides shared by two polygons. Since every side of IP is on the boundary of either 
 the component element or the bulk element, we can distinguish bulk and component edges. 
-Correspondingly the candidate pairs are enqueued into \emph{component queue} $Q_c$ and the \emph{bulk queue} $Q_b$, respectively.
+Correspondingly we use a \emph{component queue} $Q_c$ and a \emph{bulk queue} $Q_b$ where we shall place intersection candidate pairs $(c,b)$.
+In order to process every pair $(c,b)$ only once, we check if the pair was already processed before it is enqueued into one of the queues.
+Only if the pair was not yet processed we mark it processed and push it into the queue. Since the number of possible pairs is to big we can not have a flag array
+which may allow constant time checks. Therefore, we keep a hash table of the processed pairs which allows the constant check in the average.
 
-The key idea behind the two queues is to compute intersections for a component element with all possible bulk elements at first, and then move to a~next neighboring component element. So the bulk queue is emptied before the component queue.
-\begin{algorithm}
-  \caption{Advancing front algorithm}  
-  \label{algo:advancing front}
-  
-  \SetKw{return}{return}
-  \SetKw{edgefaces}{edge faces}
-  \DontPrintSemicolon
-  %\KwIn{vertex $v$ of $S_3$, $L[:]$ intersection results for edges of $S_3$}
-  %\KwOut{$(x_1, x_2)$, $x_1, x_2 \in M_3$, coincident with $v$ and intersected by the plane of $S_2$}
-  mark all $c\in \mathcal T_c$ unvisited\;
-  $\gamma=0$ \tcp*{component number}
-  \For{unvisited $c\in\mathcal T_c$}{
-    increment $\gamma$\;
-    find list $L$ of intersection candidates\;
-    append $L$ to queue $Q_c$\;
-    \For{$(c, b) \in Q_c$}{
-        mark $c$ visited\;
-        push $(c,b)$ into $Q_b$\;
-        \For{$(c, b) \in Q_b$}{            
-            list $I$ of ICs of $(c,b)$ intersection\;
-            set $\gamma$ into IP\;
-            \For{$p\in I$}{
-                \If{$p$ on boundary of $c$}{
-                    get neighbours $C'$\;
-                    \tcp{check pair if unvisited, mark visited}
-                    enqueue $(c', b)$ into $Q_c$ for all $c'\in C'$ 
-                }
-                \If{$p$ on boundary of $b$}{
-                    get neighbours $B'$\;
-                    \If{$B'$ is empty and not on boundary of $c$}{mark $c$ unvisited}
-                    enqueue $(c, b')$ into $Q_b$ for all $b'\in B'$ 
-                }                
-%                 \noteJB{Questionable}\;
-%                 \If{$p$ on both boundaries}{
-%                     enqueue $(c', b')$ into $Q_c$ for all $b'\in B',\ c'\in C'$ 
+The key idea behind the two queues is to compute intersections for a component element with all possible bulk elements at first,
+and then move to a~next neighboring component element. So the bulk queue is emptied before the component queue.
+% \begin{algorithm}
+%   \caption{Advancing front algorithm}  
+%   \label{algo:advancing front}
+%   
+%   \SetKw{return}{return}
+%   \SetKw{edgefaces}{edge faces}
+%   \DontPrintSemicolon
+%   %\KwIn{vertex $v$ of $S_3$, $L[:]$ intersection results for edges of $S_3$}
+%   %\KwOut{$(x_1, x_2)$, $x_1, x_2 \in M_3$, coincident with $v$ and intersected by the plane of $S_2$}
+%   mark all $c\in \mathcal T_c$ unvisited\;
+%   $\gamma=0$ \tcp*{component number}
+%   \For{unvisited $c\in\mathcal T_c$}{
+%     increment $\gamma$\;
+%     find list $L$ of intersection candidates\;
+%     append $L$ to queue $Q_c$\;
+%     \For{$(c, b) \in Q_c$}{
+%         mark $c$ visited\;
+%         push $(c,b)$ into $Q_b$\;
+%         \For{$(c, b) \in Q_b$}{            
+%             list $I$ of ICs of $(c,b)$ intersection\;
+%             set $\gamma$ into IP\;
+%             \For{$p\in I$}{
+%                 \If{$p$ on boundary of $c$}{
+%                     get neighbours $C'$\;
+%                     \tcp{check pair if unvisited, mark visited}
+%                     enqueue $(c', b)$ into $Q_c$ for all $c'\in C'$ 
 %                 }
-            }        
-            
-        }
-    }
-  }
-  
-\end{algorithm}
+%                 \If{$p$ on boundary of $b$}{
+%                     get neighbours $B'$\;
+%                     \If{$B'$ is empty and not on boundary of $c$}{mark $c$ unvisited}
+%                     enqueue $(c, b')$ into $Q_b$ for all $b'\in B'$ 
+%                 }                
+% %                 \noteJB{Questionable}\;
+% %                 \If{$p$ on both boundaries}{
+% %                     enqueue $(c', b')$ into $Q_c$ for all $b'\in B',\ c'\in C'$ 
+% %                 }
+%             }        
+%             
+%         }
+%     }
+%   }
+%   
+% \end{algorithm}
 
 %
 \begin{figure}[!htb]
@@ -764,61 +768,58 @@ The key idea behind the two queues is to compute intersections for a component e
   \label{fig:prolongation}
 \end{figure}
 
-First, we mark all component elements $c\in\mathcal T_c$ unvisited. Then for every unvisited element $c\in \mathcal T_c$, we find all intersection candidate pairs $(c,b)$, $b\in\mathcal T_b$.
-We note at this point, that we also increment the so called \emph{component number} $\gamma$ in this cycle, and
-save it for every intersection polygon IP which is found during the front tracking. This way, we shall
-later know to which component a given IP belongs to, which will become important in Section \ref{sec:components}.
-Then, we check every (c,b) whether it has not been processed yet and if so, we enqueue it into the component queue.
-This is from where the front tracking starts, see the top-left corner of the scheme in \fig{fig:prolongation}.
+First, we mark all component elements $c\in\mathcal T_c$ as unvisited. 
+For every unvisited element $c\in \mathcal T_c$, 
+we find some intersection candidate pairs $\{$(c,b)$, $b\in\mathcal T_b$\}$ and
+into the queue $Q_c$.
+Then we increment the \emph{component number} $\gamma$, which we use to 
+mark all intersection polygons we shall find until the queue $Q_c$ becomes empty.
+This way, we shall later know to which component a given IP belongs to, 
+which will become important in Section \ref{sec:components}.
+This is from where the front tracking starts, see the top-left corner of the scheme in 
+\fig{fig:prolongation}.
 
-We pop a first candidate pair (c,b) from the component queue and compute the intersection.
-If the intersection exists, we look for new candidate pairs among the neighboring elements
-(see the white block 'For every IC').
-Therefore, we iterate over the intersection corners and further exploit their topological position on the component element $c$ and the bulk element $b$.
-We look for two types of candidate pairs (applies both for 1d-3d and 2d-3d):
+We dequeue the first candidate pair $(c,b)$ from $Q_c$ and compute the IP.
+If the intersection exists, we look for the new candidate pairs among the neighboring elements
+(see the big white block in \fig{fig:prolongation}).
+Therefore, we iterate over ICs of the IP and further exploit their topological position on the component element $c$ and the bulk element $b$.
+For every IC one or both of the following cases may happen:
 \begin{enumerate}[label=(\alph*)]
-    \item \textbf{IC on the boundary of $c$  and inside $b$} \\
+    \item \textbf{IC is on the boundary of $c$  and inside $b$.} \\
             We find all the sides $S$ coincident with the \nface of $c$ on which IC lies. Then we get all component
             elements $C'$ neighboring with $c$ over any side $s\in S$. And finally, we push all pairs $(c',b)$, $c'\in C'$ 
-            into the component queue.
-            Note that $c$ can have more then one neighbour component elements over the single side $s$, i.e. branches are allowed.
-    \item \textbf{IC inside of $c$ anf on the boundary of $b$} \label{enum:prolong2}\\
+            into the component queue. Note that $c$ can have more then one neighbour component elements over the single side $s$, i.e. branches are allowed.
+    \item \textbf{IC is inside $c$ and on the boundary of $b$.} \label{enum:prolong2}\\
             We find all the faces $F$ coincident with the \nface of $b$ on which IC lies. 
             Then we get all bulk elements $B'$ neighboring with $b$ over any face $f\in F$,
             analogically to the previous case.
             Finally, we push the new candidate pairs $(c, b')$, $b'\in B'$ into the bulk queue.
-%     \item \textbf{IC on the boundary of both $c$ and $b$} \\
-%             This situation includes both previously described cases. Therefore, we obtain new candidate pairs
-%             $(c', b)$, $c'\in C'$ and $(c, b')$, $b'\in B'$ and push them into the component queue and the bulk queue, respectively.
+            However, if the list $B'$ is empty, which means that the component element $c$ pokes out of the bulk mesh,
+            we mark the element $c$ as unvisited again. This way we have chance to find possible other intersection of the element
+            $c$ with the bulk mesh in the main loop. Note that every time this happens, the possible further intersection 
+            of the current $c$ will be seen as different component with increased component number $m$. 
+            \notePE{possible figure prolongation13d-04}
+
 \end{enumerate}
-% \noteJB{Can we just use two (not excluded) cases one for IB on boundary of $c$ second for CI on boundary of $b$ ?}
-We see that $(c, b')$ can prolong the intersection over a bulk element face, on the other hand $(c', b)$ may prolong the intersection over the component side. If the IC lies both on the boundaries of $c$ and $b$,
-we obtain candidate pairs of both types.
-When the pair is taken from either of the queues, we check whether the pair has been already computed and possibly skip it. 
-To this end every component element keeps a hash of the bulk elements with which we have called the intersection test.
-
-After we finish the cycle over ICs, we start emptying the queues. We empty the bulk queue first,
+We see that $(c, b')$ can prolong the intersection over a bulk element face, on the other hand $(c', b)$ 
+may prolong the intersection over the component side. If the IC lies both on the boundaries of $c$ and $b$,
+we obtain candidate pairs of both types. Having all ICs processed, we continue emptying the queues. We empty the bulk queue first,
 trying to fully cover the current component element $c$ before we proceed to the next one. 
-We are able to recognize a specific case when the component element 
-does not lie inside the bulk elements with its full volume -- we end up in the situation \ref{enum:prolong2},
-but there are no more bulk neighboring elements to prolong the intersection to, $B'=\emptyset$.
-Then we mark this component element $c$ as \emph{unvisited}, so it can be later found by initialization algorithm and possibly covered by other bulk elements. See this condition also in the $C'$ branch in IC cycle in \fig{fig:prolongation}. Note that every time this happens, the possible further intersection 
-of the current $c$ will be seen as different component with increased component number $m$. \notePE{possible figure prolongation13d-04}
-
-
 
 \subsection{Intersections between component meshes}
 \label{sec:components}
-We consider here the situation that components are in the interior of 3D bulk mesh. After we compute
+We consider here the situation that components are in the interior of the 3d bulk mesh. After we compute
 all component-bulk intersections, we use it to easily find all the component-component intersection candidates.
 If the bulk element intersects more than one component element, than we can create candidates from these.
 
 Let us start with description of how we store the intersection results, which will be of great importance here.
-For each element intersection, we save the following data: reference to component and bulk element, barycentric coordinates on both and index of the component. These objects are stored in separate vectors for each pair 
-of dimensions. Further we define a matrix (\emph{intersection map}) which has as many rows as there are elements in the mesh.
-At each row (element), we save the references to all other elements, having intersection with element corresponding to this row, and references to the actual intersection data.
+For each element intersection, we save the following data: reference to component and bulk element, 
+barycentric coordinates on both and index of the component. These objects are stored in separate vectors for each pair 
+of dimensions. Further we define a sparse matrix (\emph{intersection map}) which has as many rows as there are elements in the mesh.
+At each row (element), we save the references to all other elements, having intersection with element corresponding to this row, 
+and references to the actual intersection data.
 
-The algorithm for 2d-2d intersections goes as follows. We iterate over all 2d-3d intersections, respectively over
+The algorithm for 2d-2d intersections works as follows. We iterate over all 2d-3d intersections, respectively over
 the bulk elements having some intersections with 2d components. We look at the intersection map at the
 bulk element row and collect all elements that have 2d-3d intersection with it.
 Now comes in play the component number $\gamma$. If $\gamma$ is equal for both component elements, then 
