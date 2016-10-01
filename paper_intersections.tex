@@ -977,66 +977,33 @@ Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be abou
             \plucker           & 92            & 198           & 426\\
             Haines              & 51            & 177           & 469\\
             Moller and Trumbore & 42            & 168           & 756\\
-            \ngh                & 119           & 476           & 2142\\
+            \ngh                & 127           & 508           & 2286\\
     \end{tabular}
     
 \end{table}
 
 
 
-\subsection{Element Intersection Algorithms}
-The first benchmark focuses on the 1d-3d and 2d-3d element intersections. We randomly generated
-100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
-Only the pairs with non-colliding bounding boxes were included to the timing.  
-Every element pair was computed 100 times to obtain reasonable computational time.
-\noteJB{According to the results the time of single pair is on average 2e-5s. Normal system times have resolution about 20ms, hi-resolution timers
-used in profiler have resolution about 1ms. So we need at least 10000 calls per single pair to get meaningful results.}
-
-\noteJB{Mention the hardware configuration to get an context for the timing.}
-
-% \vspace{2ex}
-% \begin{minipage}{\textwidth}
+% \subsection{Element Intersection Algorithms}
+% The first benchmark focuses on the 1d-3d and 2d-3d element intersections. We randomly generated
+% 100000 element pairs inside a unit cube, from which approximately 65\% have nonempty intersection.
+% Only the pairs with non-colliding bounding boxes were included to the timing.  
+% Every element pair was computed 100 times to obtain reasonable computational time.
+% \noteJB{According to the results the time of single pair is on average 2e-5s. Normal system times have resolution about 20ms, hi-resolution timers
+% used in profiler have resolution about 1ms. So we need at least 10000 calls per single pair to get meaningful results.}
+% 
+% \noteJB{Mention the hardware configuration to get an context for the timing.}
+% 
+% \begin{figure}[!htb]
 %     \centering
-%     \hspace{-30pt}
-%   \begin{minipage}[b]{0.44\textwidth}
-%     \centering
-%     \renewcommand{\arraystretch}{1.2}
-%     \begin{tabular}[b]{l|l}
-%             algorithm, 2d-3d& FLOPs\\
-%                       & estimate\\
-%             \hline\\
-%             parametric plane & 585\\
-%             normal plane (reuse) & 765\\
-%             Moller and Trumbore & 783\\
-%             Pl\"ucker (reuse) & 306
-%     \end{tabular}
-%     \captionof{table}{Estimation of floating point operations count and comparison of different approaches.
-%                       Only 2d-3d case considered.}
-%     \label{tab:fundamental_flops}
-%     \notePE{comment on different strategies}\noteJB{Rather put into text. I shall comment that.}
-%   \end{minipage}
-%   \hfil
-%   \begin{minipage}[b]{0.5\textwidth}
-%     \centering
-%     \includegraphics[width=\textwidth]{\figpath intersections_fundamental_speed.pdf}
-%     
-%     \captionof{figure}{Efficiency of \plucker approach compared to the legacy \ngh code.}
+%     \includegraphics[width=0.5\textwidth]{\figpath intersections_fundamental_speed.pdf}
+%     \caption{Efficiency of \plucker approach compared to the legacy \ngh code.}
 %     \label{fig:fundamental_speed}
-%     \end{minipage}
-% \end{minipage}
-% \vspace{2ex}
-
-
-\begin{figure}[!htb]
-    \centering
-    \includegraphics[width=0.5\textwidth]{\figpath intersections_fundamental_speed.pdf}
-    \caption{Efficiency of \plucker approach compared to the legacy \ngh code.}
-    \label{fig:fundamental_speed}
-\end{figure}
-
-We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
-using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1d-3d case and 2 in 2d-3d. 
-\noteJB{Just the opposite what we expect. Just by chance?}
+% \end{figure}
+% 
+% We see the benchmark results in the \fig{fig:fundamental_speed}. Green values correspond to the presented algorithms
+% using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1d-3d case and 2 in 2d-3d. 
+% \noteJB{Just the opposite what we expect. Just by chance?}
 
 \subsection{Global Mesh Intersections}
 The global mesh intersection algorithm for a composed mesh $\mathcal T$ presented in Section \ref{sec:front_advancing} has been
