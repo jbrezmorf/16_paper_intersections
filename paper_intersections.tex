@@ -971,6 +971,8 @@ Every element pair was computed 100 times to obtain reasonable computational tim
 \noteJB{According to the results the time of single pair is on average 2e-5s. Normal system times have resolution about 20ms, hi-resolution timers
 used in profiler have resolution about 1ms. So we need at least 10000 calls per single pair to get meaningful results.}
 
+\noteJB{Mention the hardware configuration to get an context for the timing.}
+
 % \vspace{2ex}
 % \begin{minipage}{\textwidth}
 %     \centering
@@ -1015,29 +1017,38 @@ We see the benchmark results in the \fig{fig:fundamental_speed}. Green values co
 using \plucker coordinates, red values to \ngh code. The gained speed up factor is approximately 5 in 1d-3d case and 2 in 2d-3d. 
 \noteJB{Just the opposite what we expect. Just by chance?}
 
-\subsection{General algorithms}
-In previous sections, we have suggested an intersection algorithm that uses axes aligned bounding boxes, BIH to find initial
-intersection and advancing front method (shortly AFront) to prolong the intersection. From now on, we shall refer to the algorithm made of these components \emph{BIHsearch}. In this section, we shall compare two additional algorithms \emph{BBsearch} and \emph{BIHonly} to see the effects of BIH and AFront (see Table \ref{tab:search_algorithms}). \emph{BBsearch} does not use BIH, but searches for the initial intersection using only AABB, and then follows AFront. The version 
-\emph{BIHonly} computes AABB together with BIH, but does not use AFront.
+\subsection{Global Mesh Intersections}
+The global mesh intersection algorithm for a composed mesh $\mathcal T$ presented in Section \ref{sec:front_advancing} has been
+implemented in three variants. First variant, use a full search (FS) over the bulk mesh to get initial pair for the advancing front algorithm (AF).
+Second variant, use the BIH to accelerate the initialization of the AF algorithm. Third variant doesn't use AF at all and relies only on the BIH. 
+In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one artificial composed mesh and one raising from a real hydrogeological simulation.
 
+% \begin{table}[!htb]
+%     \centering
+%     \renewcommand{\arraystretch}{1.2}
+%     \begin{tabular}{>{\centering\arraybackslash}p{20ex}
+%                     >{\centering\arraybackslash}p{20ex}
+%                     >{\centering\arraybackslash}p{20ex}}
+%         \colorbox{NavyBlue}{\textcolor{white}{BIHsearch\vphantom{By}}} & \colorbox{orange}{BBsearch\vphantom{By}} & \colorbox{Goldenrod}{BIHonly\vphantom{By}} \\ \hline
+%         BIH(AABB) & AABB & BIH(AABB) \\
+%         AFront & AFront & ---
+%     \end{tabular}
+%     \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.
+%     \noteJB{Just in the text. Possibly use different name for variants.}
+%     \notePE{jsem vzal z posledni prezentace.. prislo mi to prehledny.. vim jak jsem se v diplomce VF hrozne krkolome vracel od grafu k popisu algoritmu..}}
+%     \label{tab:search_algorithms}
+% \end{table}
+% 
+% Let us now start with the problem on an artificial mesh. 
 
-\begin{table}[!htb]
-    \centering
-    \renewcommand{\arraystretch}{1.2}
-    \begin{tabular}{>{\centering\arraybackslash}p{20ex}
-                    >{\centering\arraybackslash}p{20ex}
-                    >{\centering\arraybackslash}p{20ex}}
-        \colorbox{NavyBlue}{\textcolor{white}{BIHsearch\vphantom{By}}} & \colorbox{orange}{BBsearch\vphantom{By}} & \colorbox{Goldenrod}{BIHonly\vphantom{By}} \\ \hline
-        BIH(AABB) & AABB & BIH(AABB) \\
-        AFront & AFront & ---
-    \end{tabular}
-    \caption{Structure of the general algorithms. 'AFront' stands for the proposed advancing front method.
-    \noteJB{Just in the text. Possibly use different name for variants.}
-    \notePE{jsem vzal z posledni prezentace.. prislo mi to prehledny.. vim jak jsem se v diplomce VF hrozne krkolome vracel od grafu k popisu algoritmu..}}
-    \label{tab:search_algorithms}
-\end{table}
+An artificial test composed mesh consists of a cube with two diagonal rectangles. A sequence of meshes was prepared with increasing number of intersections ranging
+form $0.1$ up to $2.0$ milions. The mesh size varies from $33e+3$ up to $2e+6$ elements including both the 2d and 3d. The timing for the three compared variants
+of the mesh intersection algorithm is shown on \fig{fig:cube_speed}. As the number of component meshes is low and they are completely 
+inside of the bulk mesh the FS+AF variant was the fastest and with smallest grow as expected. On the other hand the BIH variant is constantly by th 20\%
+slower then the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
+The slightly larger grow of the BIH algorithm is masked by the common superlinear grow with power about $1.1$ which we do not completely understand.
+\noteJB{???}
 
-Let us now start with the problem on an artificial mesh. 
 
 \begin{figure}[!htb]
     \centering
@@ -1055,21 +1066,22 @@ Let us now start with the problem on an artificial mesh.
 \end{figure}
 
 
-Next, we study the performance of the intersection algorithms on a mesh of a real problem, see \fig{fig:bedrichov_meshes}. The mesh represents a mountain ridge in the Jizera mountains which 
-includes a system of geological fractures (\fig{fig:bedrichov_cut}). We also used this model to create
-a less real mesh, in which the fractures extend through the bulk surface (\fig{fig:bedrichov_extend}). 
-However, this situation might rather occur in another application than aporous media problem.
-In total, 28 fractures are in the mesh.
+
+Next, we study the performance of the intersection algorithms on a mesh of a real problem, see \fig{fig:bedrichov_meshes}.
+The mesh represents a mountain ridge above a water supply tunnel in Bed{\v r}ichov in the Jizera mountains.
+The mesh includes a system of geological fractures (\fig{fig:bedrichov_cut}). In order to study influence of the component elements poking out of
+the bulk mesh we also prepared a mesh with the artificialy extended fractures (\fig{fig:bedrichov_extend}). 
+Each of these meshes contains 28 fractures in 9 2d components and single 1d component, the tunel.
 
 The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
-scales in the graph. In the first case, we notice that algorithms using AFront are nearly twice as fast as \emph{BIHonly}. The speed up corresponds to the time saved by using AFront instead of searching the whole mesh for candidate pairs. Computation of BIH in \emph{BIHsearch} pays off and the algorithm performs better than \emph{BBsearch}.
+scales in the graph. In the first case, we notice that FS+AF and BIH+AF algorithms are nearly twice as fast as \emph{BIHonly}.
+The fraction of the non-intersectiong 3d elements in boundaing boxes of the 2d elements is higher as the 3d elements are on average smaller then the 2d elements.
+Creation of the BIH in the BIH+AF variant pays off and the algorithm performs better than the FS+AF variant.
+This in the contrast to the cube test case since the number (10) of the component meshes is higher.
 
-In the second case, we observe large blow up for \emph{BBsearch}. It is caused by the exterior elements, 
-for which all bulk elements bounding boxes are iterated, so we can be sure there is no intersection.
-This of course is much better performed using BIH.
-
-In contrast to the artificial case on the fractured cube, BIH construction is worth due
-to the presence of more components. Having more fractures inside the bulk would result to more dramatic difference.
+In the second case, we observe large blow up for the FS+AF variant. It is caused by the exterior comonent elements, 
+for which all the bulk elements bounding boxes are iterated before the algorithm concludes there is no intersection.
+This case is clearly treated by both BIH and BIH+AF variants much better.
 
 
 
