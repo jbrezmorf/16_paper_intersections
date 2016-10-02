@@ -795,12 +795,20 @@ For every IC one or both of the following cases may happen:
             analogically to the previous case.
             Finally, we push the new candidate pairs $(c, b')$, $b'\in B'$ into the bulk queue.
             However, if the list $B'$ is empty, which means that the component element $c$ pokes out of the bulk mesh,
-            we mark the element $c$ as unvisited again. This way we have chance to find possible other intersection of the element
+            we mark the element $c$ as unvisited again. This way we have a chance to find possible other intersection of the element
             $c$ with the bulk mesh in the main loop. Note that every time this happens, the possible further intersection 
-            of the current $c$ will be seen as different component with increased component number $m$. 
-            \notePE{possible figure prolongation13d-04}
-
+            of the current $c$ will be seen as different component with increased component number $m$
+            (see an example situation in \fig{fig:components}). 
 \end{enumerate}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.55\textwidth]{\figpath components.pdf}
+    \caption{The two tetrahedra 1,2 do not make a compact bulk. Therefore four initializations are needed,
+    to find all the intersections with three 1D elements: 3-1, 5-1, 4-2, 5-2; creating four independent components. Advancing front method cannot play any part in this situation.}
+    \label{fig:components}
+\end{figure}
+
 We see that $(c, b')$ can prolong the intersection over a bulk element face, on the other hand $(c', b)$ 
 may prolong the intersection over the component side. If the IC lies both on the boundaries of $c$ and $b$,
 we obtain candidate pairs of both types. Having all ICs processed, we continue emptying the queues. We empty the bulk queue first,
