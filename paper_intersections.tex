@@ -171,7 +171,7 @@ simplicial elements. Bounding interval hierarchy (BIH) of axes aligned bounding 
 is used to initialize the front tracking algorithm. The family of element intersection algorithms
 is built upon a line-triangle intersection algorithm based on the \plucker
 coordinates. These algorithms combined with the advancing front technique can reuse the results of calculations 
-performed on the neigbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
+performed on the neighbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
 on each of the intersecting elements are provided for every intersection point. Benchmarks 
 of the element intersection algorithms are presented and three variants of the global intersection 
 algorithm are compared on the meshes raising from a hydrogeological application.
@@ -218,31 +218,30 @@ The discretization then leads to the meshes of mixed dimensions, i.e. composed o
 called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
 \cite{martin_modeling_2005}, \cite{fumagalli_numerical_2011}, \cite{brezina_analysis_2015} and 
 already adopted by some groundwater simulation software, e.g FeFlow \cite{trefry_feflow:_2007} and Flow123d \cite{flow123d}.
-Nevertheless as the complexity of the geometry increase (e.g. when lots of fractures are randomly generated) the compatible meshing becomes painful or even 
+Nevertheless as the complexity of the geometry increases (e.g. when lots of fractures are randomly generated) the compatible meshing becomes painful or even 
 impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently, getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
-around the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
+at the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
 We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$
 in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected set with no self intersection.
 Further we assume only single 3d mesh $\mathcal{T}_1$.
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
-and to compute that intersection. The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. 
-Second, compute the intersection of a particular pair.
+and to compute that intersection. The mesh intersection problem consists of the two parts: the first, generating a set of candidate pairs $(K, L)$; the second, computing the intersection of a particular pair.
 
 According to our knowledge, there are lots of works using non-matching grids, yet only few of them discuss algorithms how to compute their intersections. 
 Gander and Japhet \cite{gander_algorithm_2013} present the PANG algorithm for 2d-2d and 3d-3d intersections that can be used e.g. for mesh overlapping methods.
-They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the DUNE library \cite{bastian_towards_2005}.
+They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the library DUNE \cite{bastian_towards_2005}.
 Massing, Larson, and Logg \cite{massing_efficient_2013} present an algorithm for 2d-3d intersections as part of their implementation of the Nitche method 
-which is part of the Doplhin project \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
+which is part of the project Dolfin \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
 to get intersection candidate pairs of elements, the GTS library \cite{gtslib} is used for 2d-3d intersections. 
 Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
-calculation and imprinting of the intersection curves. They exploit binary space partitioning for search of initial intersection and 
-the advancing front method for intersection curve tracking. 
+calculation and imprinting of the intersection curves. They exploit the binary space partitioning for searching of the initial intersection and 
+the advancing front method for the intersection curve tracking. 
 
 In this paper we present a new approach to intersection calculation of simplicial elements of different dimensions based on the \plucker coordinates,
 further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. Element intersections based on 
-\plucker coordinates are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neigbouring
+\plucker coordinates are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neighboring
 elements and reduce the number of arithmetic operations. 
 
 The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
@@ -252,7 +251,7 @@ technique and usage of AABB and BIH for its initialization. Finally, in Section 
 
 \section{Element Intersections}
 \label{sec:element intersecitons}
-In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3d ambient space. 
+In this section, we present algorithms for computing the intersection of a pair of simplicial elements of a~different dimension in the 3d ambient space. 
 In particular we address intersection algorithms for 1d-2d, 1d-3d, 2d-3d pairs of elements. We have implemented the case 2d-2d as well, however the treatment 
 of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1d-2d simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
@@ -268,7 +267,7 @@ reference to the intersecting simplices. A data structure of a single IC consist
  \item the local index $i_K$ of that \nface on $K$,
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
-is called the topological position of the IC on $K$.
+is called the \emph{topological position} of the IC on $K$.
 
 
 \subsection{\plucker Coordinates}
@@ -276,7 +275,7 @@ is called the topological position of the IC on $K$.
 Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}$, 
 the \plucker coordinates of $p$ are defined as
 \[ \pi_p = (\vc{u}_p, \vc{v}_p) = (\vc{u}_p, \vc{u}_p\times \vc A). \]
-Further we use a permuted inner product
+Further we denote a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
 The sign of the permuted inner product gives us the relative position of the two lines, 
@@ -358,14 +357,14 @@ We use $i$ with maximal $|u_i|$ for practical computation.
 
 The calculation of the intersection proceeds as follows:
 \begin{enumerate}
-    \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_i$, $\pi_s \odot \pi_i$, for $i=1,2,3$.
+    \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
     \item If any $w_i$ is less than $\epsilon$, there is no intersection, return empty IP.  
     \item If all $w_i$ are greater than $\epsilon$, we set $\tau_T = (2, 0)$ for the IC.
     \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_T =(1,i)$.
     \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_T=(0,i)$.
     \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
-        projected to the plane $x_i=0$ where $i$ is the index of maximal component of the triangle's normal vector.
+        projected to the plane $x_i=0$ where $i$ is the index of the maximal component of the triangle's normal vector.
         Every pair $p$, $s_i$ is checked for an intersection on $T$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_T$ to 
         $(1, i)$ or $(0, i)$, respectively. At most two ICs are obtained.
     \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
@@ -373,10 +372,9 @@ The calculation of the intersection proceeds as follows:
     \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
 \end{enumerate}
 
-We shall call every IC, that was created in the coplanar case, \emph{degenerate} since these will later
-special treatment.
+We shall call every IC, that is created in the coplanar case, \emph{degenerate} since these will later need special treatment.
 
-Checking the same sign of the inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
+Checking the same sign of the permuted inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
 line with respect to the triangle. Adaptive-precision evaluation of the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997}
 and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}. However, we rather apply a fixed tolerance check for the zero 
 barycentric coordinates and consistently keep the topological positions in this and related algorithms. \noteJB{Can we make the algorithm 
@@ -391,7 +389,7 @@ The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2
 %\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
 
 \subsection{Intersection Line-Tetrahedron (1d-3d)}
-\notePE{degenerate not defined yet.. do you call it coplanar now?}
+%\notePE{degenerate not defined yet.. do you call it coplanar now?}
 In this section we consider an intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
 $S_3$. The used algorithm is based on the 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
 intersection with the line segment and consistently propagates topological position of ICs.
@@ -454,12 +452,20 @@ Computation of IP consists of three stages: calculation of side-tetrahedron ICs 
 calculation of edge-triangle ICs (Section~\ref{sec:edges}), ordering of ICs (Section~\ref{sec:ordering}).
 The intersection corners are appended to the list $I$ as they are computed, however their order on the polygon boundary is 
 defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
-and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \noteJB{possible figure}). The vertices of the polygon are ordered in the same 
+and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \fig{fig:tracing}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
 There are special cases when the IP is degenerated to a line or a point. 
 \notePE{next sentence: how should I understand 'may possibly be'; 'an IC' instead of 'some IC'}
 If some IC may possibly be part of the such degenerated IP we put it into the list $J$. 
 
+\begin{figure}[!htb]
+    \centering    
+    \includegraphics[width=0.65\textwidth]{\figpath tracing.pdf}
+    \caption{Example of an intersection 2D-3D, demonstrating the ICs ordering. We see at every 
+    intersection polygon corner $p_i$ which \nfaces it lies on. Looking at $p_0$, the connection table entries
+    are: $F_g[s_2]=p_0$, $F_p[p_0]=s_0$. For the other ICs we have: $F_g[s_0]=p_1$, $F_p[p_1]=f_1$, $F_g[f_1]=p_2$, $F_p[p_2]=f_2$ and $F_g[f_2]=p_3$, $F_p[p_3]=s_2$.}
+    \label{fig:tracing}
+\end{figure}
 
 \subsubsection{Intersections on sides of $S_2$}
 \label{sec:sides}
@@ -676,7 +682,7 @@ intersections are computed using the bulk mesh to get the intersection pair cand
 Let us consider a single pair of the component mesh $\mathcal T_c$ and the bulk mesh~$\mathcal T_b$. 
 Element intersections for this pair of meshes are obtained in two phases: firstly, we look for the 
 first pair $(c,b)$ of the component and the bulk element with a non-empty intersection (the initialization); 
-secondly, we prolong the intersection by investigating neighbouring elements (the front tracking).
+secondly, we prolong the intersection by investigating neighboring elements (the front tracking).
 
 
 % \textbf{breadth first search} algorithm:
@@ -700,11 +706,11 @@ If the number of components $k$ is small and if the components are contained ins
 may still be linear $O(kN)$. However, for more complex cases we organize the bounding boxes of the bulk mesh into the bounding interval
 hierarchy (BIH) \cite{EGWR:EGSR06:139-149} a data structure in principle equivalent 
 to the R-trees \cite{guttman_r-trees:_1984}, \cite{nam_comparative_2004}. The construction of a BIH takes time $O(N\log(N/n))$ 
-and the lookup time is $O(\log(N/n))$ where $n$ is the number of the bulk elements in the leaf nodes of the tree.
+and the search time is $O(\log(N/n))$ where $n$ is the number of the bulk elements in the leaf nodes of the tree.
  
 \subsection{Advancing Front Method}
 \label{sec:front}
-The advancing front algorithm requires the neigbouring information for the elements within the component mesh $\mathcal T_c$ 
+The advancing front algorithm requires the neighboring information for the elements within the component mesh $\mathcal T_c$ 
 as well as within the bulk mesh $\mathcal T_b$. It can be viewed as the breadth first search algorithm for a graph where the graph vertices are 
 the intersection polygons and the graph edges are the sides shared by two polygons. Since every side of IP is on the boundary of either 
 the component element or the bulk element, we can distinguish bulk and component edges. 
@@ -738,12 +744,12 @@ and then move to a~next neighboring component element. So the bulk queue is empt
 %             set $\gamma$ into IP\;
 %             \For{$p\in I$}{
 %                 \If{$p$ on boundary of $c$}{
-%                     get neighbours $C'$\;
+%                     get neighbors $C'$\;
 %                     \tcp{check pair if unvisited, mark visited}
 %                     enqueue $(c', b)$ into $Q_c$ for all $c'\in C'$ 
 %                 }
 %                 \If{$p$ on boundary of $b$}{
-%                     get neighbours $B'$\;
+%                     get neighbors $B'$\;
 %                     \If{$B'$ is empty and not on boundary of $c$}{mark $c$ unvisited}
 %                     enqueue $(c, b')$ into $Q_b$ for all $b'\in B'$ 
 %                 }                
@@ -788,7 +794,7 @@ For every IC one or both of the following cases may happen:
     \item \textbf{IC is on the boundary of $c$  and inside $b$.} \\
             We find all the sides $S$ coincident with the \nface of $c$ on which IC lies. Then we get all component
             elements $C'$ neighboring with $c$ over any side $s\in S$. And finally, we push all pairs $(c',b)$, $c'\in C'$ 
-            into the component queue. Note that $c$ can have more then one neighbour component elements over the single side $s$, i.e. branches are allowed.
+            into the component queue. Note that $c$ can have more then one neighbor component elements over the single side $s$, i.e. branches are allowed.
     \item \textbf{IC is inside $c$ and on the boundary of $b$.} \label{enum:prolong2}\\
             We find all the faces $F$ coincident with the \nface of $b$ on which IC lies. 
             Then we get all bulk elements $B'$ neighboring with $b$ over any face $f\in F$,
@@ -843,9 +849,9 @@ initialization phase of advancing front method.
 % After computing the intersection of a pair of elements (line or triangle vs tetrahedron), we fill
 % two queues with element pairs as candidates for further intersection. If the intersection edge 
 % (point of line in 1d, edge of polygon in 2d) is inside the tetrahedron, not on its surface, we
-% get a neighbouring element of the component and push it back together with the current tetrahedron into 
+% get a neighboring element of the component and push it back together with the current tetrahedron into 
 % \emph{component prolongation queue}. If the intersection edge is inside the \emph{slave} element 
-% (line or triangle), i.e. is on the surface of tetrahedron, we get a neighbouring element of the tetrahedron
+% (line or triangle), i.e. is on the surface of tetrahedron, we get a neighboring element of the tetrahedron
 % and push it back together with the current slave element into \emph{3d prolongation queue}.
 
 
@@ -953,7 +959,7 @@ and an artificial mesh.
 \subsection{Software Flow123d}
 The implementation of the presented algorithms is part of the open source software Flow123d~\cite{flow123d}.
 The C++ is used as principal language. Flow123d provides models for saturated and unsaturated groundwater flow,
-soulute transport with sorption, and  heat transfer. Mixed finite elements, finite volumes, and discontinuous Galerkin method are 
+solute transport with sorption, and  heat transfer. Mixed finite elements, finite volumes, and discontinuous Galerkin method are 
 used. All equations are consistently formulated for meshes of mixed dimensions.  However,
 non-matching meshes are at the moment available only in experimental 1d-2d flow model, using mortar like coupling.
 % This work is the first greater step on the way to dimensional coupling models on non-matching meshes 
@@ -977,7 +983,7 @@ Part of the software is also a legacy code for element intersections that we ref
 Before presenting the results of our benchmarks, let us try to estimate the number of arithmetic operations performed during 1d-3d and 2d-3d element intersections
 as we use different algorithms for the elementary line-triangle intersection. We consider 4 algorithms for the line-triangle intersections: \plucker algorithm 
 described in Section \ref{sec:1d-2d}, the legacy code \ngh, the plane clipping algorithm due to Haines \cite{haines_fast_1991}, the minimum storage
-algorithm due to Möller and Trumbore (MT) \cite{moller_fast_1997}. Raw numbers of arithemtic operations are summarized in Table \ref{tab:fundamental_flops}.
+algorithm due to Möller and Trumbore (MT) \cite{moller_fast_1997}. Raw numbers of arithmetic operations are summarized in Table \ref{tab:fundamental_flops}.
 For the \plucker and \ngh we count FLOPS from the implementation of individual intersection algorithms, for Haines and MT we estimated FLOPS in theoretical 
 implementation. In particular we account for reuse of the calculations in \plucker and Haines algorithms. Conclusions from this census are:
 algorithms based on the \plucker coordinates should be competitive with state of art algorithms in the case of 1d-3d and 2d-3d intersections. The expected performance
@@ -1052,9 +1058,9 @@ In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one art
 % Let us now start with the problem on an artificial mesh. 
 
 An artificial test composed mesh consists of a cube with two diagonal rectangles. A sequence of meshes was prepared with increasing number of intersections ranging
-form $0.1$ up to $2.0$ milions. The mesh size varies from $33e+3$ up to $2e+6$ elements including both the 2d and 3d. The timing for the three compared variants
+form $0.1$ up to $2.0$ millions. The mesh size varies from $33e+3$ up to $2e+6$ elements including both the 2d and 3d. The timing for the three compared variants
 of the mesh intersection algorithm is shown on \fig{fig:cube_speed}. As the number of component meshes is low and they are completely 
-inside of the bulk mesh the FS+AF variant was the fastest and with smallest grow as expected. On the other hand the BIH variant is constantly by th 20\%
+inside of the bulk mesh the FS+AF variant was the fastest and with smallest grow as expected. On the other hand the BIH variant is constantly by 20\%
 slower then the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
 The slightly larger grow of the BIH algorithm is masked by the common superlinear grow with power about $1.1$ which we do not completely understand.
 \noteJB{???}
@@ -1064,7 +1070,7 @@ The slightly larger grow of the BIH algorithm is masked by the common superlinea
     \centering
     \includegraphics[width=0.43\textwidth]{\figpath test1_cube0.pdf}
     \caption{Artificial mesh -- a cube with two perpendicular planes placed on the diagonals of the cube.
-             The planes are also nonmatching, therefore can be seen as two independent components.}
+             The planes are also non-matching, therefore can be seen as two independent components.}
     \label{fig:cube_mesh}
 \end{figure}
   
@@ -1080,16 +1086,16 @@ The slightly larger grow of the BIH algorithm is masked by the common superlinea
 Next, we study the performance of the intersection algorithms on a mesh of a real problem, see \fig{fig:bedrichov_meshes}.
 The mesh represents a mountain ridge above a water supply tunnel in Bed{\v r}ichov in the Jizera mountains.
 The mesh includes a system of geological fractures (\fig{fig:bedrichov_cut}). In order to study influence of the component elements poking out of
-the bulk mesh we also prepared a mesh with the artificialy extended fractures (\fig{fig:bedrichov_extend}). 
-Each of these meshes contains 28 fractures in 9 2d components and single 1d component, the tunel.
+the bulk mesh we also prepared a mesh with the artificially extended fractures (\fig{fig:bedrichov_extend}). 
+Each of these meshes contains 28 fractures in 9 2d components and single 1d component, the tunnel.
 
 The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
 scales in the graph. In the first case, we notice that FS+AF and BIH+AF algorithms are nearly twice as fast as \emph{BIHonly}.
-The fraction of the non-intersectiong 3d elements in boundaing boxes of the 2d elements is higher as the 3d elements are on average smaller then the 2d elements.
+The fraction of the non-intersecting 3d elements in bounding boxes of the 2d elements is higher as the 3d elements are on average smaller then the 2d elements.
 Creation of the BIH in the BIH+AF variant pays off and the algorithm performs better than the FS+AF variant.
 This in the contrast to the cube test case since the number (10) of the component meshes is higher.
 
-In the second case, we observe large blow up for the FS+AF variant. It is caused by the exterior comonent elements, 
+In the second case, we observe large blow up for the FS+AF variant. It is caused by the exterior component elements, 
 for which all the bulk elements bounding boxes are iterated before the algorithm concludes there is no intersection.
 This case is clearly treated by both BIH and BIH+AF variants much better.
 
@@ -1215,7 +1221,7 @@ The work of P. Exner was supported by the Ministry of Education of the Czech Rep
 % 
 % \cite{gander_algorithm_2013} Full algorithm for 2d=3d called PANG. Implemented in DUNE in 2010 (Bastian). Other software (Hecht, MpCCI). 
 % Triangle-Triangle and Tetra-Triangle intersections done similarly as in aur approach: set of points including vertices and then sort them countercolckwise.
-% Local intersection algorithm do not provide neighbouring information so the traversal algorithm do not use it.
+% Local intersection algorithm do not provide neighboring information so the traversal algorithm do not use it.
 % 
 % Review of algorithms: \cite{gander_algorithm_2009}
 % 
