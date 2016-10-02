@@ -218,27 +218,26 @@ The discretization then leads to the meshes of mixed dimensions, i.e. composed o
 called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
 \cite{martin_modeling_2005}, \cite{fumagalli_numerical_2011}, \cite{brezina_analysis_2015} and 
 already adopted by some groundwater simulation software, e.g FeFlow \cite{trefry_feflow:_2007} and Flow123d \cite{flow123d}.
-Nevertheless as the complexity of the geometry increase (e.g. when lots of fractures are randomly generated) the compatible meshing becomes painful or even 
+Nevertheless as the complexity of the geometry increases (e.g. when lots of fractures are randomly generated) the compatible meshing becomes painful or even 
 impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently, getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
-around the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
+at the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
 
 We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$
 in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected set with no self intersection.
 Further we assume only single 3d mesh $\mathcal{T}_1$.
 The mesh intersection problem is to find all pairs of elements $L\in \mathcal{T}_i$, $K\in \mathcal{T}_j$, $i\ne j$ that have non-empty intersection 
-and to compute that intersection. The mesh intersection problem consists of the two parts: First, generate a set of candidate pairs $(K, L)$. 
-Second, compute the intersection of a particular pair.
+and to compute that intersection. The mesh intersection problem consists of the two parts: the first, generating a set of candidate pairs $(K, L)$; the second, computing the intersection of a particular pair.
 
 According to our knowledge, there are lots of works using non-matching grids, yet only few of them discuss algorithms how to compute their intersections. 
 Gander and Japhet \cite{gander_algorithm_2013} present the PANG algorithm for 2d-2d and 3d-3d intersections that can be used e.g. for mesh overlapping methods.
-They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the DUNE library \cite{bastian_towards_2005}.
+They use the advancing front technique to get candidate pairs in linear time. The algorithm is part of the library DUNE \cite{bastian_towards_2005}.
 Massing, Larson, and Logg \cite{massing_efficient_2013} present an algorithm for 2d-3d intersections as part of their implementation of the Nitche method 
-which is part of the Dolfin project \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
+which is part of the project Dolfin \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
 to get intersection candidate pairs of elements, the GTS library \cite{gtslib} is used for 2d-3d intersections. 
 Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
-calculation and imprinting of the intersection curves. They exploit binary space partitioning for search of initial intersection and 
-the advancing front method for intersection curve tracking. 
+calculation and imprinting of the intersection curves. They exploit the binary space partitioning for searching of the initial intersection and 
+the advancing front method for the intersection curve tracking. 
 
 In this paper we present a new approach to intersection calculation of simplicial elements of different dimensions based on the \plucker coordinates,
 further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. Element intersections based on 
@@ -252,7 +251,7 @@ technique and usage of AABB and BIH for its initialization. Finally, in Section 
 
 \section{Element Intersections}
 \label{sec:element intersecitons}
-In this section, we present algorithms for computing intersection of a pair of simplicial elements of a~different dimension in the 3d ambient space. 
+In this section, we present algorithms for computing the intersection of a pair of simplicial elements of a~different dimension in the 3d ambient space. 
 In particular we address intersection algorithms for 1d-2d, 1d-3d, 2d-3d pairs of elements. We have implemented the case 2d-2d as well, however the treatment 
 of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1d-2d simplices using the 
 \plucker coordinates and reduce all other cases to this one. 
@@ -268,7 +267,7 @@ reference to the intersecting simplices. A data structure of a single IC consist
  \item the local index $i_K$ of that \nface on $K$,
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
-is called the topological position of the IC on $K$.
+is called the \emph{topological position} of the IC on $K$.
 
 
 \subsection{\plucker Coordinates}
@@ -276,7 +275,7 @@ is called the topological position of the IC on $K$.
 Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}$, 
 the \plucker coordinates of $p$ are defined as
 \[ \pi_p = (\vc{u}_p, \vc{v}_p) = (\vc{u}_p, \vc{u}_p\times \vc A). \]
-Further we use a permuted inner product
+Further we denote a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
 The sign of the permuted inner product gives us the relative position of the two lines, 
@@ -358,14 +357,14 @@ We use $i$ with maximal $|u_i|$ for practical computation.
 
 The calculation of the intersection proceeds as follows:
 \begin{enumerate}
-    \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_i$, $\pi_s \odot \pi_i$, for $i=1,2,3$.
+    \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
     \item If any $w_i$ is less than $\epsilon$, there is no intersection, return empty IP.  
     \item If all $w_i$ are greater than $\epsilon$, we set $\tau_T = (2, 0)$ for the IC.
     \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_T =(1,i)$.
     \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_T=(0,i)$.
     \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
-        projected to the plane $x_i=0$ where $i$ is the index of maximal component of the triangle's normal vector.
+        projected to the plane $x_i=0$ where $i$ is the index of the maximal component of the triangle's normal vector.
         Every pair $p$, $s_i$ is checked for an intersection on $T$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_T$ to 
         $(1, i)$ or $(0, i)$, respectively. At most two ICs are obtained.
     \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
@@ -373,10 +372,9 @@ The calculation of the intersection proceeds as follows:
     \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
 \end{enumerate}
 
-We shall call every IC, that was created in the coplanar case, \emph{degenerate} since these will later
-special treatment.
+We shall call every IC, that is created in the coplanar case, \emph{degenerate} since these will later need special treatment.
 
-Checking the same sign of the inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
+Checking the same sign of the permuted inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
 line with respect to the triangle. Adaptive-precision evaluation of the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997}
 and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}. However, we rather apply a fixed tolerance check for the zero 
 barycentric coordinates and consistently keep the topological positions in this and related algorithms. \noteJB{Can we make the algorithm 
@@ -391,7 +389,7 @@ The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2
 %\noteJB{Just note that this algorithm can also be implemented using 1d-2d, but quite complex to not yet fully tested}
 
 \subsection{Intersection Line-Tetrahedron (1d-3d)}
-\notePE{degenerate not defined yet.. do you call it coplanar now?}
+%\notePE{degenerate not defined yet.. do you call it coplanar now?}
 In this section we consider an intersection of a line segment $p$ given by the parametric equation \eqref{eq:line_parametric} with a tetrahedron 
 $S_3$. The used algorithm is based on the 1d-2d algorithm and closely follows \cite{platis_fast_2003}. Our modification takes into account
 intersection with the line segment and consistently propagates topological position of ICs.
