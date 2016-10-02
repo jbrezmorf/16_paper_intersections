@@ -267,8 +267,8 @@ reference to the intersecting simplices. A data structure of a single IC consist
  \item the local index $i_K$ of that \nface on $K$,
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
-is called the \emph{topological position} of the IC on $K$. Moreover, as every IC is result of some permuted
-inner product of the \plucker coordinates (see Section \label{sec:1d-2d}), we store the sign of the product as well.
+is called the \emph{topological position} of the IC on $K$. Moreover, as every IC is a result of a permuted
+inner product of some \plucker coordinates (see Section \label{sec:1d-2d}), we store the sign of the product as well.
 
 
 \subsection{\plucker Coordinates}
@@ -457,13 +457,13 @@ defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the
 and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \fig{fig:tracing}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
 There are special cases when the IP is degenerated to a line or a point. 
-If we obtain an IC during the calculation that may possibly be part a degenerated IP but
-we can not decide it at the moment we put that IC into the list $J$. 
+If we obtain an IC during the calculation that may possibly be a part a degenerate IP, which
+we cannot decide at the moment, we put that IC into the list $J$. 
 
 \begin{figure}[!htb]
     \centering    
     \includegraphics[width=0.65\textwidth]{\figpath tracing.pdf}
-    \caption{Example of an intersection 2d-3d, demonstrating the ICs ordering. We see at every 
+    \caption{An example of an intersection 2d-3d, demonstrating the ICs ordering. We see at every 
     intersection polygon corner $p_i$ which \nfaces it lies on. Looking at $p_0$, the connection table entries
     are: $F_g[s_2]=p_0$, $F_p[p_0]=s_0$. For the other ICs we have: $F_g[s_0]=p_1$, $F_p[p_1]=f_1$, $F_g[f_1]=p_2$, $F_p[p_2]=f_2$ and $F_g[f_2]=p_3$, $F_p[p_3]=s_2$.}
     \label{fig:tracing}
