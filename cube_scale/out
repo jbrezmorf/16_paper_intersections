@@ -1,0 +1,78 @@
+            "tag": "Whole Program",
+            "percent": "100",
+                    "tag": "MESH - setup topology",
+                    "percent": "5.217298731328273"
+                    "tag": "Intersections 2D-3D",
+                    "percent": "73.11257650356899",
+                            "tag": "Intersection algorithm",
+                            "percent": "86.18404937947524",
+                                    "tag": "Intersection initialization",
+                                    "percent": "7.959602748352725"
+                                    "tag": "Element iteration",
+                                    "percent": "92.03066559306041",
+                                            "tag": "Bounding box element iteration",
+                                            "percent": "99.71405232141784",
+                                                    "tag": "Compute intersection",
+                                                    "percent": "0.03201070692506649",
+                                                            "tag": "CI trace opt",
+                                                            "percent": "8.243503959106205"
+                                                    "tag": "Prolongation algorithm",
+                                                    "percent": "99.91941703306398",
+                                                            "tag": "Compute intersection",
+                                                            "percent": "74.29680162171103",
+                                                                    "tag": "CI trace opt",
+                                                                    "percent": "10.8536934997701"
+                                                                    "tag": "CI trace convex hull",
+                                                                    "percent": "2.256707585351232"
+                                                            "tag": "intersection_exists",
+                                                            "percent": "2.397319435919875",
+                                                                    "tag": "cycle",
+                                                                    "percent": "47.98600815803154"
+                                                    "tag": "intersection_exists",
+                                                    "percent": "0.001177667356726922",
+                                                            "tag": "cycle",
+                                                            "percent": "49.23360772069257"
+                            "tag": "Intersection into storage",
+                            "percent": "13.81524102914616"
+                    "tag": "GMSHReader - read mesh",
+                    "percent": "15.0672936150832"
+            "tag": "Whole Program",
+            "percent": "100",
+                    "tag": "MESH - setup topology",
+                    "percent": "13.67958320614236"
+                    "tag": "Intersections 2D-3D",
+                    "percent": "45.87359203869105",
+                            "tag": "Intersection algorithm",
+                            "percent": "88.07569469882945",
+                                    "tag": "Intersection initialization",
+                                    "percent": "30.20361823202368"
+                                    "tag": "Element iteration",
+                                    "percent": "69.79574956960023",
+                                            "tag": "Bounding box element iteration",
+                                            "percent": "99.33938024522847",
+                                                    "tag": "Compute intersection",
+                                                    "percent": "0.005416226512572158",
+                                                            "tag": "CI trace opt",
+                                                            "percent": "5.561138679100387"
+                                                    "tag": "Prolongation algorithm",
+                                                    "percent": "99.76729895624705",
+                                                            "tag": "Compute intersection",
+                                                            "percent": "72.4118879780813",
+                                                                    "tag": "CI trace opt",
+                                                                    "percent": "11.61003138131382",
+                                                                            "tag": "CI trace convex hull",
+                                                                            "percent": "0.005346170912253274"
+                                                                    "tag": "CI trace convex hull",
+                                                                    "percent": "0.9720741582190433"
+                                                            "tag": "intersection_exists",
+                                                            "percent": "2.585632939120679",
+                                                                    "tag": "cycle",
+                                                                    "percent": "51.01031525919845"
+                                                    "tag": "intersection_exists",
+                                                    "percent": "0.0002477074068940109",
+                                                            "tag": "cycle",
+                                                            "percent": "57.49497294720042"
+                            "tag": "Intersection into storage",
+                            "percent": "11.92424633260901"
+                    "tag": "GMSHReader - read mesh",
+                    "percent": "32.77831628599934"
