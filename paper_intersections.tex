@@ -267,8 +267,8 @@ reference to the intersecting simplices. A data structure of a single IC consist
  \item the local index $i_K$ of that \nface on $K$,
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
-is called the \emph{topological position} of the IC on $K$. Moreover, as every IC is result of some permuted
-inner product of the \plucker coordinates (see Section \label{sec:1d-2d}), we store the sign of the product as well.
+is called the \emph{topological position} of the IC on $K$. Moreover, as every IC is a result of a permuted
+inner product of some \plucker coordinates (see Section \label{sec:1d-2d}), we store the sign of the product as well.
 
 
 \subsection{\plucker Coordinates}
@@ -323,12 +323,12 @@ Let us consider a line $p$ with parametric equation
     \label{eq:line_parametric}
     \vc X = \vc A + t\vc u,
 \end{equation}
-on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_3$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_2$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
 with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. 
 \begin{lemma}
 The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
-is an intersection point $\vc X$ on the $p$ and inside the triangle $S_3$. 
-The barycentric coordinates of $\vc X$ on $S_3$ are
+is an intersection point $\vc X$ on the $p$ and inside the triangle $S_2$. 
+The barycentric coordinates of $\vc X$ on $S_2$ are
 \begin{equation}
   \label{eq:bary_centric}
    w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }.
@@ -346,9 +346,9 @@ Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2
 \[
    \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc v_1 \times \vc v_2).
 \]
-The point $\vc X$ is inside $S_3$ if and only if $w_i>0$ for all $i=0,1,2$.
+The point $\vc X$ is inside $S_2$ if and only if $w_i>0$ for all $i=0,1,2$.
 \end{proof}
-Having the barycentric coordinates of $\vc X$ on $S_3$, we can compute also its local coordinate on $p$ from its parametric form:
+Having the barycentric coordinates of $\vc X$ on $S_2$, we can compute also its local coordinate on $p$ from its parametric form:
 \begin{equation}
    \label{eq:line}
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
@@ -360,12 +360,12 @@ The calculation of the intersection proceeds as follows:
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
     \item If any $w_i$ is less than $\epsilon$, there is no intersection, return empty IP.  
-    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_3} = (2, 0)$ for the IC.
-    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_3} =(1,i)$.
-    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_3}=(0,i)$.
+    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC.
+    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_2} =(1,i)$.
+    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_2}=(0,i)$.
     \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
         projected to the plane $x_i=0$ where $i$ is the index of the maximal component of the triangle's normal vector.
-        Every pair $p$, $s_i$ is checked for an intersection on $S_3$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_{S_3}$ to 
+        Every pair $p$, $s_i$ is checked for an intersection on $S_2$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_{S_2}$ to 
         $(1, i)$ or $(0, i)$, respectively. At most two ICs are obtained.
     \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
     \item If $t\in (-\epsilon, \epsilon)$ or $t\in (1-\epsilon, 1+\epsilon)$,
@@ -457,13 +457,13 @@ defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the
 and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \fig{fig:tracing}). The vertices of the polygon are ordered in the same 
 way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
 There are special cases when the IP is degenerated to a line or a point. 
-If we obtain an IC during the calculation that may possibly be part a degenerated IP but
-we can not decide it at the moment we put that IC into the list $J$. 
+If we obtain an IC during the calculation that may possibly be a part a degenerate IP, which
+we cannot decide at the moment, we put that IC into the list $J$. 
 
 \begin{figure}[!htb]
     \centering    
     \includegraphics[width=0.65\textwidth]{\figpath tracing.pdf}
-    \caption{Example of an intersection 2d-3d, demonstrating the ICs ordering. We see at every 
+    \caption{An example of an intersection 2d-3d, demonstrating the ICs ordering. We see at every 
     intersection polygon corner $p_i$ which \nfaces it lies on. Looking at $p_0$, the connection table entries
     are: $F_g[s_2]=p_0$, $F_p[p_0]=s_0$. For the other ICs we have: $F_g[s_0]=p_1$, $F_p[p_1]=f_1$, $F_g[f_1]=p_2$, $F_p[p_2]=f_2$ and $F_g[f_2]=p_3$, $F_p[p_3]=s_2$.}
     \label{fig:tracing}
@@ -775,7 +775,7 @@ and then move to a~next neighboring component element. So the bulk queue is empt
 \begin{figure}[!htb]
 %   \vspace{0pt}
   \centering    
-    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip_jb_fix_italic.pdf}
+    \includegraphics[width=\textwidth]{\figpath prolongation_scheme_ip_pe_final.pdf}
   \caption{Advancing front algorithm for 1d-2d and 2d-3d intersections.}
   \label{fig:prolongation}
 \end{figure}
@@ -828,21 +828,21 @@ trying to fully cover the current component element $c$ before we proceed to the
 
 \subsection{Intersections Between Component Meshes}
 \label{sec:components}
-We consider here the situation that components are in the interior of the 3d bulk mesh. After we compute
-all component-bulk intersections, we use it to easily find all the component-component intersection candidates.
-If the bulk element intersects more than one component element, than we can create candidates from these.
+We consider here the situation where components are in the interior of the 3d bulk mesh. After we compute
+all component-bulk intersections, we use it to easily find all the component-component intersection candidate
+pairs.
+If the bulk element intersects more than one component element, then we look for candidate pairs only among these.
 
-Let us start with description of how we store the intersection results, which will be of great importance here.
-For each element intersection, we save the following data: reference to component and bulk element, 
-barycentric coordinates on both and index of the component. These objects are stored in separate vectors for each pair 
-of dimensions. Further we define a sparse matrix (\emph{intersection map}) which has as many rows as there are elements in the mesh.
-At each row (element), we save the references to all other elements, having intersection with element corresponding to this row, 
-and references to the actual intersection data.
+Let us start with the description of how we store the intersection results, which will be of great importance here.
+For each element intersection, we save the following data: references to the component and bulk element, 
+the barycentric coordinates on both and the index of the component. These objects are stored in separate vectors for each pair of dimensions. Further we define a matrix (\emph{intersection map}) which has as many rows as there are elements in the mesh.
+At each row, we save the references to all other elements, having intersection with the element corresponding to this row, and references to the actual intersection data.
 
-The algorithm for 2d-2d intersections works as follows. We iterate over all 2d-3d intersections, respectively over
+The algorithm for 2d-2d intersections works as follows. We iterate over all 2d-3d intersections, in fact over
 the bulk elements having some intersections with 2d components. We look at the intersection map at the
 bulk element row and collect all elements that have 2d-3d intersection with it.
-Now comes in play the component number $\gamma$. If $\gamma$ is equal for both component elements, then 
+Then we create all possible pairs from the collected component elements.
+Now comes in play the component number $\gamma$. If the elements of a single pair have $\gamma$ equal, then 
 these are part of a single continuous component and we do not compute any intersection.
 Otherwise we obtain a new candidate pair, for which IP can be computed.
 
@@ -955,10 +955,10 @@ initialization phase of advancing front method.
 
 In this section, we present numerical results on several benchmark problems. 
 In the beginning, we provide some software development related information.
-Then analyze theoretical number of FLOPS in our element intersection algorithms with 
+Then we analyze the theoretical number of FLOPS in our element intersection algorithms with 
 other state of art algorithms.
-Next we shall compare our algorithms with different initialization phase (candidate pairs search),
-and using the advancing front method or not. We shall show the results both on a mesh of a real locality
+Next we compare our algorithms with different initialization phase (candidate pairs search),
+and using the advancing front method or not. We show the results both on a mesh of a real locality
 and an artificial mesh.
 
 
@@ -1041,8 +1041,8 @@ Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be abou
 
 \subsection{Global Mesh Intersections}
 The global mesh intersection algorithm for a composed mesh $\mathcal T$ presented in Section \ref{sec:front_advancing} has been
-implemented in three variants. First variant, use a full search (FS) over the bulk mesh to get initial pair for the advancing front algorithm (AF).
-Second variant, use the BIH to accelerate the initialization of the AF algorithm. Third variant doesn't use AF at all and relies only on the BIH. 
+implemented in three variants. First variant uses a full search (FS) over the bulk mesh to get the initial pair for the advancing front algorithm (AF).
+Second variant uses the BIH to accelerate the initialization of the AF algorithm. Third variant doesn't use AF at all and relies only on the BIH. 
 In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one artificial composed mesh and one raising from a real hydrogeological simulation.
 
 % \begin{table}[!htb]
@@ -1066,9 +1066,8 @@ In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one art
 An artificial test composed mesh consists of a cube with two diagonal rectangles. A sequence of meshes was prepared with increasing number of intersections ranging
 form $0.1$ up to $2.0$ millions. The mesh size varies from $33e+3$ up to $2e+6$ elements including both the 2d and 3d. The timing for the three compared variants
 of the mesh intersection algorithm is shown on \fig{fig:cube_speed}. As the number of component meshes is low and they are completely 
-inside of the bulk mesh the FS+AF variant was the fastest and with smallest grow as expected. On the other hand the BIH variant is constantly by 20\%
-slower then the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
-The slightly larger grow of the BIH algorithm is masked by the common superlinear grow with power about $1.1$ which we do not completely understand.
+inside of the bulk mesh the FS+AF variant is the fastest and with the smallest growth as expected. On the other hand the BIH variant is constantly slower by 20\% than the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
+The slightly larger growth of the BIH algorithm is masked by the common superlinear growth with power about $1.1$ which we do not completely understand.
 \noteJB{???}
 
 
@@ -1093,7 +1092,7 @@ Next, we study the performance of the intersection algorithms on a mesh of a rea
 The mesh represents a mountain ridge above a water supply tunnel in Bed{\v r}ichov in the Jizera mountains.
 The mesh includes a system of geological fractures (\fig{fig:bedrichov_cut}). In order to study influence of the component elements poking out of
 the bulk mesh we also prepared a mesh with the artificially extended fractures (\fig{fig:bedrichov_extend}). 
-Each of these meshes contains 28 fractures in 9 2d components and single 1d component, the tunnel.
+Each of these meshes contains \notePE{what is the 9 number??} 28 fractures in 9 2d components and a single 1d component, the tunnel.
 
 The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
 scales in the graph. In the first case, we notice that FS+AF and BIH+AF algorithms are nearly twice as fast as \emph{BIHonly}.
