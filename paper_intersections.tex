@@ -970,7 +970,7 @@ used. All equations are consistently formulated for meshes of mixed dimensions. 
 non-matching meshes are at the moment available only in experimental 1d-2d flow model, using mortar like coupling.
 % This work is the first greater step on the way to dimensional coupling models on non-matching meshes 
 % in Flow123d.
-Part of the software is also a legacy code for element intersections that we refer to as \ngh.
+%Part of the software is also a legacy code for element intersections that we refer to as \ngh.
 
 % \notePE{check NGH.. how to refer to NGH later?}
 % Currently, there is also another implementation of the element intersections in the software (we shall refer to
@@ -986,19 +986,25 @@ Part of the software is also a legacy code for element intersections that we ref
 %further vector and matrix operations provided by the library.
 
 \subsection{Theoretical Comparison}
-Before presenting the results of our benchmarks, let us try to estimate the number of arithmetic operations performed during 1d-3d and 2d-3d element intersections
-as we use different algorithms for the elementary line-triangle intersection. We consider 4 algorithms for the line-triangle intersections: \plucker algorithm 
-described in Section \ref{sec:1d-2d}, the legacy code \ngh, the plane clipping algorithm due to Haines \cite{haines_fast_1991}, the minimum storage
-algorithm due to Möller and Trumbore (MT) \cite{moller_fast_1997}. Raw numbers of arithmetic operations are summarized in Table \ref{tab:fundamental_flops}.
-For the \plucker and \ngh we count FLOPS from the implementation of individual intersection algorithms, for Haines and MT we estimated FLOPS in theoretical 
-implementation. In particular we account for reuse of the calculations in \plucker and Haines algorithms. Conclusions from this census are:
-algorithms based on the \plucker coordinates should be competitive with state of art algorithms in the case of 1d-3d and 2d-3d intersections. The expected performance
-for the 1d-2d case seems to be poor however these intersections are computed after 1d-3d and 2d-3d so the \plucker coordinates may be reused, then we get 
-quite competitive $45$ FLOPS. Similarly we may expect better times in remaining two intersection cases when we account for the reuse of calculation between elements.
-Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be about $2.5\times$ faster and the 2d-3d about $5\times$ faster.
+It proved to be a bit problematic to compare the presented algorithms for element-element intersections to any of the state of art
+algorithms e.g. from the field of computer graphics. The algorithms for computer graphics applications are specialized for
+the 1d-2d and 1d-3d cases and they provide different output information then our algorithms. Moreover our implementation 
+is not yet fully optimized to be on par with the fine tuned implementations. Instead, we present a theoretical comparison 
+in terms of estimated number of floating point operations (FLOPS) performed by individual algorithms. As the intersection 
+algorithms works on small data they should not be limited by the memory access, thus such comparison may be realistic. 
 
-\noteJB{Need better timing for \plucker with respect to NGH in 
-2d-3d  case. Could it be due to polygon tracing?}
+We consider 3 algorithms for the line-triangle intersections: \plucker algorithm 
+described in Section \ref{sec:1d-2d}, the algorithm based on the plane clipping due to Haines \cite{haines_fast_1991}, and the minimum storage
+algorithm due to M{\" o}ller and Trumbore (MT) \cite{moller_fast_1997}. For the later two algorithms we have considered strightforward modifications
+to make them return qualitatively same output as our algorithms for 1d-2d, 1d-3d, and 2d-3d cases.
+Estimated numbers of FLOPS for all cases are summarized in Table \ref{tab:fundamental_flops}.
+For the \plucker, we count FLOPS actually made by the implementation of individual intersection algorithms. For Haines and MT, 
+we estimated number of FLOPS in theoretical implementations. In particular we account for reuse of the calculations in \plucker and Haines algorithms. 
+Conclusions from this census are: algorithms based on the \plucker coordinates should be competitive with state of art algorithms in the case of 1d-3d 
+and 2d-3d intersections. The expected performance for the 1d-2d case seems to be poor however these intersections are computed after 1d-3d and 2d-3d 
+so the \plucker coordinates may be reused. Considering this scenario we get quite competitive $45$ FLOPS. 
+Similarly we may expect better times in remaining two intersection cases when the \plucker coordinates and their products 
+are reused by neighbouring elements.
 
 \begin{table}[!htb]
     \caption{Raw number of FLOPS used by different intersection algorithms.}    
@@ -1010,8 +1016,7 @@ Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be abou
             \hline\\
             \plucker           & 92            & 198           & 426\\
             Haines              & 51            & 177           & 469\\
-            Moller and Trumbore & 42            & 168           & 756\\
-            \ngh                & 127           & 508           & 2286\\
+            Moller and Trumbore & 42            & 168           & 756
     \end{tabular}
     
 \end{table}
@@ -1043,7 +1048,7 @@ Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be abou
 The global mesh intersection algorithm for a composed mesh $\mathcal T$ presented in Section \ref{sec:front_advancing} has been
 implemented in three variants. First variant uses a full search (FS) over the bulk mesh to get the initial pair for the advancing front algorithm (AF).
 Second variant uses the BIH to accelerate the initialization of the AF algorithm. Third variant doesn't use AF at all and relies only on the BIH. 
-In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one artificial composed mesh and one raising from a real hydrogeological simulation.
+In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one artificial composed mesh and one mesh raising from a real hydrogeological simulation.
 
 % \begin{table}[!htb]
 %     \centering
@@ -1063,12 +1068,15 @@ In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one art
 % 
 % Let us now start with the problem on an artificial mesh. 
 
-An artificial test composed mesh consists of a cube with two diagonal rectangles. A sequence of meshes was prepared with increasing number of intersections ranging
-form $0.1$ up to $2.0$ millions. The mesh size varies from $33e+3$ up to $2e+6$ elements including both the 2d and 3d. The timing for the three compared variants
-of the mesh intersection algorithm is shown on \fig{fig:cube_speed}. As the number of component meshes is low and they are completely 
-inside of the bulk mesh the FS+AF variant is the fastest and with the smallest growth as expected. On the other hand the BIH variant is constantly slower by 20\% than the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
-The slightly larger growth of the BIH algorithm is masked by the common superlinear growth with power about $1.1$ which we do not completely understand.
-\noteJB{???}
+The artificial composed mesh consists of a cube and two diagonal rectangular 2d meshes (see \fig{fig:fig:cube_mesh}). The bulk mesh 
+A sequence of meshes was prepared with increasing number of elements ranging
+form $33$ up to $2000$ thousands of elements. The mesh step for the bulk mesh was always about half the mesh step of the component mesh. 
+The number of the bulk-component intersections varies from $0.1$ up to $2.0$ millions. The timing for the three compared variants
+of the mesh intersection algorithm is shown on \fig{fig:cube_speed}. Every algorithm consists of the initialization phase which process all elements of the mesh 
+and the intersection phase which depends only on the number of elements in the component mesh. In these terms both phases of all three variants exhibits almost 
+linear time complexity. As the number of component meshes is low and they are completely inside of the bulk mesh the FS+AF variant is the fastest in particular
+due to fast initialization. On the other hand the BIH variant is about two times slower than the BIH+AF variant during the intersection phase. 
+That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
 
 
 \begin{figure}[!htb]
