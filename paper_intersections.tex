@@ -932,13 +932,11 @@ initialization phase of advancing front method.
 \label{sec:benchmarks}
 
 %done \noteJB{I prefer to call them element intersection. Fundamental intersection seems to epic.}
-\noteJB{We compare just against NGH which we should briefly describe. Neither of the algorithms is optimized. The new one deals correctly with special cases and provides 
-barycentric coordinates (so more work for less time).}
-\noteJB{Also write little about Flow123d here. The language etc.}
 
 In this section, we present numerical results on several benchmark problems. 
 In the beginning, we provide some software development related information.
-Then we compare the performance of our algorithms for element intersections with other approaches \noteJB{they are all ours}.
+Then analyze theoretical number of FLOPS in our element intersection algorithms with 
+other state of art algorithms.
 Next we shall compare our algorithms with different initialization phase (candidate pairs search),
 and using the advancing front method or not. We shall show the results both on a mesh of a real locality
 and an artificial mesh.
