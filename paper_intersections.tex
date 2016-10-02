@@ -91,7 +91,7 @@
 %\newcommand{\defref}[1]{\hyperref[#1]{Def.~\ref{#1}}}
 \newcommand{\prob}[1]{Problem~{#1}}
 \newcommand{\fig}[1]{\hyperref[#1]{Figure \ref{#1}}}
-\newcommand{\figpath}{figures/}
+\newcommand{\figpath}{}
 
 %math:
 \def\vc#1{\mathbf{\boldsymbol{#1}}}     % vector
@@ -816,8 +816,9 @@ For every IC one or both of the following cases may happen:
 \begin{figure}[!htb]
     \centering
     \includegraphics[width=0.55\textwidth]{\figpath components.pdf}
-    \caption{The two tetrahedra 1,2 do not make a compact bulk. Therefore four initializations are needed,
-    to find all the intersections with three 1D elements: 3-1, 5-1, 4-2, 5-2; creating four independent components. Advancing front method cannot play any part in this situation.}
+    \caption{For a non-convex bulk domain a situation as this may happen. The 1d elements 3,4,5 extends out of the bulk mesh.
+    Therefore four initializations are needed, to find all four 1d-3d intersections every one forming an independent component. 
+    Advancing front method cannot play any part in this situation.}
     \label{fig:components}
 \end{figure}
 
@@ -1100,13 +1101,14 @@ Next, we study the performance of the intersection algorithms on a mesh of a rea
 The mesh represents a mountain ridge above a water supply tunnel in Bed{\v r}ichov in the Jizera mountains.
 The mesh includes a system of geological fractures (\fig{fig:bedrichov_cut}). In order to study influence of the component elements poking out of
 the bulk mesh we also prepared a mesh with the artificially extended fractures (\fig{fig:bedrichov_extend}). 
-Each of these meshes contains \notePE{what is the 9 number??} 28 fractures in 9 2d components and a single 1d component, the tunnel.
+Each of these meshes contains 28 fractures however some of them are connected in the conforming way so there is 9 separated 2d components and a 
+single 1d component, the tunnel.
 
 The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
 scales in the graph. In the first case, we notice that FS+AF and BIH+AF algorithms are nearly twice as fast as \emph{BIHonly}.
 The fraction of the non-intersecting 3d elements in bounding boxes of the 2d elements is higher as the 3d elements are on average smaller then the 2d elements.
 Creation of the BIH in the BIH+AF variant pays off and the algorithm performs better than the FS+AF variant.
-This in the contrast to the cube test case since the number (10) of the component meshes is higher.
+This in the contrast to the cube test case since the number of the component meshes is higher.
 
 In the second case, we observe large blow up for the FS+AF variant. It is caused by the exterior component elements, 
 for which all the bulk elements bounding boxes are iterated before the algorithm concludes there is no intersection.
