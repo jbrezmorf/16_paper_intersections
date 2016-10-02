@@ -955,10 +955,10 @@ initialization phase of advancing front method.
 
 In this section, we present numerical results on several benchmark problems. 
 In the beginning, we provide some software development related information.
-Then analyze theoretical number of FLOPS in our element intersection algorithms with 
+Then we analyze the theoretical number of FLOPS in our element intersection algorithms with 
 other state of art algorithms.
-Next we shall compare our algorithms with different initialization phase (candidate pairs search),
-and using the advancing front method or not. We shall show the results both on a mesh of a real locality
+Next we compare our algorithms with different initialization phase (candidate pairs search),
+and using the advancing front method or not. We show the results both on a mesh of a real locality
 and an artificial mesh.
 
 
@@ -1041,8 +1041,8 @@ Compared to the legacy code \ngh the \plucker algorithm for 1d-3d should be abou
 
 \subsection{Global Mesh Intersections}
 The global mesh intersection algorithm for a composed mesh $\mathcal T$ presented in Section \ref{sec:front_advancing} has been
-implemented in three variants. First variant, use a full search (FS) over the bulk mesh to get initial pair for the advancing front algorithm (AF).
-Second variant, use the BIH to accelerate the initialization of the AF algorithm. Third variant doesn't use AF at all and relies only on the BIH. 
+implemented in three variants. First variant uses a full search (FS) over the bulk mesh to get the initial pair for the advancing front algorithm (AF).
+Second variant uses the BIH to accelerate the initialization of the AF algorithm. Third variant doesn't use AF at all and relies only on the BIH. 
 In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one artificial composed mesh and one raising from a real hydrogeological simulation.
 
 % \begin{table}[!htb]
@@ -1066,9 +1066,8 @@ In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one art
 An artificial test composed mesh consists of a cube with two diagonal rectangles. A sequence of meshes was prepared with increasing number of intersections ranging
 form $0.1$ up to $2.0$ millions. The mesh size varies from $33e+3$ up to $2e+6$ elements including both the 2d and 3d. The timing for the three compared variants
 of the mesh intersection algorithm is shown on \fig{fig:cube_speed}. As the number of component meshes is low and they are completely 
-inside of the bulk mesh the FS+AF variant was the fastest and with smallest grow as expected. On the other hand the BIH variant is constantly by 20\%
-slower then the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
-The slightly larger grow of the BIH algorithm is masked by the common superlinear grow with power about $1.1$ which we do not completely understand.
+inside of the bulk mesh the FS+AF variant is the fastest and with the smallest growth as expected. On the other hand the BIH variant is constantly slower by 20\% than the BIH+AF variant. That is roughly related to the average fraction of the non-intersecting 3d element in the bounding box of a 2d element.
+The slightly larger growth of the BIH algorithm is masked by the common superlinear growth with power about $1.1$ which we do not completely understand.
 \noteJB{???}
 
 
@@ -1093,7 +1092,7 @@ Next, we study the performance of the intersection algorithms on a mesh of a rea
 The mesh represents a mountain ridge above a water supply tunnel in Bed{\v r}ichov in the Jizera mountains.
 The mesh includes a system of geological fractures (\fig{fig:bedrichov_cut}). In order to study influence of the component elements poking out of
 the bulk mesh we also prepared a mesh with the artificially extended fractures (\fig{fig:bedrichov_extend}). 
-Each of these meshes contains 28 fractures in 9 2d components and single 1d component, the tunnel.
+Each of these meshes contains \notePE{what is the 9 number??} 28 fractures in 9 2d components and a single 1d component, the tunnel.
 
 The results for both meshes can be seen in the \fig{fig:bedrichov_speed}, pay attention to the different time
 scales in the graph. In the first case, we notice that FS+AF and BIH+AF algorithms are nearly twice as fast as \emph{BIHonly}.
