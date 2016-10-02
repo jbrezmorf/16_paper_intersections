@@ -323,12 +323,12 @@ Let us consider a line $p$ with parametric equation
     \label{eq:line_parametric}
     \vc X = \vc A + t\vc u,
 \end{equation}
-on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_3$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
+on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_2$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
 with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. 
 \begin{lemma}
 The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
-is an intersection point $\vc X$ on the $p$ and inside the triangle $S_3$. 
-The barycentric coordinates of $\vc X$ on $S_3$ are
+is an intersection point $\vc X$ on the $p$ and inside the triangle $S_2$. 
+The barycentric coordinates of $\vc X$ on $S_2$ are
 \begin{equation}
   \label{eq:bary_centric}
    w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }.
@@ -346,9 +346,9 @@ Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2
 \[
    \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc v_1 \times \vc v_2).
 \]
-The point $\vc X$ is inside $S_3$ if and only if $w_i>0$ for all $i=0,1,2$.
+The point $\vc X$ is inside $S_2$ if and only if $w_i>0$ for all $i=0,1,2$.
 \end{proof}
-Having the barycentric coordinates of $\vc X$ on $S_3$, we can compute also its local coordinate on $p$ from its parametric form:
+Having the barycentric coordinates of $\vc X$ on $S_2$, we can compute also its local coordinate on $p$ from its parametric form:
 \begin{equation}
    \label{eq:line}
    X_i  = A_i + t u_i, \text{ for } i=1,2,3
@@ -360,12 +360,12 @@ The calculation of the intersection proceeds as follows:
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
     \item If any $w_i$ is less than $\epsilon$, there is no intersection, return empty IP.  
-    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_3} = (2, 0)$ for the IC.
-    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_3} =(1,i)$.
-    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_3}=(0,i)$.
+    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC.
+    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_2} =(1,i)$.
+    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_2}=(0,i)$.
     \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
         projected to the plane $x_i=0$ where $i$ is the index of the maximal component of the triangle's normal vector.
-        Every pair $p$, $s_i$ is checked for an intersection on $S_3$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_{S_3}$ to 
+        Every pair $p$, $s_i$ is checked for an intersection on $S_2$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_{S_2}$ to 
         $(1, i)$ or $(0, i)$, respectively. At most two ICs are obtained.
     \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
     \item If $t\in (-\epsilon, \epsilon)$ or $t\in (1-\epsilon, 1+\epsilon)$,
