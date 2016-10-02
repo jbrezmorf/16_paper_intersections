@@ -1,0 +1,31 @@
+Dear editors José Luis Galán-García and Gabriel Aguilera-Venegas,
+
+We wish to submit a new manuscript entitled 
+“Fast Algorithms for Intersection of Non-matching Grids Using Plucker Coordinates.” 
+for possible publication in "Computers & Mathematics with Applications" journal in special issue ESCO 2016.
+We confirm that this work is original and has not been published elsewhere nor it is currently under consideration for publication elsewhere.
+
+The XFEM, Mortar methods, and Nitche's methods attract popularity as they are able to deal with complex or 
+varying domains. The technical issues of the mesh intersection problems however prevent their widespread.
+The paper presents a family of algorithms for intersections of simplicial elements of different dimension
+using Plucker coordinates. These algorithms combined with an advancing front technique allow reuse of
+calculations by neighbouring elements reducing number of algebraic operations.
+
+This work significantly extends the algorithm for ray-tetrahedron intersection due to Platis and Theoharis.
+In particular, the triangle-tetrahedron algorithm is presented and and detection of spacial intersection cases
+is discussed. Further, these algorithms are combined with the advancing front method into a mesh intersection algorithm.
+Finally, three variants of the mesh intersection algorithm are compared on both academic and realistic meshes.
+
+
+Proposed reviewers:
+Vit Dolejsi, Mathematical-Physical faculty, Charles University, Czech Republic; dolejsi@karlin.mff.cuni.cz
+Martin J. Gander, Université de Genève, Genève 4, Switzerland; Martin.Gander@unige.ch
+Alessio Fumagalli, Department of Mathematics,  University of Bergen, Norway;  Alessio.Fumagalli@uib.no
+Anders Logg, Chalmers University of Technology; logg@chalmers.se
+
+
+Thank you for considering this article for publication.
+
+With kind regards
+
+Jan Brezina (corresponding author), Pavel Exner
