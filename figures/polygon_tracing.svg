@@ -13,7 +13,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="polygon_tracing.svg">
   <sodipodi:namedview
      id="base"
@@ -23,17 +23,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="242.14255"
+     inkscape:cx="82.14255"
      inkscape:cy="770.23156"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1440"
-     inkscape:window-height="841"
-     inkscape:window-x="-4"
-     inkscape:window-y="-3"
+     inkscape:window-width="1920"
+     inkscape:window-height="1141"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1">
     <sodipodi:guide
        orientation="0,1"
@@ -280,7 +280,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -295,14 +295,14 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
-       style="fill:none;stroke:#5a5a5a;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       d="m 160.02252,401.88522 0.35714,-121.27958 48.72192,-59.599 120.77885,25.81581 44.49238,156.30751 z"
+       style="fill:none;stroke:#5a5a5a;stroke-width:4;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 160.02252,401.88522 0.35714,-126.27958 -1.27808,-63.88471 173.63599,30.81581 36.63524,162.02179 z"
        id="path8183"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
     <path
-       style="fill:none;stroke:#5a5a5a;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 12;stroke-dashoffset:0"
-       d="m 208.92857,220.93361 -151.071427,184.64285 336.071427,61.42858 -64.64286,-220 z"
+       style="fill:none;stroke:#5a5a5a;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:2, 12;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 162.5,211.6479 49.285715,364.86218 383.92857,479.1479 334.28571,242.00504 Z"
        id="path8185"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccc" />
