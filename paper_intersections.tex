@@ -107,8 +107,11 @@
 \newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}
 
 
-\newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
-\newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
+%\newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
+%\newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
+\newcommand{\noteJB}[1]{}
+\newcommand{\notePE}[1]{}
+
 \newcommand{\plucker}{Pl\"{u}cker }
 \newcommand{\nface}{$n$-face }
 \newcommand{\nfaces}{$n$-faces }
@@ -194,8 +197,8 @@ advancing front method
 		
 %% MSC codes here, in the form: \MSC code \sep code
 %% or \MSC[2008] code \sep code (2000 is the default)
-%\MSC[2010] 65N30 \sep %    Finite elements, Rayleigh-Ritz and Galerkin methods, finite methods
-%\MSC[2010] 35J05  %    Laplacian operator, reduced wave equation (Helmholtz equation), Poisson equation
+\MSC[2010] 65M60 \sep %    Finite elements, Rayleigh-Ritz and Galerkin methods, finite methods
+\MSC[2010] 65D18  %    Computer graphics, image analysis, and computational geometry [See also 51N05, 68U05]
 
 % suggestions:
 
@@ -224,8 +227,8 @@ advancing front method
 % Partial differential equations, boundary value problems
 %        65N50   	Mesh generation and refinement
 %	65N55   	Multigrid methods; domain decomposition
-
 \end{keyword}
+
 
 \end{frontmatter}
 
@@ -297,7 +300,7 @@ reference to the intersecting simplices. A data structure of a single IC consist
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
 is called the \emph{topological position} of the IC on $K$. Moreover, as every IC is a result of a permuted
-inner product of some \plucker coordinates (see Section \label{sec:1d-2d}), we store the sign of the product as well.
+inner product of some \plucker coordinates (see Section \ref{sec:1d-2d}), we store the sign of the product as well.
 
 
 \subsection{\plucker Coordinates}
@@ -498,7 +501,7 @@ we cannot decide at the moment, we put that IC into the list $J$.
     \label{fig:tracing}
 \end{figure}
 
-\subsubsection{Intersections on Sides of $S_2$}
+\subsubsection{Intersections on Sides of Triangle}
 \label{sec:sides}
 
 \begin{algorithm}
@@ -556,7 +559,7 @@ the same object $x\in M_3$, in such case the backlink is unnecessary and would o
 
 
 
-\subsubsection{Intersections on Edges of $S_3$}
+\subsubsection{Intersections on Edges of Tetrahedron}
 \label{sec:edges}
 \begin{algorithm}  
   \caption{2d-3d intersection, ICs on edges of $S_3$}
@@ -1098,7 +1101,7 @@ In this section, we compare these three variants (FS+AF, BIH+AF, BIH) on one art
 % 
 % Let us now start with the problem on an artificial mesh. 
 
-The artificial composed mesh consists of a cube and two diagonal rectangular 2d meshes (see \fig{fig:fig:cube_mesh}). The bulk mesh 
+The artificial composed mesh consists of a cube and two diagonal rectangular 2d meshes (see \fig{fig:cube_mesh}). The bulk mesh 
 A sequence of meshes was prepared with increasing number of elements ranging
 form $33$ up to $2000$ thousands of elements. The mesh step for the bulk mesh was always about half the mesh step of the component mesh. 
 The number of the bulk-component intersections varies from $0.1$ up to $2.0$ millions. The timing for the three compared variants
