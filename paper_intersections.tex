@@ -91,7 +91,8 @@
 %\newcommand{\defref}[1]{\hyperref[#1]{Def.~\ref{#1}}}
 \newcommand{\prob}[1]{Problem~{#1}}
 \newcommand{\fig}[1]{\hyperref[#1]{Figure \ref{#1}}}
-\newcommand{\figpath}{}
+% \newcommand{\figpath}{}
+\newcommand{\figpath}{figures/}
 
 %math:
 \def\vc#1{\mathbf{\boldsymbol{#1}}}     % vector
@@ -305,29 +306,31 @@ inner product of some \plucker coordinates (see Section \ref{sec:1d-2d}), we sto
 
 \subsection{\plucker Coordinates}
 \plucker coordinates represent a line in 3d space.
-Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}$, 
+Considering a line $p$, given by a point $\vc A$ and its directional vector $\vc{u}_p$, 
 the \plucker coordinates of $p$ are defined as
-\[ \pi_p = (\vc{u}_p, \vc{v}_p) = (\vc{u}_p, \vc{u}_p\times \vc A). \]
-Further we denote a permuted inner product
+\[ \pi_p = (\vc{u}_p, \vc{v}_p),\; \vc{v}_p = \vc{u}_p\times \vc A. \]
+Further, having two lines $p$ and $q$ with \plucker coordinates $\pi_p$ and $\pi_q$, we denote a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
-The sign of the permuted inner product gives us the relative position of the two lines, 
-see \fig{fig:plucker_products}.
+The sign of the permuted inner product tells us the relative position of two lines, 
+which is demonstrated on an example of a relative position of a line and a triangle sides in \fig{fig:plucker_products}.
 
 
 \begin{figure}[!htb]
-    \centering    
-    \subfloat[$\pi_p\odot \pi_i < 0 \;\forall i$]{
+    \centering
+    \subfloat[$\pi_p\odot \pi_{s_i} < 0 \;\forall i$]{
         \includegraphics[width=0.3\textwidth]{\figpath plucker_product_a.pdf}
     }
-    \subfloat[$\pi_p\odot \pi_i = 0 \, \exists i$ \newline special case]{
+    \subfloat[$\pi_p\odot \pi_{s_i} = 0 \, \exists i$ \newline special]{
         \includegraphics[width=0.3\textwidth]{\figpath plucker_product_b.pdf}
     }
-    \subfloat[$\pi_p\odot \pi_i > 0 \;\forall i$]{
+    \subfloat[$\pi_p\odot \pi_{s_i} > 0 \;\forall i$]{
         \includegraphics[width=0.3\textwidth]{\figpath plucker_product_c.pdf}
     }
-    \caption{Sign of the permuted inner product is related to the relative position of the two oriented lines.          
+    \caption{Different relative positions of a line $p$ and a triangle with sides $s_i$, $i=0,1,2$. 
+            Signs of the permuted inner products depend on orientation of lines.          
             Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+            We see that in cases a and c the products have the same sign.
     }
     \label{fig:plucker_products}
 \end{figure}
