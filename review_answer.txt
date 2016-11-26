@@ -1,0 +1,44 @@
+Reviewer1:
+- It is not quite clear what is the main motivation for this work. Why to use FE computation
+on non-matching grids? It is clear that the mesh generation is easier but on the other hand
+the FE solution is much more complicated. There exist mesh generation codes allowing to
+generate matching grids for complicated geometries. This item should be discussed.
+
+- The authors should outline how the algorithm is sensitive to the computer arithmetic.
+Namely, how to set parameter  in the algorithm in page 5? Is it necessary to choose it
+empirically or is there a more sophisticated approach?
+
+- I suppose that it would be also nice to add some FE solution of the considered problem on
+meshes from Figure 8.
+
+- bottom of page 3: what is u p and v p ? What is their relation to v?
+Notation explained better.
+PE done
+
+- I do not understand too much to Figure 1. There is stated that “the sign of the permuted
+inner product gives us the relative position of the two lines”. But in Figure 1, there is more
+lines. Which two of them are considered?
+Explained better with link to the notation used above.
+PE done
+
+- Section 4.2: Table 1 shows that the algorithms based on the Plücker coordinates is less
+effective. Are there some another advantages of this algorithm?
+
+
+Reviewer2:
+- is the algorithm suited only for simplicial meshes? If so, please specify from the very beginning (maybe in the title) otherwise explain how can be generalized.                                                                                  
+- in the introduction please explain the different nature of the fractures
+- in the introduction when citing [2] you don't use the initial of the names, but you do few lines below for [15]. Please unify this notation.                              
+- page 3. Please rephrase or make it more clear the second point of the list                
+- page 3. u_p and v_p are not defined                  
+  PE done
+- page 3. I suggest to write a paragraph to introduce and highlight all the relevant properties of the Plucker coordinates. Introduce also few references for the people not used to Plucker coordinates.                                                
+- page 4. Please discuss the sign of the permuted inner product if the intersection occurs at the boundary (vertex and edge)                                          
+- lemma 2.1. Please make more clear how to derive (2)
+- page 5, point 3. The parameter epsilon is not defined.
+- page 5, please provide some pictures for the intersection algorithm, in particular for the "critical cases"                                                            
+- page 10 and 11. Please add some figure to visualize, in particular, the degenerate cases
+- is it possible to highlight, in Fig 8, the regions which requires more computational time? Maybe with some figure zoom are relative discussion                        
+- is it possible to have in the appendix the source code, using the Flow123d library, to perform a simple example with the proposed algorithm? Eg the one from Fig 6. If this is not possible maybe a link to a web page with such example.                                                                                      
+- please check reference [7] and [16]. Some of the references are incomplete (eg page number for [6] and [7])
+

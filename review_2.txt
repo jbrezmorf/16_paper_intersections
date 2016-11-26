@@ -1,0 +1,69 @@
+Ms. Ref. No.:  CAMWA-D-16-01629  Title: Fast Algorithms for Intersection of Non-matching Grids Using Plucker coordinates.  Computers and Mathematics with Applications
+
+Dear Mr. Jan Březina,    
+
+The reviewers' comments on your paper are below.  Kindly inform me of your reaction to the comments and address any questions you may have.    
+
+Upon agreement of the suggestions made by the reviewers, please follow the guidelines below to process your revised manuscript within 30 days:      
+
+a) outline each change made (point by point) as raised in the reviewer comments          
+
+AND/OR    
+
+b) provide a suitable rebuttal to each reviewer comment not addressed      
+
+I would appreciate if you could submit your revised paper by Dec 14 2016 12:00:00:000AM.
+
+To submit your revision, please do the following:    
+
+1. Go to: http://ees.elsevier.com/camwa/    
+
+2. Enter your login details    
+
+3. Click [Author Login]  This takes you to the Author Main Menu.    
+
+4. Click [Submissions Needing Revision]    
+
+5. Click [Revise Submission]    I look forward to receiving your revised manuscript.    
+
+Computers and Mathematics with Applications features the Interactive Plot Viewer, see: http://www.elsevier.com/interactiveplots. Interactive Plots provide easy access to the data behind plots. To include one with your article, please prepare a .csv file with your plot data and test it online at http://authortools.elsevier.com/interactiveplots/verification before submission as supplementary material.
+
+Yours sincerely,    
+
+José L. Galán-García, PhD  
+Managing Guest Editor
+Computers and Mathematics with Applications  
+
+Note: While submitting the revised manuscript, please double check the author names provided in the submission so that authorship related changes are made in the revision stage. If your manuscript is accepted, any authorship change will involve approval from co-authors and respective editor handling the submission and this may cause a significant delay in publishing your manuscript.
+
+Please note that editors and/or reviewers have uploaded files related to this submission. To access these file(s) while you are not logged into the system, please click on the link below. (Note: this link will expire after 5 clicks or 30 days.) Alternatively, you may log in to the system and click the 'View Review Attachments' link in the Action column.    
+******    
+
+Editor's and Reviewers' comments:    
+
+Reviewer #2: In the paper, the authors present the application of the Plucker coordinates to compute the intersection of object of different dimensions. The core of the algorithm is the 1d-2d intersection. The other cases consider a suitable decomposition to fall back to the 1d-2d case. Special and degenerate cases are taken into account.                                                                            
+                                                                                             
+I found that the article investigates a topic of substantial interest for the Computers and Mathematics with Applications audiences. However due to its level of technicality I strongly suggest to increase the number of illustrative figures. I found the test cases very interesting.                                                      
+
+Comments:                                                                                              
+- is the algorithm suited only for simplicial meshes? If so, please specify from the very beginning (maybe in the title) otherwise explain how can be generalized.                                                                                  
+- in the introduction please explain the different nature of the fractures
+- in the introduction when citing [2] you don't use the initial of the names, but you do few lines below for [15]. Please unify this notation.                              
+- page 3. Please rephrase or make it more clear the second point of the list                
+- page 3. u_p and v_p are not defined                  
+- page 3. I suggest to write a paragraph to introduce and highlight all the relevant properties of the Plucker coordinates. Introduce also few references for the people not used to Plucker coordinates.                                                
+- page 4. Please discuss the sign of the permuted inner product if the intersection occurs at the boundary (vertex and edge)                                          
+- lemma 2.1. Please make more clear how to derive (2)
+- page 5, point 3. The parameter epsilon is not defined.
+- page 5, please provide some pictures for the intersection algorithm, in particular for the "critical cases"                                                            
+- page 10 and 11. Please add some figure to visualize, in particular, the degenerate cases
+- is it possible to highlight, in Fig 8, the regions which requires more computational time? Maybe with some figure zoom are relative discussion                        
+- is it possible to have in the appendix the source code, using the Flow123d library, to perform a simple example with the proposed algorithm? Eg the one from Fig 6. If this is not possible maybe a link to a web page with such example.                                                                                      
+- please check reference [7] and [16]. Some of the references are incomplete (eg page number for [6] and [7])
+
+
+   
+
+******************************************  Please note that the editorial process varies considerably from journal to journal. To view a sample editorial process, please click here:  http://ees.elsevier.com/eeshelp/sample_editorial_process.pdf    
+
+For further assistance, please visit our customer support site at http://help.elsevier.com/app/answers/list/p/7923. Here you can search for solutions on a range of topics, find answers to frequently asked questions and learn more about EES via interactive tutorials. You will also find our 24/7 support contact details should you need any further assistance from one of our customer support representatives.
