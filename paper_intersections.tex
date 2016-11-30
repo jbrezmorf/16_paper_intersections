@@ -673,33 +673,44 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
   }  
 \end{algorithm}
 
+\begin{figure}[!htb]
+    \centering    
+    \includegraphics[width=0.9\textwidth]{\figpath vertex_faces.pdf}
+    \caption{Possible cases processed in the function \emph{vertex faces}.
+             Only the main features refered in text are denoted: tetrahedorn vertex $v$, edge $e$, face $f$ (stripes).}
+    \label{fig:vertex_faces}
+\end{figure}
+
 The function in Algorithm \ref{algo:vertex_faces} gets as a parameter IC $p$ at the vertex $v$ of $S_3$ 
 which is a special case of a non-degenerate edge-triangle intersection. There are three
 edges incident with the vertex $v$, results $s[i]$ of their intersections with $S_2$ may be one of: no IC, 
 degenerate IC, positive IC and negative IC. Accordingly we call the edge: without intersection, degenerate, positive, or negative. 
 We use these edge idicators to return generalized faces of $S_3$ preceding and succeeding $p$ on the polygons boundary assuming $p$ is at interior of $S_2$.
-Possible cases are:
+Possible cases are (see also \fig{fig:vertex_faces} a-e):
 \begin{itemize}
  \item {\bf Single degenerate IC} (line \ref{line:one_degenerated}){\bf .} Let us denote $e$ the edge with degenerate IC 
  and $f$ the face between the other two edges.
- The other two (non-degenerate) edges may have either the opposite sign (the plane is cutting $S_3$) 
- or the same sign (the plane is touching $S_3$ at the edge $e$).
+ The other two (non-degenerate) edges may have either the opposite sign (the plane is cutting $S_3$, see case b in \fig{fig:vertex_faces}) 
+ or the same sign (the plane is touching $S_3$ at the edge $e$, see case a).
  In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then the vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
  In the second case, we just return anything since there are at most two ICs in IP so the connection tables are not necessary. However, we add 
  current IC into $J$.
  
- \item {\bf Two degenerate ICs} (line \ref{line:two_degenerated}){\bf .} A face of $S_3$ lies in the plane of $S_2$. 
+ \item {\bf Two degenerate ICs} (line \ref{line:two_degenerated}){\bf .} A face of $S_3$ lies in the plane of $S_2$,
+ see case c in \fig{fig:vertex_faces}. 
  Let $e$ be the single non-degenerate edge. We treat the two degenerate edges as faces adjacent to $e$ 
  and return them sorted like the faces given by edge faces of edge $e$.
  
  
  \item {\bf Single IC has the opposite sign to the other two} (line \ref{line:different_sign}){\bf .} 
  Let $e$ be the edge of the single IC with the different sign. 
- The plane of $S_2$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$. 
+ The plane of $S_2$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$,
+ see case d in \fig{fig:vertex_faces}.
  The order is determined by the function \emph{edge faces} called for the edge $e$.
 
  \item {\bf All ICs have the same sign} (line \ref{line:same_signs}){\bf .} Since $S_2$ is touching $S_3$ 
- at the vertex $v$, the polygon degenerates into a point and thus no connection information is necessary. We add IC to $J$ and return any pair of faces.
+ at the vertex $v$, the polygon degenerates into a point and thus no connection information is necessary.
+ We add IC to $J$ and return any pair of faces. See case e in \fig{fig:vertex_faces}.
 \end{itemize}
 
 % Either all signs are equal ($S_2$ touching $S_3$) wee , or
