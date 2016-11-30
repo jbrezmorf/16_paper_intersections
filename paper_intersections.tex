@@ -364,7 +364,8 @@ Let us consider a line $p$ with parametric equation
     \vc X = \vc A + t\vc u,
 \end{equation}
 on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_2$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
-with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$. 
+with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$.
+\notePE{I think adding figure with node and side numbering would make it easier to read.}
 \begin{lemma}
 The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
 is an intersection point $\vc X$ on the $p$ and inside the triangle $S_2$. 
@@ -377,15 +378,17 @@ The barycentric coordinates of $\vc X$ on $S_2$ are
 \begin{proof}
 Using the barycentric coordinates, the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
 The line $p$ has \plucker coordinates $(\vc u, \vc u \times \vc X)$ since these are invariant to change of the initial point. 
-Combining these two expressions we get
+Combining these two expressions and substituing for $\vc V_0-\vc V_2=\vc s_1$, we get for side $\vc s_1$
 \[
    \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times \vc V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
    =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
 \]
 Since $\vc s_0 + \vc s_1 + \vc s_2=0$ we have $ \vc s_1 \times \vc s_2 = \vc s_2 \times \vc s_0 = \vc s_0 \times \vc s_1$ and thus
-\[
-   \pi_p \odot \pi_{s_i} = -w_i \vc u \cdot (\vc s_1 \times \vc s_2).
-\]
+\begin{eqnarray}
+   \pi_p \odot \pi_{s_i} &=& -w_i \vc u \cdot (\vc s_1 \times \vc s_2), \label{eq:bary_centric_part1}\\
+   \sum_{i=0}^{2} \pi_p \odot \pi_{s_i} &=& - \vc u \cdot (\vc s_1 \times \vc s_2). \label{eq:bary_centric_part2}
+\end{eqnarray}
+The result \eqref{eq:bary_centric} then follows directly from combination of \eqref{eq:bary_centric_part1} and \eqref{eq:bary_centric_part2}.
 The point $\vc X$ is inside $S_2$ if and only if $w_i>0$ for all $i=0,1,2$.
 \end{proof}
 Having the barycentric coordinates of $\vc X$ on $S_2$, we can compute also its local coordinate on $p$ from its parametric form:
