@@ -34,11 +34,15 @@ Reviewer2:
   PE done
 - page 3. I suggest to write a paragraph to introduce and highlight all the relevant properties of the Plucker coordinates. Introduce also few references for the people not used to Plucker coordinates.                                                
 - page 4. Please discuss the sign of the permuted inner product if the intersection occurs at the boundary (vertex and edge)                                          
+PE done. Explained better with link to the notation used above. Figure 1 case b improved.
 - lemma 2.1. Please make more clear how to derive (2)
 - page 5, point 3. The parameter epsilon is not defined.
 - page 5, please provide some pictures for the intersection algorithm, in particular for the "critical cases"                                                            
 - page 10 and 11. Please add some figure to visualize, in particular, the degenerate cases
 - is it possible to highlight, in Fig 8, the regions which requires more computational time? Maybe with some figure zoom are relative discussion                        
 - is it possible to have in the appendix the source code, using the Flow123d library, to perform a simple example with the proposed algorithm? Eg the one from Fig 6. If this is not possible maybe a link to a web page with such example.                                                                                      
-- please check reference [7] and [16]. Some of the references are incomplete (eg page number for [6] and [7])
 
+- please check reference [7] and [16]. Some of the references are incomplete (eg page number for [6] and [7])
+PE: [6] - fixed pages
+    [7] - pages are not available, there is a weird problem: if I add pages (pages={1--23}) then also the year will appear, otherwise it is without year.
+    [16] I can't see any problem with this reference, it is complete and link works..

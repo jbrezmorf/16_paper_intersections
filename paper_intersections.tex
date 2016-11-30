@@ -108,10 +108,10 @@
 \newcommand*\rfrac[2]{{}^{#1}\!/_{#2}}
 
 
-%\newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
-%\newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
-\newcommand{\noteJB}[1]{}
-\newcommand{\notePE}[1]{}
+\newcommand{\noteJB}[1]{{\color{Blue} \textbf{JB: } \textit{#1}}}
+\newcommand{\notePE}[1]{{\color{Orange} \textbf{PE: } \textit{#1}}}
+% \newcommand{\noteJB}[1]{}
+% \newcommand{\notePE}[1]{}
 
 \newcommand{\plucker}{Pl\"{u}cker }
 \newcommand{\nface}{$n$-face }
@@ -312,8 +312,14 @@ the \plucker coordinates of $p$ are defined as
 Further, having two lines $p$ and $q$ with \plucker coordinates $\pi_p$ and $\pi_q$, we denote a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
-The sign of the permuted inner product tells us the relative position of two lines, 
-which is demonstrated on an example of a relative position of a line and a triangle sides in \fig{fig:plucker_products}.
+The sign of the permuted inner product tells us the relative position of two lines. 
+We shall demonstrate this on an example of a relative position of a line and triangle sides in \fig{fig:plucker_products}.
+The permuted inner products have the same sign in cases a and c, which will be later used as an indicator
+that an intersection inside the triangle exists.
+If any $\pi_p\odot \pi_{s_i}$ is zero, as in case b, it means that the lines $p$ and $s_i$ are intersecting each other
+(note that $s_i$ are considered as infinite lines at the moment).
+Any other situation not depicted in \fig{fig:plucker_products} is charaterized by different signs of permuted inner products.
+
 
 
 \begin{figure}[!htb]
@@ -330,7 +336,6 @@ which is demonstrated on an example of a relative position of a line and a trian
     \caption{Different relative positions of a line $p$ and a triangle with sides $s_i$, $i=0,1,2$. 
             Signs of the permuted inner products depend on orientation of lines.          
             Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
-            We see that in cases a and c the products have the same sign.
     }
     \label{fig:plucker_products}
 \end{figure}
@@ -394,7 +399,8 @@ The calculation of the intersection proceeds as follows:
 \begin{enumerate}
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
-    \item If any $w_i$ is less than $\epsilon$, there is no intersection, return empty IP.  
+    \item If any $w_i$ is less than $-\epsilon$ \notePE{I believe there was minus missing.}, there is no intersection, return empty IP. 
+          Compare \fig{fig:plucker_products} and \eqref{eq:bary_centric} for better insight.
     \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC.
     \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_2} =(1,i)$.
     \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_2}=(0,i)$.
@@ -1284,5 +1290,3 @@ The work of P. Exner was supported by the Ministry of Education of the Czech Rep
 %\endinput
 %%
 %% End of file `elsarticle-template-harv.tex'.
-
--
