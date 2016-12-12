@@ -41,7 +41,7 @@ Reviewer2:
 
 - in the introduction please explain the different nature of the fractures
 
-    TODO: Which nature?
+    DONE, JB. Not clear what is wrong. Nevertheless, we provide a better explanation for the role of fractures in the hydrogeology.
 
 - in the introduction when citing [2] you don't use the initial of the names, but you do few lines below for [15]. Please unify this notation.                              
 

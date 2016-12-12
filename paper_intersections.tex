@@ -244,8 +244,10 @@ The Mortar method \cite{belgacem_mortar_1999} allows domain decomposition, indep
 However our primal motivation is usage of XFEM methods \cite{fries_extended/generalized_2010} and non-matching meshes of mixed dimension in groundwater models.
 
 The realistic models of groundwater processes including the transport processes and geomechanics have to deal with 
-a complex nature of geological formations including fractures and wells. Although of a small scale, these features may have significant impact 
-on the global behavior of the system and their representation in the numerical model is imperative.
+a complex nature of geological formations containing various small scale features as fractures (or fractured zones) and wells. 
+Although of small scale, these features may have significant impact 
+on the global behavior of the system and their representation in the numerical model is imperative. For example the fractures may form preferential 
+paths which allow much faster transport that can not be fully captured by eqivalent continuum.
 One possible approach is to model fractures and wells as lower dimensional objects and introduce their coupling with the surrounding continuum. 
 The discretization then leads to the meshes of mixed dimensions, i.e. composed of elements of different dimension. This approach 
 called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
