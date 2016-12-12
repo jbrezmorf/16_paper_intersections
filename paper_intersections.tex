@@ -168,7 +168,7 @@
 \begin{abstract}
 The XFEM and Mortar methods can be used in combination with non-matching or non-conforming grids 
 to deal with problems on complex geometries. However the information about the mesh intersection must be provided.
-We present algorithms for intersections between 1d and 2d unstructured multi component meshes 
+We present algorithms for intersections between 1d and 2d unstructured multi component simplicial meshes 
 and their intersections with a background unstructured 3d mesh. A common algorithm 
 based on the advancing front technique is used for the efficient selection of candidate pairs among 
 simplicial elements. Bounding interval hierarchy (BIH) of axes aligned bounding boxes (AABB) of elements
@@ -178,7 +178,7 @@ coordinates. These algorithms combined with the advancing front technique can re
 performed on the neighbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
 on each of the intersecting elements are provided for every intersection point. Benchmarks 
 of the element intersection algorithms are presented and three variants of the global intersection 
-algorithm are compared on the meshes raising from a hydrogeological application.
+algorithm are compared on the meshes raising from a hydrogeological applications.
 \end{abstract}
 
 \begin{keyword}
@@ -272,9 +272,10 @@ Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliabl
 calculation and imprinting of the intersection curves. They exploit the binary space partitioning for searching of the initial intersection and 
 the advancing front method for the intersection curve tracking. 
 
-In this paper we present a new approach to intersection calculation of simplicial elements of different dimensions based on the \plucker coordinates,
-further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. Element intersections based on 
-\plucker coordinates are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neighboring
+In this paper we present a new approach to the mesh intersectionn problem based on the \plucker coordinates,
+further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. 
+Presented intersection algorithms for pairs of simplicial elements of different dimensions are based on \plucker coordinates.
+These algorithms are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neighboring
 elements and reduce the number of arithmetic operations. 
 
 The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
