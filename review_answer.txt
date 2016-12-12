@@ -14,7 +14,7 @@ generate matching grids for complicated geometries. This item should be discusse
 Namely, how to set parameter  in the algorithm in page 5? Is it necessary to choose it
 empirically or is there a more sophisticated approach?
 
-    TODO: Clarify. Its experimental. 
+    DONE, JB. Definition of \epsilon was added as well as better discussion of this topic.      
 
 - I suppose that it would be also nice to add some FE solution of the considered problem on
 meshes from Figure 8.
@@ -37,7 +37,7 @@ Explained better with link to the notation used above.
 effective. Are there some another advantages of this algorithm?
 
 
-Reviewer2:
+Reviewer 2:
 - is the algorithm suited only for simplicial meshes? If so, please specify from the very beginning (maybe in the title) otherwise explain how can be generalized.                                                                                  
 
     DONE, JB. Specified in abstract and make it more pronounced in the introduction.    
@@ -75,7 +75,7 @@ Reviewer2:
 
 - page 5, point 3. The parameter epsilon is not defined.
 
-    Same as in previous review.
+    DONE, JB. Duplicate, see resolution note above.
 
 - page 5, please provide some pictures for the intersection algorithm, in particular for the "critical cases"
 

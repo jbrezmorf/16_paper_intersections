@@ -407,27 +407,30 @@ The calculation of the intersection proceeds as follows:
 \begin{enumerate}
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
-    \item If any $w_i$ is less than $-\epsilon$ \notePE{I believe there was minus missing.}, there is no intersection, return empty IP. 
+    \item If any $w_i$ is less than $-\epsilon$ (see definition bellow), there is no intersection, return empty IP. 
           Compare \fig{fig:plucker_products} and \eqref{eq:bary_centric} for better insight.
     \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC.
     \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_2} =(1,i)$.
     \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_2}=(0,i)$.
     \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
         projected to the plane $x_i=0$ where $i$ is the index of the maximal component of the triangle's normal vector.
-        Every pair $p$, $s_i$ is checked for an intersection on $S_2$ boundary either inside $s_i$ or at a vertex $V_i$, setting the topological info $\tau_{S_2}$ to 
-        $(1, i)$ or $(0, i)$, respectively. At most two ICs are obtained.
+        Every pair $p$, $s_i$ is checked for an intersection on $S_2$ boundary either inside $s_i$ or at a vertex $V_i$, 
+        setting the topological info $\tau_{S_2}$ to 
+        $(1, i)$ or $(0, i)$, respectively. The ICs (at most two of them) obtained in this coplanar case will be called 
+        \emph{degenerate} and will later need special treatment.
     \item For each IC the barycentric coordinates $(1-t, t)$ on the line $p$ are computed according to \eqref{eq:line}. 
     \item If $t\in (-\epsilon, \epsilon)$ or $t\in (1-\epsilon, 1+\epsilon)$,
         we set the end point of $S_1$: $\tau_{S_1} = (0,0)$ or $\tau_{S_1} = (0,1)$, respectively.
     \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
 \end{enumerate}
 
-We shall call every IC, that is created in the coplanar case, \emph{degenerate} since these will later need special treatment.
-
-Checking the same sign of the permuted inner products can be viewed as a geometric predicate for the presence of the intersection and orientation of the 
-line with respect to the triangle. Adaptive-precision evaluation of the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997}
-and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}. However, we rather apply a fixed tolerance check for the zero 
-barycentric coordinates and consistently keep the topological positions in this and related algorithms. 
+The algorithm depends on the parameter $\epsilon$ used as a common tolerance parameter for detection of ICs with special positions. First, it is used 
+in the sign check for permuted inner products, second, it is used for position check on the line. Only these two kinds of geometric predicates are used 
+through the all intersection algorithms. Currently, we use just fixed value $\epsilon=10^{-9}$. It works on all realistic meshes we deal with, but we are aware 
+of problems with possible unconsistent results of two different, but logically related predicates. Adaptive-precision evaluation of 
+the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997} and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}
+in order to deal with these inconsistencies. It is a topic for future work to understand dependency between our geometric predicates
+and decide if the adaptive-precision is the only way to guarantee the correctness of the algorithm even for various corner cases.
 
 %\noteJB{Can we make the algorithm 
 %\emph{parsimonious} in the spirit of the Fortune \cite{fortune_stable_1989} quoted by Schewchuk? 
