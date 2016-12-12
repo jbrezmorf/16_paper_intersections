@@ -4,8 +4,11 @@ on non-matching grids? It is clear that the mesh generation is easier but on the
 the FE solution is much more complicated. There exist mesh generation codes allowing to
 generate matching grids for complicated geometries. This item should be discussed.
 
-    TODO: Explain (1) thousends of fractures is usually out of scope of matching grid generation. 
-    (2) forming of fractures or moving boundaries. (3) This question is slightly out of context. 
+    DONE, JB. We have tried GSMH and Netgen for some complex practical problems and both them failed.
+    Further more even describe the geometry requires solving the intersection of so many objects that 
+    it is out of scope of the CAD libraries as OpenCASCADE. So practical motivation is strong and mentioned in the paper. 
+    We have added note about time evolving network of fractures, where non-matching meshes are needed
+    intrinsically.
 
 - The authors should outline how the algorithm is sensitive to the computer arithmetic.
 Namely, how to set parameter  in the algorithm in page 5? Is it necessary to choose it

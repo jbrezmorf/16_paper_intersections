@@ -257,6 +257,8 @@ Nevertheless as the complexity of the geometry increases (e.g. when lots of frac
 impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently, getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
 at the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
+Although it is (currently) out of our interest the non-matching mesh approach allows a time evolving network of fractures necessary e.g. in 
+modeling of hydraulic fracking.
 
 We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$
 in the 3d ambient space. We assume that every mesh $\mathcal T_i$ is a connected set with no self intersection.
