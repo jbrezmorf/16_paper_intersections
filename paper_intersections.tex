@@ -178,7 +178,7 @@ coordinates. These algorithms combined with the advancing front technique can re
 performed on the neighbouring elements and reduce the number of arithmetic operations. Barycentric coordinates
 on each of the intersecting elements are provided for every intersection point. Benchmarks 
 of the element intersection algorithms are presented and three variants of the global intersection 
-algorithm are compared on the meshes raising from a hydrogeological applications.
+algorithm are compared on the meshes raising from hydrogeological applications.
 \end{abstract}
 
 \begin{keyword}
@@ -247,7 +247,7 @@ The realistic models of groundwater processes including the transport processes 
 a complex nature of geological formations containing various small scale features as fractures (or fractured zones) and wells. 
 Although of small scale, these features may have significant impact 
 on the global behavior of the system and their representation in the numerical model is imperative. For example the fractures may form preferential 
-paths which allow much faster transport that can not be fully captured by eqivalent continuum.
+paths which allow much faster transport that cannot be fully captured by equivalent continuum.
 One possible approach is to model fractures and wells as lower dimensional objects and introduce their coupling with the surrounding continuum. 
 The discretization then leads to the meshes of mixed dimensions, i.e. composed of elements of different dimension. This approach 
 called mixed-dimensional analysis in the mechanics \cite{bournival_mesh-geometry_2008} is also studied in the groundwater context, see e.g. 
@@ -257,7 +257,7 @@ Nevertheless as the complexity of the geometry increases (e.g. when lots of frac
 impossible. In order to avoid these difficulties we may discretize the continuum and every fracture and well independently, getting a non-matching 
 (or incompatible) mesh of mixed dimensions and then apply XFEM to represent jumps of the solution on the fractures or singularities 
 at the wells. The prerequisite for such approach is a fast and robust algorithm for calculating intersections of individual meshes.
-Although it is (currently) out of our interest the non-matching mesh approach allows a time evolving network of fractures necessary e.g. in 
+Although it is (currently) out of our interest, the non-matching mesh approach allows a time evolving network of fractures necessary e.g. in 
 modeling of hydraulic fracking.
 
 We consider a composed mesh $\mathcal T$ consisting of simplicial meshes $\mathcal T_i$ of dimensions $d_i \in \{1,2,3\}$, $i=1,\dots,N_\mathcal{T}$
@@ -276,7 +276,7 @@ Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliabl
 calculation and imprinting of the intersection curves. They exploit the binary space partitioning for searching of the initial intersection and 
 the advancing front method for the intersection curve tracking. 
 
-In this paper we present a new approach to the mesh intersectionn problem based on the \plucker coordinates,
+In this paper we present a new approach to the mesh intersection problem based on the \plucker coordinates,
 further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. 
 Presented intersection algorithms for pairs of simplicial elements of different dimensions are based on \plucker coordinates.
 These algorithms are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neighboring
@@ -323,7 +323,7 @@ The permuted inner products have the same sign in cases a and c, which will be l
 that an intersection inside the triangle exists.
 If any $\pi_p\odot \pi_{s_i}$ is zero, as in case b, it means that the lines $p$ and $s_i$ are intersecting each other
 (note that $s_i$ are considered as infinite lines at the moment).
-Any other situation not depicted in \fig{fig:plucker_products} is charaterized by different signs of permuted inner products.
+Any other situation not depicted in \fig{fig:plucker_products} is characterized by different signs of permuted inner products.
 
 
 
@@ -383,7 +383,7 @@ The barycentric coordinates of $\vc X$ on $S_2$ are
 \begin{proof}
 Using the barycentric coordinates, the intersection point can be expressed as $\vc X = \vc V_0 + w_1 \vc s_2 - w_2 \vc s_1$.
 The line $p$ has \plucker coordinates $(\vc u, \vc u \times \vc X)$ since these are invariant to change of the initial point. 
-Combining these two expressions and substituing for $\vc V_0-\vc V_2=\vc s_1$, we get for side $\vc s_1$
+Combining these two expressions and substituting for $\vc V_0-\vc V_2=\vc s_1$, we get for side $\vc s_1$
 \[
    \pi_p \odot \pi_{s_1} = \vc u \cdot (\vc s_1 \times \vc V_2) + \vc s_1 \cdot ( \vc u \times [\vc V_0 + w_1\vc s_2 - w_2 \vc s_1])
    =-w_1 \vc u \cdot (\vc s_1 \times \vc s_2).
@@ -427,7 +427,7 @@ The calculation of the intersection proceeds as follows:
 The algorithm depends on the parameter $\epsilon$ used as a common tolerance parameter for detection of ICs with special positions. First, it is used 
 in the sign check for permuted inner products, second, it is used for position check on the line. Only these two kinds of geometric predicates are used 
 through the all intersection algorithms. Currently, we use just fixed value $\epsilon=10^{-9}$. It works on all realistic meshes we deal with, but we are aware 
-of problems with possible unconsistent results of two different, but logically related predicates. Adaptive-precision evaluation of 
+of problems with possible inconsistent results of two different, but logically related predicates. Adaptive-precision evaluation of 
 the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997} and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}
 in order to deal with these inconsistencies. It is a topic for future work to understand dependency between our geometric predicates
 and decide if the adaptive-precision is the only way to guarantee the correctness of the algorithm even for various corner cases.
@@ -685,7 +685,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
     \centering    
     \includegraphics[width=0.9\textwidth]{\figpath vertex_faces.pdf}
     \caption{Possible cases processed in the function \emph{vertex faces}.
-             Only the main features refered in text are denoted: tetrahedorn vertex $v$, edge $e$, face $f$ (stripes).}
+             Only the main features referred in text are denoted: tetrahedron vertex $v$, edge $e$, face $f$ (stripes).}
     \label{fig:vertex_faces}
 \end{figure}
 
@@ -693,7 +693,7 @@ The function in Algorithm \ref{algo:vertex_faces} gets as a parameter IC $p$ at 
 which is a special case of a non-degenerate edge-triangle intersection. There are three
 edges incident with the vertex $v$, results $s[i]$ of their intersections with $S_2$ may be one of: no IC, 
 degenerate IC, positive IC and negative IC. Accordingly we call the edge: without intersection, degenerate, positive, or negative. 
-We use these edge idicators to return generalized faces of $S_3$ preceding and succeeding $p$ on the polygons boundary assuming $p$ is at interior of $S_2$.
+We use these edge indicators to return generalized faces of $S_3$ preceding and succeeding $p$ on the polygons boundary assuming $p$ is at interior of $S_2$.
 Possible cases are (see also \fig{fig:vertex_faces} a-e):
 \begin{itemize}
  \item {\bf Single degenerate IC} (line \ref{line:one_degenerated}){\bf .} Let us denote $e$ the edge with degenerate IC 
@@ -1059,7 +1059,7 @@ algorithms works on small data they should not be limited by the memory access, 
 
 We consider 3 algorithms for the line-triangle intersections: \plucker algorithm 
 described in Section \ref{sec:1d-2d}, the algorithm based on the plane clipping due to Haines \cite{haines_fast_1991}, and the minimum storage
-algorithm due to M{\" o}ller and Trumbore (MT) \cite{moller_fast_1997}. For the later two algorithms we have considered strightforward modifications
+algorithm due to M{\" o}ller and Trumbore (MT) \cite{moller_fast_1997}. For the later two algorithms we have considered straightforward modifications
 to make them return qualitatively same output as our algorithms for 1d-2d, 1d-3d, and 2d-3d cases.
 Estimated numbers of FLOPS for all cases are summarized in Table \ref{tab:fundamental_flops}.
 For the \plucker, we count FLOPS actually made by the implementation of individual intersection algorithms. For Haines and MT, 
@@ -1068,7 +1068,7 @@ Conclusions from this census are: algorithms based on the \plucker coordinates s
 and 2d-3d intersections. The expected performance for the 1d-2d case seems to be poor however these intersections are computed after 1d-3d and 2d-3d 
 so the \plucker coordinates may be reused. Considering this scenario we get quite competitive $45$ FLOPS. 
 Similarly we may expect better times in remaining two intersection cases when the \plucker coordinates and their products 
-are reused by neighbouring elements.
+are reused by neighboring elements.
 
 \begin{table}[!htb]
     \caption{Raw number of FLOPS used by different intersection algorithms.}    
