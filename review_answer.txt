@@ -22,16 +22,14 @@ meshes from Figure 8.
     DONE, JB.Unfortunately the XFEM code based on the presented intersection algorithm is not yet available.     
 
 - bottom of page 3: what is u p and v p ? What is their relation to v?
-Notation explained better.
 
-    DONE, PE Corrected.
+    DONE, PE. Notation explained better.
 
 - I do not understand too much to Figure 1. There is stated that “the sign of the permuted
 inner product gives us the relative position of the two lines”. But in Figure 1, there is more
 lines. Which two of them are considered?
-Explained better with link to the notation used above.
 
-    DONE, PE. DONE, JB.
+    DONE, PE. Explained better with link to the notation used above.
 
 - Section 4.2: Table 1 shows that the algorithms based on the Plücker coordinates is less
 effective. Are there some another advantages of this algorithm?
@@ -68,8 +66,7 @@ Reviewer 2:
   
 - page 4. Please discuss the sign of the permuted inner product if the intersection occurs at the boundary (vertex and edge)                                          
 
-    DONE, PE 
-    Explained better with link to the notation used above. Figure 1 case b improved.
+    DONE, PE. Explained better with link to the notation used above. Figure 1 case b improved.
     
 - lemma 2.1. Please make more clear how to derive (2)
     
@@ -83,11 +80,12 @@ Reviewer 2:
 - page 5, please provide some pictures for the intersection algorithm, in particular for the "critical cases"
 
     DONE, JB. Figure added.
-
 - page 10 and 11. Please add some figure to visualize, in particular, the degenerate cases
     DONE, PE Figure added.
     DONE, JB. (small improvements)
     
+    DONE, PE. Figure added.
+
 - is it possible to highlight, in Fig 8, the regions which requires more computational time? Maybe with some figure zoom are relative discussion
   
   DONE, JB. I don't understand. There are no regions computationally demanding more then others.
@@ -100,6 +98,6 @@ Reviewer 2:
 - please check reference [7] and [16]. Some of the references are incomplete (eg page number for [6] and [7])
 
 DONE,PE: 
-    [6] - fixed pages
-    [7] - pages are not available, there is a weird problem: if I add pages (pages={1--23}) then also the year will appear, otherwise it is without year.
+    [7] - pages are not available.
+          There is also a bib style problem, which I do not understand: if I add pages (pages={1--23}) then also the year will appear, otherwise it is without year.
     [16] I can't see any problem with this reference, it is complete and link works..
