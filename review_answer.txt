@@ -18,24 +18,25 @@ empirically or is there a more sophisticated approach?
 
 - I suppose that it would be also nice to add some FE solution of the considered problem on
 meshes from Figure 8.
-
-    TODO: Explain it is not yet available.
+    
+    DONE, JB.Unfortunately the XFEM code based on the presented intersection algorithm is not yet available.     
 
 - bottom of page 3: what is u p and v p ? What is their relation to v?
 Notation explained better.
 
-    DONE, PE 
+    DONE, PE Corrected.
 
 - I do not understand too much to Figure 1. There is stated that “the sign of the permuted
 inner product gives us the relative position of the two lines”. But in Figure 1, there is more
 lines. Which two of them are considered?
 Explained better with link to the notation used above.
 
-    DONE, PE 
+    DONE, PE. DONE, JB.
 
 - Section 4.2: Table 1 shows that the algorithms based on the Plücker coordinates is less
 effective. Are there some another advantages of this algorithm?
 
+    DONE, JB. It is explained in the text. However, we add a notice to the caption.
 
 Reviewer 2:
 - is the algorithm suited only for simplicial meshes? If so, please specify from the very beginning (maybe in the title) otherwise explain how can be generalized.                                                                                  
@@ -48,20 +49,22 @@ Reviewer 2:
 
 - in the introduction when citing [2] you don't use the initial of the names, but you do few lines below for [15]. Please unify this notation.                              
 
-    TODO: unify
+    DONE, JB. When citing in the text the authors are mentioned for references closely related to the topic as we suppose that this could be helpful 
+    for readers familiar with intersection algorithms.
     
 - page 3. Please rephrase or make it more clear the second point of the list                
 
+    DONE, JB. Particularized, example added.
     
 
 - page 3. u_p and v_p are not defined                  
 
-    DONE, PE 
+    DONE, PE Corrected. 
 
 - page 3. I suggest to write a paragraph to introduce and highlight all the relevant properties of the Plucker coordinates. 
   Introduce also few references for the people not used to Plucker coordinates.
   
-    TODO: relevant properties should be already mentioned, hard to provide more references into literature
+    DONE, JB. We need only elementary properties. The related paragraph was improved, references added.
   
 - page 4. Please discuss the sign of the permuted inner product if the intersection occurs at the boundary (vertex and edge)                                          
 
@@ -70,8 +73,8 @@ Reviewer 2:
     
 - lemma 2.1. Please make more clear how to derive (2)
     
-    DONE, PE 
-    Add some partial steps in the proof.
+    DONE, PE.  Added some partial steps in the proof.
+    DONE, JB.  Figure with notation.
 
 - page 5, point 3. The parameter epsilon is not defined.
 
@@ -79,18 +82,24 @@ Reviewer 2:
 
 - page 5, please provide some pictures for the intersection algorithm, in particular for the "critical cases"
 
-    DONE, PE 
-    Figure added.
+    DONE, JB. Figure added.
 
 - page 10 and 11. Please add some figure to visualize, in particular, the degenerate cases
-
-- is it possible to highlight, in Fig 8, the regions which requires more computational time? Maybe with some figure zoom are relative discussion                        
+    DONE, PE Figure added.
+    DONE, JB. (small improvements)
+    
+- is it possible to highlight, in Fig 8, the regions which requires more computational time? Maybe with some figure zoom are relative discussion
+  
+  DONE, JB. I don't understand. There are no regions computationally demanding more then others.
 
 - is it possible to have in the appendix the source code, using the Flow123d library, to perform a simple example with the proposed algorithm? 
-  Eg the one from Fig 6. If this is not possible maybe a link to a web page with such example.                                                                                      
+  Eg the one from Fig 6. If this is not possible maybe a link to a web page with such example.  
+  
+  TODO: link
 
 - please check reference [7] and [16]. Some of the references are incomplete (eg page number for [6] and [7])
 
-PE: [6] - fixed pages
+DONE,PE: 
+    [6] - fixed pages
     [7] - pages are not available, there is a weird problem: if I add pages (pages={1--23}) then also the year will appear, otherwise it is without year.
     [16] I can't see any problem with this reference, it is complete and link works..

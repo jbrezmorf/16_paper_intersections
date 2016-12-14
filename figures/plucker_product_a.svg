@@ -22,18 +22,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="384.58356"
-     inkscape:cy="657.77708"
+     inkscape:zoom="1.979899"
+     inkscape:cx="260.4664"
+     inkscape:cy="824.50006"
      inkscape:document-units="px"
-     inkscape:current-layer="g6643"
+     inkscape:current-layer="layer1"
      showgrid="false"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1863"
-     inkscape:window-height="1056"
-     inkscape:window-x="57"
-     inkscape:window-y="24"
+     inkscape:window-width="1920"
+     inkscape:window-height="1141"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1">
     <sodipodi:guide
        orientation="0,1"
@@ -266,7 +266,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -274,6 +274,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path3793-5-4"
+       d="M 296.33603,217.4336 260.0265,126.73549"
+       style="fill:none;stroke:#000000;stroke-width:4.21569777;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8.43139543, 4.21569771;stroke-dashoffset:0;marker-end:none" />
     <path
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"
@@ -309,12 +315,6 @@
        id="path3793-5"
        d="M 258.69598,123.65363 214.3318,11.401791"
        style="fill:none;stroke:#000000;stroke-width:4.86799717;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)" />
-    <path
-       sodipodi:nodetypes="cc"
-       inkscape:connector-curvature="0"
-       id="path3793-5-4"
-       d="M 296.33603,217.4336 260.0265,126.73549"
-       style="fill:none;stroke:#000000;stroke-width:4.21569777;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8.43139543, 4.21569771;stroke-dashoffset:0;marker-end:none" />
     <path
        transform="matrix(1.0150926,0,0,1.0150926,-94.973155,49.67536)"
        d="m 352.54323,69.736298 a 5.3033009,5.3033009 0 1 1 -10.6066,0 5.3033009,5.3033009 0 1 1 10.6066,0 z"

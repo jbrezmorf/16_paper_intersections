@@ -91,6 +91,8 @@
 %\newcommand{\defref}[1]{\hyperref[#1]{Def.~\ref{#1}}}
 \newcommand{\prob}[1]{Problem~{#1}}
 \newcommand{\fig}[1]{\hyperref[#1]{Figure \ref{#1}}}
+\newcommand{\algo}[1]{\hyperref[#1]{Algorithm \ref{#1}}}
+
 % \newcommand{\figpath}{}
 \newcommand{\figpath}{figures/}
 
@@ -290,9 +292,9 @@ technique and usage of AABB and BIH for its initialization. Finally, in Section 
 \section{Element Intersections}
 \label{sec:element intersecitons}
 In this section, we present algorithms for computing the intersection of a pair of simplicial elements of a~different dimension in the 3d ambient space. 
-In particular we address intersection algorithms for 1d-2d, 1d-3d, 2d-3d pairs of elements. We have implemented the case 2d-2d as well, however the treatment 
-of the special cases is quite technical and not fully completed yet. The fundamental idea is to compute intersection of 1d-2d simplices using the 
-\plucker coordinates and reduce all other cases to this one. 
+In particular we address intersection algorithms for 1d-2d, 1d-3d, 2d-3d pairs of elements.  The fundamental idea is to compute intersection of 1d-2d 
+simplices using the \plucker coordinates and reduce all other cases to this one. We have implemented the case 2d-2d as well, however the treatment 
+of all special cases is quite technical and not fully tested yet.
 
 We denote $S_i$ a simplicial element with $i+1$ vertices (of dimension $i$). We call vertices, edges, faces and simplices itself the \nfaces and we denote
 $M_i$ the set of all \nfaces of the simplex $S_i$.
@@ -300,8 +302,8 @@ In general, an intersection can be a point, a line segment or a polygon called \
 The intersection polygon is represented as a list of its corners called \emph{intersection corners} (IC). The IP data structure keeps also 
 reference to the intersecting simplices. A data structure of a single IC consists of:
 \begin{itemize}
- \item the barycentric coordinate $\vc w_K$ of IC on $K$,
- \item the dimension $d_K$ of the most specific \nface the IC lies on,
+ \item The barycentric coordinate $\vc w_K$ of IC on $K$.
+ \item The dimension $d_K$ of the smallest dimension \nface the IC lies on, e.g. IC on an edge have $d_K=1$ although it also lies on the connected faces.
  \item the local index $i_K$ of that \nface on $K$,
 \end{itemize}
 for each intersecting element $K$ of the pair. The pair $\tau_K = (d_K, i_K)$
@@ -314,34 +316,34 @@ inner product of some \plucker coordinates (see Section \ref{sec:1d-2d}), we sto
 geometry can be found e.g. in \cite{dorst_geometric_2007} or \cite{joswig_polyhedral_2013}.
 Considering a line $p$, given by a point $\vc A_p$ and its directional vector $\vc{u}_p$, 
 the \plucker coordinates of $p$ are defined as
-\[ \pi_p = (\vc{u}_p, \vc{v}_p),\; \vc{v}_p = \vc{u}_p\times \vc A. \]
+\[ \pi_p = (\vc{u}_p, \vc{v}_p),\; \vc{v}_p = \vc{u}_p\times \vc A_p. \]
+This representation is independent on choice of $A_p$ since $\vc{u}_p\times (\vc A_p + t \vc u) = \vc{u}_p\times \vc A_p$.
 Further, having two lines $p$ and $q$ with \plucker coordinates $\pi_p$ and $\pi_q$, we denote a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
-The sign of the permuted inner product tells us the relative position of two lines. 
-We shall demonstrate this on an example of a relative position of a line and triangle sides in \fig{fig:plucker_products}.
-The permuted inner products have the same sign in cases a and c, which will be later used as an indicator
-that an intersection inside the triangle exists.
-If any $\pi_p\odot \pi_{s_i}$ is zero, as in case b, it means that the lines $p$ and $s_i$ are intersecting each other
-(note that $s_i$ are considered as infinite lines at the moment).
-Any other situation not depicted in \fig{fig:plucker_products} is charaterized by different signs of permuted inner products.
-
-
+The sign of the permuted inner product is non-zero if $p$ and $q$ are skew lines and is positive if $q$ is oriented counterclockwise and 
+negative if $q$ is oriented clockwise looking in the $p$ direction. This can be used to determine relative position 
+of the line $p$ and the triangle. This is demonstrated in \fig{fig:plucker_products}.
+The permuted inner products of triangle sides with the line $p$ have common sign, cases (a) and (c), if and only if the 
+line intersect the triangle inside. If any $\pi_p\odot \pi_{s_i}$ is zero, as in the case (b), 
+it means that the lines $p$ and $s_i$ are coplanar.
 
 \begin{figure}[!htb]
     \centering
     \subfloat[$\pi_p\odot \pi_{s_i} < 0 \;\forall i$]{
-        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_a.pdf}
+        \includegraphics[width=0.25\textwidth]{\figpath plucker_product_a.pdf}
     }
-    \subfloat[$\pi_p\odot \pi_{s_i} = 0 \, \exists i$ \newline special]{
-        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_b.pdf}
+    \hspace{2ex}
+    \subfloat[$\pi_p\odot \pi_{s_i} = 0 \, \exists i$, \newline special case]{
+        \includegraphics[width=0.25\textwidth]{\figpath plucker_product_b.pdf}
     }
+    \hspace{2ex}
     \subfloat[$\pi_p\odot \pi_{s_i} > 0 \;\forall i$]{
-        \includegraphics[width=0.3\textwidth]{\figpath plucker_product_c.pdf}
+        \includegraphics[width=0.25\textwidth]{\figpath plucker_product_c.pdf}
     }
-    \caption{Different relative positions of a line $p$ and a triangle with sides $s_i$, $i=0,1,2$. 
-            Signs of the permuted inner products depend on orientation of lines.          
-            Dashed line symbolizes that the line is in the back, the lines intersect in the middle case.
+    \caption{Different relative positions of the line $p$ and a triangle with sides $s_i$, $i=0,1,2$. 
+            Dashed parts are behind the triangle. Signs of the permuted inner products depend on orientation of lines,
+            the line $p$ is coplanar with some side in the case (b).
     }
     \label{fig:plucker_products}
 \end{figure}
@@ -370,9 +372,17 @@ Let us consider a line $p$ with parametric equation
     \vc X = \vc A + t\vc u,
 \end{equation}
 on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_2$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
-with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$.
-\notePE{I think adding figure with node and side numbering would make it easier to read.}
+with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$, see \fig{fig:triangle_notation}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{\figpath triangle_notation.pdf}
+    \caption{Notation for Lemma \ref{lemma_barycentric}.    }
+    \label{fig:triangle_notation}
+\end{figure}
+
 \begin{lemma}
+\label{lemma_barycentric}
 The permuted inner products $\pi_p \odot \pi_{s_i},\, i=0,1,2$ have the same non-zero sign if and only if there
 is an intersection point $\vc X$ on the $p$ and inside the triangle $S_2$. 
 The barycentric coordinates of $\vc X$ on $S_2$ are
@@ -404,15 +414,22 @@ Having the barycentric coordinates of $\vc X$ on $S_2$, we can compute also its 
 \end{equation}
 We use $i$ with maximal $|u_i|$ for practical computation. 
 
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{\figpath 1d-2d_cases.pdf}
+    \caption{Some possible cases of the 1d-2d algorithm.}
+    \label{fig:1d2d_cases}
+\end{figure}
+
+
 The calculation of the intersection proceeds as follows:
 \begin{enumerate}
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
-    \item If any $w_i$ is less than $-\epsilon$ (see definition bellow), there is no intersection, return empty IP. 
-          Compare \fig{fig:plucker_products} and \eqref{eq:bary_centric} for better insight.
-    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC.
-    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_2} =(1,i)$.
-    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_2}=(0,i)$.
+    \item If any $w_i$ is less than $-\epsilon$ (see definition bellow), there is no intersection, return empty IP. \fig{fig:1d2d_cases}, (a).          
+    \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC. \fig{fig:1d2d_cases}, (b).
+    \item If one $w_i$ is less than $\epsilon$, intersection is on the edge $s_i$, we set $\tau_{S_2} =(1,i)$. \fig{fig:1d2d_cases}, (c).
+    \item If two $w_i$ are less than $\epsilon$, intersection is at the vertex $V_i$, we set $\tau_{S_2}=(0,i)$. \fig{fig:1d2d_cases}, (d).
     \item \label{item:coplanar} If all $w_i$ are less than $\epsilon$, the line is coplanar with the triangle, both objects are 
         projected to the plane $x_i=0$ where $i$ is the index of the maximal component of the triangle's normal vector.
         Every pair $p$, $s_i$ is checked for an intersection on $S_2$ boundary either inside $s_i$ or at a vertex $V_i$, 
@@ -428,7 +445,7 @@ The calculation of the intersection proceeds as follows:
 The algorithm depends on the parameter $\epsilon$ used as a common tolerance parameter for detection of ICs with special positions. First, it is used 
 in the sign check for permuted inner products, second, it is used for position check on the line. Only these two kinds of geometric predicates are used 
 through the all intersection algorithms. Currently, we use just fixed value $\epsilon=10^{-9}$. It works on all realistic meshes we deal with, but we are aware 
-of problems with possible unconsistent results of two different, but logically related predicates. Adaptive-precision evaluation of 
+of problems with possible inconsistent results of two different, but logically related predicates. Adaptive-precision evaluation of 
 the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997} and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}
 in order to deal with these inconsistencies. It is a topic for future work to understand dependency between our geometric predicates
 and decide if the adaptive-precision is the only way to guarantee the correctness of the algorithm even for various corner cases.
@@ -479,9 +496,12 @@ intersection with the line segment and consistently propagates topological posit
     trim intersection with respect to the line segment $S_1$
   }
 \end{algorithm}
-Algorithm \ref{algo:13d} first computes line-face intersections for every face of $S_3$.
-Tetrahedron has six edges, so 7 \plucker coordinates and 6 permuted inner products are computed at most. Precomputed coordinates and products are passed into the 1d-2d algorithm which is performed for the whole line $p$ (line \ref{line:13-intersection}).
-If no IC is found, or coplanar case occurs in line-face computation, we continue to the next face. Note, ICs that would be created in coplanar case are to be found as ICs with the other faces, since they lie on edges.
+\algo{algo:13d} first computes line-face intersections for every face of $S_3$.
+Tetrahedron has six edges, so 7 \plucker coordinates and 6 permuted inner products are computed at most. 
+Precomputed coordinates and products are passed into the 1d-2d algorithm which is performed for the whole 
+line $p$ (line \ref{line:13-intersection}).
+If no IC is found, or coplanar case occurs in line-face computation, we continue to the next face. Note, ICs that would 
+be created in coplanar case are to be found as ICs with the other faces, since they lie on edges.
 Next, IC can be on an edge or at a vertex; then we set the correct topological position and mark the adjacent faces
 to be skipped, since there cannot be another IC (and coplanar case has been checked already).
 Finally at the line \ref{line:13-append}, we append the IC to the result and check whether the maximal amount of 
@@ -563,9 +583,9 @@ we cannot decide at the moment, we put that IC into the list $J$.
 %  }
 \end{algorithm}
 
-Algorithm \ref{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
+\algo{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
 and computes the line-tetrahedron intersection $L$.
-If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in Algorithm \ref{algo:collect_23_ip_edges} 
+If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in \algo{algo:collect_23_ip_edges} 
 with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
 To this end we save the IC into separate list $J$ and skip filling of the connection tables.
 %\notePE{here it is weird... there is no line appending the IC into resulting list.. Which is the resulting list??
@@ -573,7 +593,7 @@ To this end we save the IC into separate list $J$ and skip filling of the connec
 In the regular case, we process each of the two ICs in $L$ (loop on line \ref{line:one side loop}). The IC $p$ is added to the list $I$,
 vertices of $S_2$ added twice are merged at final stage. Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
 the point $p$ lies on and set the tables $F_g$, $F_p$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
-The backward temporary link on the line \ref{line:back_link43} is used later in Algorithm \ref{algo:collect_23_ip_edges} to allow proper continuation 
+The backward temporary link on the line \ref{line:back_link43} is used later in \algo{algo:collect_23_ip_edges} to allow proper continuation 
 of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
 the same object $x\in M_3$, in such case the backlink is unnecessary and would overwrite the correct link set by previous IC.
 
@@ -601,7 +621,7 @@ the same object $x\in M_3$, in such case the backlink is unnecessary and would o
         $(f_0,\ f_1)$ = \edgefaces($e$)
     } 
     \Else($p$ at the vertex $v$ of $S_3$){       
-            $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{Algorithm \ref{algo:vertex_faces}}
+            $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{\algo{algo:vertex_faces}}
             \nllabel{line:mark_edges}
     }    
     \uIf{ $p$ is on the boundary of $S_2$ }{
@@ -626,16 +646,16 @@ the same object $x\in M_3$, in such case the backlink is unnecessary and would o
   \label{fig:edge_faces}
 \end{figure}
 
-Algorithm \ref{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
+\algo{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
 First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and 
 possibly those ICs with special position at the vertex or on the edge of $S_3$ already computed 
-in Algorithm \ref{algo:colect_23_ip_triangle}. Then we pass through once again skipping the edges with none or degenerate $L[e]$.
+in \algo{algo:colect_23_ip_triangle}. Then we pass through once again skipping the edges with none or degenerate $L[e]$.
 For every intersection corner $p=L[e]$, we first get its (generalized) faces that would appear before and after the IC on IP, assuming that $p$ is inside $S_2$. 
 
 The function \emph{edge faces} returns the adjacent faces $f_0$, $f_1$ to the edge $e$, on which the IC lies (see the situation in \fig{fig:edge_faces}). 
 The faces are sorted using the sign of the permuted inner product in 1d-2d intersection. The order of faces matches 
 the order of sides of IP if the sign is negative. If the sign is positive the function \emph{edge faces} returns face pair $(f_1, f_0)$.
-If the IC is at the vertex $v$ of $S_3$, the function \emph{vertex faces} described later (Algorithm \ref{algo:vertex_faces}) is used.
+If the IC is at the vertex $v$ of $S_3$, the function \emph{vertex faces} described later (\algo{algo:vertex_faces}) is used.
 It returns a pair of generalized faces (face or edge) adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$. 
 If IC $p$ is inside $S_2$, we add it into $I$ and set the connection tables (line \ref{line:insideS2}). 
 However,
@@ -690,7 +710,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
     \label{fig:vertex_faces}
 \end{figure}
 
-The function in Algorithm \ref{algo:vertex_faces} gets as a parameter IC $p$ at the vertex $v$ of $S_3$ 
+The function in \algo{algo:vertex_faces} gets as a parameter IC $p$ at the vertex $v$ of $S_3$ 
 which is a special case of a non-degenerate edge-triangle intersection. There are three
 edges incident with the vertex $v$, results $s[i]$ of their intersections with $S_2$ may be one of: no IC, 
 degenerate IC, positive IC and negative IC. Accordingly we call the edge: without intersection, degenerate, positive, or negative. 
@@ -699,14 +719,14 @@ Possible cases are (see also \fig{fig:vertex_faces} a-e):
 \begin{itemize}
  \item {\bf Single degenerate IC} (line \ref{line:one_degenerated}){\bf .} Let us denote $e$ the edge with degenerate IC 
  and $f$ the face between the other two edges.
- The other two (non-degenerate) edges may have either the opposite sign (the plane is cutting $S_3$, see case b in \fig{fig:vertex_faces}) 
- or the same sign (the plane is touching $S_3$ at the edge $e$, see case a).
+ The other two (non-degenerate) edges may have either the opposite sign (the plane is cutting $S_3$, see \fig{fig:vertex_faces}, (a)) 
+ or the same sign (the plane is touching $S_3$ at the edge $e$, see \fig{fig:vertex_faces}, (b)).
  In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then the vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
  In the second case, we just return anything since there are at most two ICs in IP so the connection tables are not necessary. However, we add 
  current IC into $J$.
  
  \item {\bf Two degenerate ICs} (line \ref{line:two_degenerated}){\bf .} A face of $S_3$ lies in the plane of $S_2$,
- see case c in \fig{fig:vertex_faces}. 
+ see \fig{fig:vertex_faces}, (c). 
  Let $e$ be the single non-degenerate edge. We treat the two degenerate edges as faces adjacent to $e$ 
  and return them sorted like the faces given by edge faces of edge $e$.
  
@@ -714,12 +734,12 @@ Possible cases are (see also \fig{fig:vertex_faces} a-e):
  \item {\bf Single IC has the opposite sign to the other two} (line \ref{line:different_sign}){\bf .} 
  Let $e$ be the edge of the single IC with the different sign. 
  The plane of $S_2$ separates $e$ from the other two edges so it goes through the faces adjacent to $e$,
- see case d in \fig{fig:vertex_faces}.
+ see \fig{fig:vertex_faces}, (d).
  The order is determined by the function \emph{edge faces} called for the edge $e$.
 
  \item {\bf All ICs have the same sign} (line \ref{line:same_signs}){\bf .} Since $S_2$ is touching $S_3$ 
  at the vertex $v$, the polygon degenerates into a point and thus no connection information is necessary.
- We add IC to $J$ and return any pair of faces. See case e in \fig{fig:vertex_faces}.
+ We add IC to $J$ and return any pair of faces, see \fig{fig:vertex_faces}, (e) .
 \end{itemize}
 
 % Either all signs are equal ($S_2$ touching $S_3$) wee , or
@@ -1072,7 +1092,8 @@ Similarly we may expect better times in remaining two intersection cases when th
 are reused by neighbouring elements.
 
 \begin{table}[!htb]
-    \caption{Raw number of FLOPS used by different intersection algorithms.}    
+    \caption{Raw number of FLOPs used by different intersection algorithms. Second row contains estimated effective number of FLOPs per intersection
+    accounting for reuse of edges through the mesh intersection assuming edges of 2d and 3d elements are used twice (conservative). }    
     \label{tab:fundamental_flops}
     \centering
     \renewcommand{\arraystretch}{1.2}
@@ -1080,6 +1101,7 @@ are reused by neighbouring elements.
             algorithm           & 1d-2d         & 1d-3d         & 2d-3d \\                      
             \hline\\
             \plucker           & 92            & 198           & 426\\
+            \plucker (edge reuse)& 42           & 138            & 264\\
             Haines              & 51            & 177           & 469\\
             Moller and Trumbore & 42            & 168           & 756
     \end{tabular}
