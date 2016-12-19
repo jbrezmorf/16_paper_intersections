@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:ns0="http://www.iki.fi/pav/software/textext/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="triangle_notation.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="290.07872"
+     inkscape:cy="498.40861"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1141"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <defs
+     id="defs4">
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker4560"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path4562" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker4526"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path4528" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path4153"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker4448"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path4450" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker4426"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lstart">
+      <path
+         transform="scale(0.8) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path4428" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker4526-0"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         id="path4528-0" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker4560-7"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         id="path4562-5" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.48737401px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4526)"
+       d="m 193.46484,575.61708 154.96534,0"
+       id="path4144" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.48737401px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4560)"
+       d="M 348.43018,575.61708 265.14485,449.57422"
+       id="path4142" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.48737401px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="M 265.14485,449.57422 193.46484,575.61708"
+       id="path4136" />
+    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="content"
+       transform="matrix(1,0,0,-1,-41.785714,1293.2143)"
+       xml:space="preserve"
+       stroke-miterlimit="10.433"
+       font-style="normal"
+       font-variant="normal"
+       font-weight="normal"
+       font-stretch="normal"
+       font-size-adjust="none"
+       letter-spacing="normal"
+       word-spacing="normal"
+       ns0:text="$\\mathbf V_0$"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         d="m 230.8,713.27 0.02,0.02 0.01,0.03 0,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.02,0 0.01,0.01 0.02,0.01 0.02,0.01 0.02,0 0.02,0.01 0.03,0.01 0.03,0 0.01,0.01 0.02,0 0.01,0 0.02,0 0.02,0.01 0.02,0 0.01,0 0.02,0 0.02,0 0.03,0.01 0.02,0 0.02,0 0.02,0 0.03,0 0.02,0 0.03,0 0.03,0.01 0.02,0 0.03,0 0.03,0 0.03,0 0.04,0 0.03,0 0.03,0 0.19,0 0,0.47 c -0.38,-0.01 -0.86,-0.03 -1.12,-0.03 -0.4,0 -0.92,0 -1.31,0.03 l 0,-0.47 c 0.09,0 0.88,0 0.88,-0.12 0,-0.04 -0.03,-0.09 -0.04,-0.12 l -2.02,-4.53 -2.12,4.77 0.94,0 0,0.47 c -0.38,-0.03 -1.34,-0.03 -1.76,-0.03 -0.39,0 -1.23,0 -1.58,0.03 l 0,-0.47 0.92,0 2.75,-6.19 c 0.08,-0.18 0.12,-0.26 0.4,-0.26 0.16,0 0.28,0 0.39,0.24 z"
+         id="path4625" /><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         d="m 235.69,707.85 0,0.15 0,0.13 -0.01,0.13 -0.01,0.13 -0.01,0.13 -0.01,0.11 -0.02,0.12 -0.02,0.11 -0.03,0.11 -0.03,0.11 -0.03,0.1 -0.04,0.1 -0.04,0.1 -0.05,0.09 -0.05,0.1 -0.03,0.05 -0.03,0.04 c -0.21,0.32 -0.65,0.6 -1.2,0.6 -1.62,0 -1.62,-1.9 -1.62,-2.41 0,-0.5 0,-2.36 1.62,-2.36 l 0,0.2 c -0.32,0 -0.75,0.18 -0.89,0.76 -0.1,0.41 -0.1,0.98 -0.1,1.5 0,0.5 0,1.03 0.11,1.42 0.14,0.55 0.59,0.7 0.88,0.7 0.37,0 0.74,-0.23 0.86,-0.64 0.11,-0.38 0.12,-0.88 0.12,-1.48 0,-0.52 0,-1.04 -0.09,-1.48 -0.14,-0.63 -0.62,-0.78 -0.89,-0.78 l 0,0 0,-0.2 c 1.61,0 1.61,1.86 1.61,2.36 z"
+         id="path4627" /></g>    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       ns0:text="$\\mathbf V_1$"
+       word-spacing="normal"
+       letter-spacing="normal"
+       font-size-adjust="none"
+       font-stretch="normal"
+       font-weight="normal"
+       font-variant="normal"
+       font-style="normal"
+       stroke-miterlimit="10.433"
+       xml:space="preserve"
+       transform="matrix(1,0,0,-1,127.09572,1291.0158)"
+       id="g5855"><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         id="path5857"
+         d="m 230.8,713.27 0.02,0.02 0.01,0.03 0,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.02,0 0.01,0.01 0.02,0.01 0.02,0.01 0.02,0 0.02,0.01 0.03,0.01 0.03,0 0.01,0.01 0.02,0 0.01,0 0.02,0 0.02,0.01 0.02,0 0.01,0 0.02,0 0.02,0 0.03,0.01 0.02,0 0.02,0 0.02,0 0.03,0 0.02,0 0.03,0 0.03,0.01 0.02,0 0.03,0 0.03,0 0.03,0 0.04,0 0.03,0 0.03,0 0.19,0 0,0.47 c -0.38,-0.01 -0.86,-0.03 -1.12,-0.03 -0.4,0 -0.92,0 -1.31,0.03 l 0,-0.47 c 0.09,0 0.88,0 0.88,-0.12 0,-0.04 -0.03,-0.09 -0.04,-0.12 l -2.02,-4.53 -2.12,4.77 0.94,0 0,0.47 c -0.38,-0.03 -1.34,-0.03 -1.76,-0.03 -0.39,0 -1.23,0 -1.58,0.03 l 0,-0.47 0.92,0 2.75,-6.19 c 0.08,-0.18 0.12,-0.26 0.4,-0.26 0.16,0 0.28,0 0.39,0.24 z" /><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         id="path5859"
+         d="m 234.43,710.07 0,0 0,0.01 0,0.01 0,0.01 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 0,0 0,0.01 0,0.01 -0.01,0 0,0.01 0,0 0,0.01 0,0.01 -0.01,0.01 0,0 -0.01,0.01 0,0 -0.01,0.01 0,0 -0.01,0.01 -0.01,0 0,0 -0.01,0 -0.01,0.01 -0.01,0 0,0 -0.01,0 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 -0.01,0 -0.01,0 c -0.44,-0.44 -1.08,-0.45 -1.37,-0.45 l 0,-0.25 c 0.17,0 0.63,0 1.02,0.2 l 0,-3.56 c 0,-0.23 0,-0.32 -0.7,-0.32 l -0.27,0 0,-0.25 c 0.13,0.01 0.99,0.03 1.25,0.03 0.21,0 1.09,-0.02 1.24,-0.03 l 0,0.25 -0.26,0 c -0.7,0 -0.7,0.09 -0.7,0.32 z" /></g>    <g
+       id="g5910"
+       transform="matrix(1,0,0,-1,37.095717,1152.4443)"
+       xml:space="preserve"
+       stroke-miterlimit="10.433"
+       font-style="normal"
+       font-variant="normal"
+       font-weight="normal"
+       font-stretch="normal"
+       font-size-adjust="none"
+       letter-spacing="normal"
+       word-spacing="normal"
+       ns0:text="$\\mathbf V_2$"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         d="m 230.8,713.27 0.02,0.02 0.01,0.03 0,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.02,0 0.01,0.01 0.02,0.01 0.02,0.01 0.02,0 0.02,0.01 0.03,0.01 0.03,0 0.01,0.01 0.02,0 0.01,0 0.02,0 0.02,0.01 0.02,0 0.01,0 0.02,0 0.02,0 0.03,0.01 0.02,0 0.02,0 0.02,0 0.03,0 0.02,0 0.03,0 0.03,0.01 0.02,0 0.03,0 0.03,0 0.03,0 0.04,0 0.03,0 0.03,0 0.19,0 0,0.47 c -0.38,-0.01 -0.86,-0.03 -1.12,-0.03 -0.4,0 -0.92,0 -1.31,0.03 l 0,-0.47 c 0.09,0 0.88,0 0.88,-0.12 0,-0.04 -0.03,-0.09 -0.04,-0.12 l -2.02,-4.53 -2.12,4.77 0.94,0 0,0.47 c -0.38,-0.03 -1.34,-0.03 -1.76,-0.03 -0.39,0 -1.23,0 -1.58,0.03 l 0,-0.47 0.92,0 2.75,-6.19 c 0.08,-0.18 0.12,-0.26 0.4,-0.26 0.16,0 0.28,0 0.39,0.24 z"
+         id="path5912" /><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         d="m 235.62,706.9 -0.24,0 c -0.02,-0.15 -0.09,-0.57 -0.18,-0.63 -0.06,-0.05 -0.59,-0.05 -0.69,-0.05 l -1.28,0 c 0.73,0.65 0.97,0.85 1.39,1.17 0.52,0.42 1,0.85 1,1.51 0,0.84 -0.74,1.36 -1.63,1.36 -0.87,0 -1.46,-0.61 -1.46,-1.25 0,-0.35 0.3,-0.39 0.37,-0.39 0.17,0 0.37,0.12 0.37,0.37 0,0.13 -0.04,0.37 -0.41,0.37 0.22,0.5 0.69,0.65 1.02,0.65 0.7,0 1.06,-0.54 1.06,-1.11 0,-0.61 -0.43,-1.09 -0.65,-1.34 l -1.69,-1.66 c -0.07,-0.06 -0.07,-0.07 -0.07,-0.27 l 2.88,0 z"
+         id="path5914" /></g>    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       ns0:text="$\\mathbf s_0$"
+       word-spacing="normal"
+       letter-spacing="normal"
+       font-size-adjust="none"
+       font-stretch="normal"
+       font-weight="normal"
+       font-variant="normal"
+       font-style="normal"
+       stroke-miterlimit="10.433"
+       xml:space="preserve"
+       transform="matrix(1,0,0,-1,88.748572,1214.1415)"
+       id="g5968"><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         id="path5970"
+         d="m 225.54,710.05 -0.04,0.01 -0.04,0.01 -0.04,0 -0.03,0.01 -0.04,0.01 -0.05,0.01 -0.08,0.02 -0.08,0.02 -0.05,0.01 -0.04,0.01 -0.04,0.02 -0.04,0.01 -0.04,0.02 -0.04,0.02 -0.04,0.01 -0.04,0.02 -0.03,0.02 -0.04,0.03 -0.03,0.02 -0.03,0.03 -0.03,0.02 -0.02,0.03 -0.03,0.03 -0.02,0.03 -0.02,0.03 -0.01,0.02 0,0.02 -0.01,0.02 -0.01,0.02 0,0.02 0,0.02 -0.01,0.02 0,0.02 0,0.02 0,0.02 c 0,0.62 0.93,0.62 1.11,0.62 0.75,0 1.13,-0.29 1.18,-0.84 0.01,-0.15 0.02,-0.2 0.23,-0.2 0.24,0 0.24,0.05 0.24,0.28 l 0,0.8 c 0,0.19 0,0.28 -0.18,0.28 -0.04,0 -0.06,0 -0.45,-0.19 -0.26,0.13 -0.61,0.19 -1.01,0.19 -0.29,0 -1.83,0 -1.83,-1.31 0,-0.4 0.2,-0.67 0.4,-0.84 0.4,-0.34 0.78,-0.4 1.54,-0.54 0.36,-0.06 1.11,-0.19 1.11,-0.78 0,-0.75 -0.92,-0.75 -1.14,-0.75 -1.05,0 -1.31,0.73 -1.43,1.16 -0.05,0.14 -0.1,0.14 -0.24,0.14 -0.24,0 -0.24,-0.06 -0.24,-0.29 l 0,-1.09 c 0,-0.19 0,-0.28 0.18,-0.28 0.07,0 0.09,0 0.3,0.15 0.01,0 0.23,0.15 0.26,0.17 0.46,-0.32 0.97,-0.32 1.17,-0.32 0.31,0 1.85,0 1.85,1.46 0,0.43 -0.2,0.77 -0.55,1.05 -0.39,0.29 -0.71,0.35 -1.48,0.48 z" /><path
+         style="fill:#000000;stroke-width:0"
+         inkscape:connector-curvature="0"
+         id="path5972"
+         d="m 231.55,707.85 -0.01,0.15 0,0.13 0,0.13 -0.01,0.13 -0.01,0.13 -0.02,0.11 -0.02,0.12 -0.02,0.11 -0.02,0.11 -0.03,0.11 -0.04,0.1 -0.04,0.1 -0.04,0.1 -0.05,0.09 -0.05,0.1 -0.03,0.05 -0.03,0.04 c -0.21,0.32 -0.64,0.6 -1.2,0.6 -1.62,0 -1.62,-1.9 -1.62,-2.41 0,-0.5 0,-2.36 1.62,-2.36 l 0,0.2 c -0.32,0 -0.75,0.18 -0.89,0.76 -0.09,0.41 -0.09,0.98 -0.09,1.5 0,0.5 0,1.03 0.1,1.42 0.15,0.55 0.59,0.7 0.88,0.7 0.37,0 0.74,-0.23 0.86,-0.64 0.11,-0.38 0.12,-0.88 0.12,-1.48 0,-0.52 0,-1.04 -0.09,-1.48 -0.14,-0.63 -0.61,-0.78 -0.89,-0.78 l 0,0 0,-0.2 c 1.62,0 1.62,1.86 1.62,2.36 z" /></g>    <g
+       id="g6076"
+       transform="matrix(1,0,0,-1,-10.18,1216.2843)"
+       xml:space="preserve"
+       stroke-miterlimit="10.433"
+       font-style="normal"
+       font-variant="normal"
+       font-weight="normal"
+       font-stretch="normal"
+       font-size-adjust="none"
+       letter-spacing="normal"
+       word-spacing="normal"
+       ns0:text="$\\mathbf s_1$"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"><path
+         d="m 225.54,710.05 -0.04,0.01 -0.04,0.01 -0.04,0 -0.03,0.01 -0.04,0.01 -0.05,0.01 -0.08,0.02 -0.08,0.02 -0.05,0.01 -0.04,0.01 -0.04,0.02 -0.04,0.01 -0.04,0.02 -0.04,0.02 -0.04,0.01 -0.04,0.02 -0.03,0.02 -0.04,0.03 -0.03,0.02 -0.03,0.03 -0.03,0.02 -0.02,0.03 -0.03,0.03 -0.02,0.03 -0.02,0.03 -0.01,0.02 0,0.02 -0.01,0.02 -0.01,0.02 0,0.02 0,0.02 -0.01,0.02 0,0.02 0,0.02 0,0.02 c 0,0.62 0.93,0.62 1.11,0.62 0.75,0 1.13,-0.29 1.18,-0.84 0.01,-0.15 0.02,-0.2 0.23,-0.2 0.24,0 0.24,0.05 0.24,0.28 l 0,0.8 c 0,0.19 0,0.28 -0.18,0.28 -0.04,0 -0.06,0 -0.45,-0.19 -0.26,0.13 -0.61,0.19 -1.01,0.19 -0.29,0 -1.83,0 -1.83,-1.31 0,-0.4 0.2,-0.67 0.4,-0.84 0.4,-0.34 0.78,-0.4 1.54,-0.54 0.36,-0.06 1.11,-0.19 1.11,-0.78 0,-0.75 -0.92,-0.75 -1.14,-0.75 -1.05,0 -1.31,0.73 -1.43,1.16 -0.05,0.14 -0.1,0.14 -0.24,0.14 -0.24,0 -0.24,-0.06 -0.24,-0.29 l 0,-1.09 c 0,-0.19 0,-0.28 0.18,-0.28 0.07,0 0.09,0 0.3,0.15 0.01,0 0.23,0.15 0.26,0.17 0.46,-0.32 0.97,-0.32 1.17,-0.32 0.31,0 1.85,0 1.85,1.46 0,0.43 -0.2,0.77 -0.55,1.05 -0.39,0.29 -0.71,0.35 -1.48,0.48 z"
+         id="path6078"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /><path
+         d="m 230.28,710.07 0,0 0,0.01 0,0.01 0,0.01 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 -0.01,0 0,0.01 0,0.01 0,0.01 -0.01,0 0,0.01 -0.01,0 0,0.01 -0.01,0 -0.01,0.01 0,0 -0.01,0 -0.01,0 -0.01,0.01 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 -0.01,0 -0.01,0 -0.01,0 -0.01,0 c -0.44,-0.44 -1.08,-0.45 -1.36,-0.45 l 0,-0.25 c 0.17,0 0.63,0 1.01,0.2 l 0,-3.56 c 0,-0.23 0,-0.32 -0.7,-0.32 l -0.26,0 0,-0.25 c 0.12,0.01 0.98,0.03 1.24,0.03 0.21,0 1.09,-0.02 1.25,-0.03 l 0,0.25 -0.27,0 c -0.7,0 -0.7,0.09 -0.7,0.32 z"
+         id="path6080"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /></g>    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       ns0:text="$\\mathbf s_2$"
+       word-spacing="normal"
+       letter-spacing="normal"
+       font-size-adjust="none"
+       font-stretch="normal"
+       font-weight="normal"
+       font-variant="normal"
+       font-style="normal"
+       stroke-miterlimit="10.433"
+       xml:space="preserve"
+       transform="matrix(1,0,0,-1,39.462858,1293.7844)"
+       id="g6149"><path
+         id="path6151"
+         d="m 225.54,710.05 -0.04,0.01 -0.04,0.01 -0.04,0 -0.03,0.01 -0.04,0.01 -0.05,0.01 -0.08,0.02 -0.08,0.02 -0.05,0.01 -0.04,0.01 -0.04,0.02 -0.04,0.01 -0.04,0.02 -0.04,0.02 -0.04,0.01 -0.04,0.02 -0.03,0.02 -0.04,0.03 -0.03,0.02 -0.03,0.03 -0.03,0.02 -0.02,0.03 -0.03,0.03 -0.02,0.03 -0.02,0.03 -0.01,0.02 0,0.02 -0.01,0.02 -0.01,0.02 0,0.02 0,0.02 -0.01,0.02 0,0.02 0,0.02 0,0.02 c 0,0.62 0.93,0.62 1.11,0.62 0.75,0 1.13,-0.29 1.18,-0.84 0.01,-0.15 0.02,-0.2 0.23,-0.2 0.24,0 0.24,0.05 0.24,0.28 l 0,0.8 c 0,0.19 0,0.28 -0.18,0.28 -0.04,0 -0.06,0 -0.45,-0.19 -0.26,0.13 -0.61,0.19 -1.01,0.19 -0.29,0 -1.83,0 -1.83,-1.31 0,-0.4 0.2,-0.67 0.4,-0.84 0.4,-0.34 0.78,-0.4 1.54,-0.54 0.36,-0.06 1.11,-0.19 1.11,-0.78 0,-0.75 -0.92,-0.75 -1.14,-0.75 -1.05,0 -1.31,0.73 -1.43,1.16 -0.05,0.14 -0.1,0.14 -0.24,0.14 -0.24,0 -0.24,-0.06 -0.24,-0.29 l 0,-1.09 c 0,-0.19 0,-0.28 0.18,-0.28 0.07,0 0.09,0 0.3,0.15 0.01,0 0.23,0.15 0.26,0.17 0.46,-0.32 0.97,-0.32 1.17,-0.32 0.31,0 1.85,0 1.85,1.46 0,0.43 -0.2,0.77 -0.55,1.05 -0.39,0.29 -0.71,0.35 -1.48,0.48 z"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /><path
+         id="path6153"
+         d="m 231.47,706.9 -0.24,0 c -0.02,-0.15 -0.09,-0.57 -0.18,-0.63 -0.06,-0.05 -0.59,-0.05 -0.69,-0.05 l -1.28,0 c 0.73,0.65 0.97,0.85 1.39,1.17 0.52,0.42 1,0.85 1,1.51 0,0.84 -0.74,1.36 -1.63,1.36 -0.87,0 -1.45,-0.61 -1.45,-1.25 0,-0.35 0.3,-0.39 0.37,-0.39 0.16,0 0.37,0.12 0.37,0.37 0,0.13 -0.05,0.37 -0.42,0.37 0.22,0.5 0.69,0.65 1.02,0.65 0.7,0 1.06,-0.54 1.06,-1.11 0,-0.61 -0.43,-1.09 -0.65,-1.34 l -1.68,-1.66 c -0.07,-0.06 -0.07,-0.07 -0.07,-0.27 l 2.87,0 z"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /></g>    <path
+       inkscape:connector-curvature="0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.48737401;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.48737401, 1.46212202;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 199.34294,542.69768 154.96534,0"
+       id="path4144-4" />
+    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       ns0:text="$\\mathbf w_1$"
+       word-spacing="normal"
+       letter-spacing="normal"
+       font-size-adjust="none"
+       font-stretch="normal"
+       font-weight="normal"
+       font-variant="normal"
+       font-style="normal"
+       stroke-miterlimit="10.433"
+       xml:space="preserve"
+       transform="matrix(1,0,0,-1,3.2898568,1307.4387)"
+       id="g9190"><path
+         id="path9192"
+         d="m 230.77,710.87 0.01,0.02 0.01,0.02 0.01,0.02 0.01,0.01 0,0.01 0.01,0.01 0.01,0.01 0.01,0 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.02,0 0.01,0.01 0.02,0.01 0.02,0 0.02,0.01 0.02,0.01 0.03,0 0.01,0 0.01,0.01 0.02,0 0.01,0 0.02,0 0.02,0 0.01,0.01 0.02,0 0.02,0 0.02,0 0.01,0 0.02,0 0.03,0 0.02,0 0.02,0.01 0.02,0 0.02,0 0.03,0 0.02,0 0.03,0 0.02,0 0.03,0 0,0.47 c -0.23,-0.02 -0.53,-0.03 -0.77,-0.03 -0.26,0 -0.73,0.02 -0.95,0.03 l 0,-0.47 c 0.09,0 0.58,-0.01 0.58,-0.12 0,-0.03 -0.03,-0.09 -0.04,-0.12 l -1.05,-2.55 -1.13,2.79 0.55,0 0,0.47 c -0.32,-0.01 -0.83,-0.03 -1.13,-0.03 -0.42,0 -0.84,0.02 -1,0.03 l 0,-0.47 0.59,0 c 0.21,-0.5 0.21,-0.52 0.21,-0.53 0,-0.04 -0.03,-0.1 -0.04,-0.13 l -0.79,-1.91 -1.05,2.57 0.56,0 0,0.47 c -0.41,-0.02 -0.81,-0.03 -1.22,-0.03 -0.31,0 -0.75,0.02 -1.09,0.03 l 0,-0.47 0.59,0 1.52,-3.73 c 0.07,-0.17 0.11,-0.27 0.36,-0.27 0.25,0 0.29,0.1 0.36,0.27 l 1.06,2.58 1.05,-2.58 c 0.07,-0.17 0.11,-0.27 0.36,-0.27 0.25,0 0.29,0.1 0.36,0.27 z"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /><path
+         id="path9194"
+         d="m 234.04,710.07 0,0 0,0.01 0,0.01 0,0.01 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 0,0.01 0,0 0,0.01 0,0 0,0.01 0,0.01 -0.01,0 0,0.01 0,0 0,0.01 0,0.01 -0.01,0.01 0,0 -0.01,0.01 0,0 -0.01,0.01 0,0 -0.01,0.01 -0.01,0 0,0 -0.01,0 -0.01,0.01 -0.01,0 0,0 -0.01,0 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 -0.01,0 0,0 -0.01,0 -0.01,0 -0.01,0 -0.01,0 c -0.44,-0.44 -1.08,-0.45 -1.37,-0.45 l 0,-0.25 c 0.17,0 0.63,0 1.02,0.2 l 0,-3.56 c 0,-0.23 0,-0.32 -0.7,-0.32 l -0.27,0 0,-0.25 c 0.13,0.01 0.99,0.03 1.25,0.03 0.21,0 1.09,-0.02 1.24,-0.03 l 0,0.25 -0.26,0 c -0.7,0 -0.7,0.09 -0.7,0.32 z"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /></g>    <path
+       inkscape:connector-curvature="0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.48737401;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.48737401, 1.46212202;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 294.77545,474.68828 223.09544,600.73115"
+       id="path4136-6" />
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.4152669;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.41526691, 1.24580073;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 287.52988,589.99208 216.56663,482.59729"
+       id="path4142-6" />
+    <g
+       id="g9011"
+       transform="matrix(1,0,0,-1,27.808594,1239.1381)"
+       xml:space="preserve"
+       stroke-miterlimit="10.433"
+       font-style="normal"
+       font-variant="normal"
+       font-weight="normal"
+       font-stretch="normal"
+       font-size-adjust="none"
+       letter-spacing="normal"
+       word-spacing="normal"
+       ns0:text="$\\mathbf X$"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"><path
+         d="m 228.25,711.08 1.68,2.2 c 0.11,0.14 0.12,0.15 0.47,0.18 0.23,0.03 0.3,0.03 0.57,0.03 l 0.29,0 0,0.47 c -0.41,-0.03 -0.9,-0.03 -1.33,-0.03 -0.39,0 -1.16,0 -1.52,0.03 l 0,-0.47 c 0.18,0 0.57,0 0.92,-0.11 -0.01,-0.02 -0.06,-0.08 -0.08,-0.11 l -1.31,-1.74 -1.43,1.96 0.83,0 0,0.47 c -0.41,-0.03 -1.36,-0.03 -1.8,-0.03 -0.4,0 -1.27,0 -1.62,0.03 l 0,-0.47 0.98,0 2.21,-3.06 -2.01,-2.64 c -0.09,-0.12 -0.11,-0.14 -0.43,-0.17 -0.2,-0.02 -0.41,-0.03 -0.61,-0.03 l -0.29,0 0,-0.47 c 0.42,0.03 0.91,0.03 1.34,0.03 0.38,0 1.15,0 1.51,-0.03 l 0,0.47 c -0.18,0 -0.57,0 -0.92,0.11 0.01,0.02 0.06,0.08 0.08,0.11 l 1.65,2.18 1.73,-2.4 -0.83,0 0,-0.47 c 0.41,0.03 1.36,0.03 1.81,0.03 0.4,0 1.26,0 1.61,-0.03 l 0,0.47 -0.98,0 z"
+         id="path9013"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /></g>    <g
+       id="g9299"
+       transform="matrix(1,0,0,-1,-6.2040547,1191.7063)"
+       xml:space="preserve"
+       stroke-miterlimit="10.433"
+       font-style="normal"
+       font-variant="normal"
+       font-weight="normal"
+       font-stretch="normal"
+       font-size-adjust="none"
+       letter-spacing="normal"
+       word-spacing="normal"
+       ns0:text="$\\mathbf w_0$"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"><path
+         d="m 230.77,710.87 0.01,0.02 0.01,0.02 0.01,0.02 0.01,0.01 0,0.01 0.01,0.01 0.01,0.01 0.01,0 0.01,0.01 0.01,0.01 0.01,0.01 0.01,0.01 0.02,0 0.01,0.01 0.02,0.01 0.02,0 0.02,0.01 0.02,0.01 0.03,0 0.01,0 0.01,0.01 0.02,0 0.01,0 0.02,0 0.02,0 0.01,0.01 0.02,0 0.02,0 0.02,0 0.01,0 0.02,0 0.03,0 0.02,0 0.02,0.01 0.02,0 0.02,0 0.03,0 0.02,0 0.03,0 0.02,0 0.03,0 0,0.47 c -0.23,-0.02 -0.53,-0.03 -0.77,-0.03 -0.26,0 -0.73,0.02 -0.95,0.03 l 0,-0.47 c 0.09,0 0.58,-0.01 0.58,-0.12 0,-0.03 -0.03,-0.09 -0.04,-0.12 l -1.05,-2.55 -1.13,2.79 0.55,0 0,0.47 c -0.32,-0.01 -0.83,-0.03 -1.13,-0.03 -0.42,0 -0.84,0.02 -1,0.03 l 0,-0.47 0.59,0 c 0.21,-0.5 0.21,-0.52 0.21,-0.53 0,-0.04 -0.03,-0.1 -0.04,-0.13 l -0.79,-1.91 -1.05,2.57 0.56,0 0,0.47 c -0.41,-0.02 -0.81,-0.03 -1.22,-0.03 -0.31,0 -0.75,0.02 -1.09,0.03 l 0,-0.47 0.59,0 1.52,-3.73 c 0.07,-0.17 0.11,-0.27 0.36,-0.27 0.25,0 0.29,0.1 0.36,0.27 l 1.06,2.58 1.05,-2.58 c 0.07,-0.17 0.11,-0.27 0.36,-0.27 0.25,0 0.29,0.1 0.36,0.27 z"
+         id="path9301"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /><path
+         d="m 235.3,707.85 0,0.15 0,0.13 -0.01,0.13 -0.01,0.13 -0.01,0.13 -0.01,0.11 -0.02,0.12 -0.02,0.11 -0.03,0.11 -0.03,0.11 -0.03,0.1 -0.04,0.1 -0.04,0.1 -0.05,0.09 -0.05,0.1 -0.03,0.05 -0.03,0.04 c -0.21,0.32 -0.65,0.6 -1.2,0.6 -1.62,0 -1.62,-1.9 -1.62,-2.41 0,-0.5 0,-2.36 1.62,-2.36 l 0,0.2 c -0.32,0 -0.75,0.18 -0.89,0.76 -0.1,0.41 -0.1,0.98 -0.1,1.5 0,0.5 0,1.03 0.11,1.42 0.14,0.55 0.59,0.7 0.88,0.7 0.37,0 0.74,-0.23 0.86,-0.64 0.11,-0.38 0.12,-0.88 0.12,-1.48 0,-0.52 0,-1.04 -0.09,-1.48 -0.14,-0.63 -0.62,-0.78 -0.89,-0.78 l 0,0 0,-0.2 c 1.61,0 1.61,1.86 1.61,2.36 z"
+         id="path9303"
+         inkscape:connector-curvature="0"
+         style="fill:#000000;stroke-width:0" /></g>    <g
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       ns0:preamble="/home/jb/Projekty/16_konference/Liblice/prezentace/graphics/preambule.tex"
+       ns0:text="$\\mathbf w_2$"
+       text-anchor="start"
+       word-spacing="normal"
+       letter-spacing="normal"
+       font-size-adjust="none"
+       font-stretch="normal"
+       font-weight="normal"
+       font-variant="normal"
+       font-style="normal"
+       fill-opacity="1"
+       fill-rule="evenodd"
+       fill="none"
+       stroke-opacity="1"
+       stroke-dashoffset="0"
+       stroke-dasharray="none"
+       stroke-miterlimit="10.433"
+       stroke-linejoin="miter"
+       stroke-linecap="butt"
+       stroke="black"
+       xml:space="preserve"
+       transform="matrix(1,0,0,-1,126.16593,1255.921)"
+       id="g9408"><path
+         id="path9410"
+         fill="black"
+         stroke-width="0"
+         d="M230.77,710.87 L230.78,710.89 L230.79,710.91 L230.8,710.93 L230.81,710.94 L230.81,710.95 L230.82,710.96 L230.83,710.97 L230.84,710.97 L230.85,710.98 L230.86,710.99 L230.87,711 L230.88,711.01 L230.9,711.01 L230.91,711.02 L230.93,711.03 L230.95,711.03 L230.97,711.04 L230.99,711.05 L231.02,711.05 L231.03,711.05 L231.04,711.06 L231.06,711.06 L231.07,711.06 L231.09,711.06 L231.11,711.06 L231.12,711.07 L231.14,711.07 L231.16,711.07 L231.18,711.07 L231.19,711.07 L231.21,711.07 L231.24,711.07 L231.26,711.07 L231.28,711.08 L231.3,711.08 L231.32,711.08 L231.35,711.08 L231.37,711.08 L231.4,711.08 L231.42,711.08 L231.45,711.08 V711.55 C231.22,711.53,230.92,711.52,230.68,711.52 C230.42,711.52,229.95,711.54,229.73,711.55 V711.08 C229.82,711.08,230.31,711.07,230.31,710.96 C230.31,710.93,230.28,710.87,230.27,710.84 L229.22,708.29 L228.09,711.08 H228.64 V711.55 C228.32,711.54,227.81,711.52,227.51,711.52 C227.09,711.52,226.67,711.54,226.51,711.55 V711.08 H227.1 C227.31,710.58,227.31,710.56,227.31,710.55 C227.31,710.51,227.28,710.45,227.27,710.42 L226.48,708.51 L225.43,711.08 H225.99 V711.55 C225.58,711.53,225.18,711.52,224.77,711.52 C224.46,711.52,224.02,711.54,223.68,711.55 V711.08 H224.27 L225.79,707.35 C225.86,707.18,225.9,707.08,226.15,707.08 C226.4,707.08,226.44,707.18,226.51,707.35 L227.57,709.93 L228.62,707.35 C228.69,707.18,228.73,707.08,228.98,707.08 C229.23,707.08,229.27,707.18,229.34,707.35 Z " /><path
+         id="path9412"
+         fill="black"
+         stroke-width="0"
+         d="M235.23,706.9 H234.99 C234.97,706.75,234.9,706.33,234.81,706.27 C234.75,706.22,234.22,706.22,234.12,706.22 H232.84 C233.57,706.87,233.81,707.07,234.23,707.39 C234.75,707.81,235.23,708.24,235.23,708.9 C235.23,709.74,234.49,710.26,233.6,710.26 C232.73,710.26,232.14,709.65,232.14,709.01 C232.14,708.66,232.44,708.62,232.51,708.62 C232.68,708.62,232.88,708.74,232.88,708.99 C232.88,709.12,232.84,709.36,232.47,709.36 C232.69,709.86,233.16,710.01,233.49,710.01 C234.19,710.01,234.55,709.47,234.55,708.9 C234.55,708.29,234.12,707.81,233.9,707.56 L232.21,705.9 C232.14,705.84,232.14,705.83,232.14,705.63 H235.02 Z " /></g>  </g>
+</svg>
