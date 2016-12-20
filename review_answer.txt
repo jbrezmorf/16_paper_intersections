@@ -47,8 +47,7 @@ Reviewer 2:
 
 - in the introduction when citing [2] you don't use the initial of the names, but you do few lines below for [15]. Please unify this notation.                              
 
-    DONE, JB. When citing in the text the authors are mentioned for references closely related to the topic as we suppose that this could be helpful 
-    for readers familiar with intersection algorithms.
+    DONE, PE. Initials removed at [15].
     
 - page 3. Please rephrase or make it more clear the second point of the list                
 
