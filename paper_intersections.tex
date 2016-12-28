@@ -274,14 +274,14 @@ They use the advancing front technique to get candidate pairs in linear time. Th
 Massing, Larson, and Logg \cite{massing_efficient_2013} present an algorithm for 2d-3d intersections as part of their implementation of the Nitche method 
 which is part of the project Dolfin \cite{Dolphin}. They use axes aligned bounding boxes of elements (AABB) and bounding interval hierarchy (BIH) 
 to get intersection candidate pairs of elements, the GTS library \cite{gtslib} is used for 2d-3d intersections. 
-Finally, there is the work of A. Elsheikh and M. Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
+Finally, there is the work of Elsheikh and Elsheikh \cite{elsheikh_reliable_2012} presenting an algorithm for 2d-2d mesh union operation which includes 
 calculation and imprinting of the intersection curves. They exploit the binary space partitioning for searching of the initial intersection and 
 the advancing front method for the intersection curve tracking. 
 
 In this paper we present a new approach to the mesh intersection problem based on the \plucker coordinates,
 further developing the algorithm of Platis and Theoharis \cite{platis_fast_2003} for ray-tetrahedron intersections. 
 Presented intersection algorithms for pairs of simplicial elements of different dimensions are based on \plucker coordinates.
-These algorithms are combined with the advancing front method which allows us to reuse \plucker coordinates and their products between neighboring
+These algorithms are combined with the advancing front method which allows us to reuse \plucker coordinates and their products among neighboring
 elements and reduce the number of arithmetic operations. 
 
 The paper is organized as follows. In Section \ref{sec:element intersecitons} the algorithms for
@@ -317,7 +317,7 @@ geometry can be found e.g. in \cite{dorst_geometric_2007} or \cite{joswig_polyhe
 Considering a line $p$, given by a point $\vc A_p$ and its directional vector $\vc{u}_p$, 
 the \plucker coordinates of $p$ are defined as
 \[ \pi_p = (\vc{u}_p, \vc{v}_p),\; \vc{v}_p = \vc{u}_p\times \vc A_p. \]
-This representation is independent on choice of $A_p$ since $\vc{u}_p\times (\vc A_p + t \vc u) = \vc{u}_p\times \vc A_p$.
+This representation is independent of the choice of $A_p$ since $\vc{u}_p\times (\vc A_p + t \vc u) = \vc{u}_p\times \vc A_p$.
 Further, having two lines $p$ and $q$ with \plucker coordinates $\pi_p$ and $\pi_q$, we denote a permuted inner product
 \[\pi_p \odot \pi_q = \vc{u}_p\cdot \vc{v}_q + \vc{u}_q \cdot \vc{v}_p. \]
 
@@ -325,7 +325,7 @@ The sign of the permuted inner product is non-zero if $p$ and $q$ are skew lines
 negative if $q$ is oriented clockwise looking in the $p$ direction. This can be used to determine relative position 
 of the line $p$ and the triangle. This is demonstrated in \fig{fig:plucker_products}.
 The permuted inner products of triangle sides with the line $p$ have common sign, cases (a) and (c), if and only if the 
-line intersect the triangle inside. If any $\pi_p\odot \pi_{s_i}$ is zero, as in the case (b), 
+line intersects the triangle inside. If any $\pi_p\odot \pi_{s_i}$ is zero, as in the case (b), 
 it means that the lines $p$ and $s_i$ are coplanar.
 
 \begin{figure}[!htb]
@@ -343,7 +343,7 @@ it means that the lines $p$ and $s_i$ are coplanar.
     }
     \caption{Different relative positions of the line $p$ and a triangle with sides $s_i$, $i=0,1,2$. 
             Dashed parts are behind the triangle. Signs of the permuted inner products depend on orientation of lines,
-            the line $p$ is coplanar with some side in the case (b).
+            the line $p$ is coplanar with a side in the case (b).
     }
     \label{fig:plucker_products}
 \end{figure}
@@ -372,7 +372,7 @@ Let us consider a line $p$ with parametric equation
     \vc X = \vc A + t\vc u,
 \end{equation}
 on which a line segment $S_1$ is defined by $t\in [0,1]$ and a triangle $S_2$ given by vertices $(\vc V_0, \vc V_1, \vc V_2)$ 
-with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$, see \fig{fig:triangle_notation}
+with oriented sides $s_i=(\vc V_j, \vc V_k)$, $j=(i+1)\text{ mod }3$, $k=(i+2)\text{ mod }3$, see \fig{fig:triangle_notation}.
 
 \begin{figure}[!htb]
     \centering
@@ -528,7 +528,7 @@ calculation of edge-triangle ICs (Section~\ref{sec:edges}), ordering of ICs (Sec
 
 \begin{figure}[!htb]
     \centering    
-    \includegraphics[width=0.65\textwidth]{\figpath tracing.pdf}
+    \includegraphics[width=0.65\textwidth]{\figpath tracing_color.pdf}
     \caption{An example of an intersection 2d-3d, demonstrating the ICs ordering. We see at every 
     intersection polygon corner $p_i$ which \nfaces it lies on. Looking at $p_0$, the connection table entries
     are: $F_c[s_2]=p_0$, $F_f[p_0]=s_0$. For the other ICs we have: $F_c[s_0]=p_1$, $F_f[p_1]=f_1$, $F_c[f_1]=p_2$, $F_f[p_2]=f_2$ and $F_c[f_2]=p_3$, $F_f[p_3]=s_2$.}
@@ -654,7 +654,7 @@ To this end we save the IC into separate list $J$ and skip filling of the connec
 
 \begin{figure}%[!htb]
   \begin{center}        
-    \includegraphics[width=0.3\textwidth]{\figpath edge_faces.pdf}
+    \includegraphics[width=0.3\textwidth]{\figpath edge_faces_color.pdf}
   \end{center}
   \caption{Order of faces adjacent to the oriented edge $e$ pointing towards us.}
   \label{fig:edge_faces}
