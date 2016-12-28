@@ -388,7 +388,7 @@ is an intersection point $\vc X$ on the $p$ and inside the triangle $S_2$.
 The barycentric coordinates of $\vc X$ on $S_2$ are
 \begin{equation}
   \label{eq:bary_centric}
-   w_i = \frac{\pi_p \odot \pi_{s_i}}{ \sum_{j=0}^{2} \pi_p \odot \pi_{s_i} }.
+   w_i = \frac{\pi_p \odot \pi_{s_i}}{w},\quad w=\sum_{i=0}^{2} \pi_p \odot \pi_{s_i}.
 \end{equation}
 \end{lemma}
 \begin{proof}
@@ -525,25 +525,64 @@ To get all ICs, we have to compute at most 12 side-face intersections and at mos
 to this end we only need to compute 9 \plucker coordinates (3 sides, 6 edges) and 18 permuted inner products, one for every side-edge pair.
 Computation of IP consists of three stages: calculation of side-tetrahedron ICs (Section \ref{sec:sides}), 
 calculation of edge-triangle ICs (Section~\ref{sec:edges}), ordering of ICs (Section~\ref{sec:ordering}).
-The intersection corners are appended to the list $I$ as they are computed, however their order on the polygon boundary is 
-defined by the \emph{connection tables} $F_g(:)$ and $F_p(:)$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an IC given by $F_g[x]$ 
-and every IC $p$ is followed by the side that lies on $F_p[p]\in M_2\cup M_3$ (see \fig{fig:tracing}). The vertices of the polygon are ordered in the same 
-way as is the order and orientation of the sides of $S_2$, that is counterclockwise around the interior with normal pointing to us.
-There are special cases when the IP is degenerated to a line or a point. 
-If we obtain an IC during the calculation that may possibly be a part a degenerate IP, which
-we cannot decide at the moment, we put that IC into the list $J$. 
 
 \begin{figure}[!htb]
     \centering    
     \includegraphics[width=0.65\textwidth]{\figpath tracing.pdf}
     \caption{An example of an intersection 2d-3d, demonstrating the ICs ordering. We see at every 
     intersection polygon corner $p_i$ which \nfaces it lies on. Looking at $p_0$, the connection table entries
-    are: $F_g[s_2]=p_0$, $F_p[p_0]=s_0$. For the other ICs we have: $F_g[s_0]=p_1$, $F_p[p_1]=f_1$, $F_g[f_1]=p_2$, $F_p[p_2]=f_2$ and $F_g[f_2]=p_3$, $F_p[p_3]=s_2$.}
+    are: $F_c[s_2]=p_0$, $F_f[p_0]=s_0$. For the other ICs we have: $F_c[s_0]=p_1$, $F_f[p_1]=f_1$, $F_c[f_1]=p_2$, $F_f[p_2]=f_2$ and $F_c[f_2]=p_3$, $F_f[p_3]=s_2$.}
     \label{fig:tracing}
 \end{figure}
 
+\subsubsection{Successor tables}
+The intersection corners are appended to the list $I$ as they are computed, however their order on the polygon boundary is 
+given indirectly by the \emph{successor tables} $F_c[:]$ and $F_f[:]$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an 
+IC given by $F_c[x]$ and every IC $p$ is followed by the side of the intersection polygon that lies on the \nface $F_f[p]\in M_2\cup M_3$ (see \fig{fig:tracing}).
+For every IC $u$, we shall also find two $n$-faces $x$, $y$ incident with the two sides of the resulting IP that are neighbouring with the IC $u$. 
+The order of $n$-faces $x$, $y$ have to match the orientation of the IP which is the same as the orientation of $S_2$ triangle, 
+that is counterclockwise around the interior with normal pointing to us.
+Having $x$, $y$ in right order, we set $F_c[x]=u$, $F_f[u]=y$.
+
+This simple approach works well even for most of the degenerated ICs, however in order to deal with some special cases and 
+with duplicity of ICs in vertices, we further mark by the backlink $F_c[y]=u$ the $n$-faces that success some IC but still do not poses its successors.
+If $y$ already have the backlink we swap $x$ and $y$. The result is the {\emph set links} operation formalized in Algorithm \ref{algo:set_links}.
+\begin{algorithm}
+  \caption{2d-3d intersection, set links}
+  \label{algo:set_links}
+  \DontPrintSemicolon  
+  \SetKw{continue}{continue}
+  \KwIn{$n$-face $x$, IC $p$, $n$-face $y$}
+  \If{$F_f[F_c[y]]=y$}{
+    swap $x$ and $y$ \tcp*{$y$ success an IC already}
+  }
+  $F_c[x]=u$, $F_f[u]=y$\;
+  \lIf{$F_c[y]$ is unset}{ $F_c[y] = u$}
+\end{algorithm}
+
+
+
+
+
 \subsubsection{Intersections on Sides of Triangle}
 \label{sec:sides}
+\algo{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
+and computes the line-tetrahedron intersection $L$. In the regular case ($\abs{L}=2$), we process each IC in $L$ (loop on line \ref{line:one side loop}).
+
+The IC $p$ is added to the list $I$, vertices of $S_2$ added twice are merged at final stage. 
+Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
+the point $p$ lies on and set the tables $F_c$, $F_f$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
+The backward temporary link on the line \ref{line:back_link43} is used later in \algo{algo:collect_23_ip_edges} to allow proper continuation 
+of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
+the same object $x\in M_3$, in such case the backlink is unnecessary and would overwrite the correct link set by previous IC.
+
+
+If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in \algo{algo:collect_23_ip_edges} 
+with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
+To this end we save the IC into separate list $J$ and skip filling of the connection tables.
+%\notePE{here it is weird... there is no line appending the IC into resulting list.. Which is the resulting list??
+%I find the reference to 'line:one side loop' also incorrect..}
+
 
 \begin{algorithm}
   \caption{2d-3d intersection, ICs on sides of $S_2$}
@@ -553,49 +592,24 @@ we cannot decide at the moment, we put that IC into the list $J$.
   \SetKw{continue}{continue}
   \KwIn{$S_2$ and $S_3$}
   \KwOut{List $I$ with ICs on sides of $S_2$}  
-  $F_g(:)=-1,\ F_p(:)=-1$\tcp*{Unset links.} 
+  $F_c(:)=-1,\ F_f(:)=-1$\tcp*{Unset links.} 
   \For{side $s$ of $S_2$}{ 
     $L$ = intersection($s, S_3$)\;
-    \lIf{ $\abs{L} = 0$}{\continue}
-    \lIf{ $\abs{L} = 1$}{
-        append $p$ to $J$
-        \continue
-    }
     \For{$p$ in $L$}{ \nllabel{line:one side loop}
-        append $p$ to $I$
-%        \lIf{$p \ne I[-1]$ }{append $p$ to $I$}
-        $p$ lies on $x\in M_3$\; \nllabel{line:m4_object}
-        \lIf{$p$ lies at the vertex $v$ of $S_3$}{$x=v$}
-        \uIf{$p$ is the first in $L$}{
-            $F_g[x] = p$,\ $F_p[p] = s$\;
+        $p$ lies on $n$-faces $x\in M_2$ and $y\in M_3$\;
+        \If{$\abs{L} = 1$}{
+            deal with special case \tcp*{side $s$ touching $S_3$}
         }
-        \Else($p$ is the last in $L$){
-            $F_g[s] = p,\ F_p[p] = x$\;
-            \lIf{$F_g[x] = -1$}{$F_g[x] = p$} \nllabel{line:back_link43}
+        append $p$ to $I$
+        \uIf{$x$ is the vertex of $S_2$}{
+            set links($x$, $p$, $s$)
+        }
+        \Else{
+            set links($y$, $p$, $x$)
         }
     }
   }  
-%  \If{$I[-1] = I[0]$}{
-%    $x = F_p[I[-1]]$\;
-%    \If{$F_g[x]]=I[-1]$}{$F_g[x]=I[0]$}
-%    $F_g[s_2] = I[0]$\;
-%    remove $I[-1]$
-%  }
 \end{algorithm}
-
-\algo{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
-and computes the line-tetrahedron intersection $L$.
-If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in \algo{algo:collect_23_ip_edges} 
-with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
-To this end we save the IC into separate list $J$ and skip filling of the connection tables.
-%\notePE{here it is weird... there is no line appending the IC into resulting list.. Which is the resulting list??
-%I find the reference to 'line:one side loop' also incorrect..}
-In the regular case, we process each of the two ICs in $L$ (loop on line \ref{line:one side loop}). The IC $p$ is added to the list $I$,
-vertices of $S_2$ added twice are merged at final stage. Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
-the point $p$ lies on and set the tables $F_g$, $F_p$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
-The backward temporary link on the line \ref{line:back_link43} is used later in \algo{algo:collect_23_ip_edges} to allow proper continuation 
-of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
-the same object $x\in M_3$, in such case the backlink is unnecessary and would overwrite the correct link set by previous IC.
 
 
 
@@ -610,8 +624,8 @@ the same object $x\in M_3$, in such case the backlink is unnecessary and would o
   \SetKw{edgefaces}{edge faces}
   \SetKw{vertexfaces}{vertex faces}
   \DontPrintSemicolon
-  \KwIn{$I$ with ICs on $S_2$ boundary, partially filled $F_p$, $F_g$}
-  \KwOut{all ICs in $I$, complete $F_p$, $F_g$}  
+  \KwIn{$I$ with ICs on $S_2$ boundary, partially filled $F_f$, $F_c$}
+  \KwOut{all ICs in $I$, complete $F_f$, $F_c$}  
   
   \lFor{edge $e$ of $S_3$}{$L[e]$ = intersection($e, S_2$)}  \nllabel{line:12edges}
   \For{edge $e$ of $S_3$ with regular $L[e]$}{
@@ -626,14 +640,14 @@ the same object $x\in M_3$, in such case the backlink is unnecessary and would o
     }    
     \uIf{ $p$ is on the boundary of $S_2$ }{
          $p$ lies on edge or at vertex $x \in M_3$\;
-         $q=F_g[x]$\tcp*{$q$ is already computed $p$}
-         \lIf{$F_p[q]=x$}{$F_p[q]=f_1$} \nllabel{line:successor}
-         \lElse{$F_g[f_0]=q$}  \nllabel{line:predecessor}
-         $F_g[x]=-1$\tcp*{remove the backlink}
+         $q=F_c[x]$\tcp*{$q$ is already computed $p$}
+         \lIf{$F_f[q]=x$}{$F_f[q]=f_1$} \nllabel{line:successor}
+         \lElse{$F_c[f_0]=q$}  \nllabel{line:predecessor}
+         $F_c[x]=-1$\tcp*{remove the backlink}
     }
     \Else{
          append $p$ to $I$\; 
-         $F_g[f_0]=p,\ F_p[p]=f_1$\tcp*{overwrite the backlink} \nllabel{line:insideS2}
+         $F_c[f_0]=p,\ F_f[p]=f_1$\tcp*{overwrite the backlink} \nllabel{line:insideS2}
     }   
   }  
 \end{algorithm}
@@ -673,7 +687,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
   \label{algo:vertex_faces}
   
   \SetKw{return}{return}
-  \SetKw{edgefaces}{edge faces}
+  \SetKw{edgefaces}{EdgeFaces}
   \DontPrintSemicolon
   \KwIn{vertex $v$ of $S_3$, $L[:]$ intersection results for edges of $S_3$}
   \KwOut{pair of \nfaces incident with $v$ that is intersected by the plane of $S_2$}
@@ -681,7 +695,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
   $s[i] = L[e_i]$, for $i=0,1,2$, \;
   
   \uIf{$s[:]$ have 1 non-degenerate edge $e$}{ \nllabel{line:two_degenerated}
-    \return pair of degenerate edges sorted according to \edgefaces($e$)    
+    \return pair of degenerate edges sorted according to $\edgefaces($e$)$    
   }
   
   \uElseIf{ $s$ have 1 degenerate edge $e$}{\nllabel{line:one_degenerated}
@@ -694,7 +708,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
     }
   }  
   \uElseIf{ $s$ have edge $e$ with sign opposite to other two}{ \nllabel{line:different_sign}
-    \return edge faces($e$)\;
+    \return $\edgefaces(e)$\;
   }
   
   \Else($s$ have all signs same){ \nllabel{line:same_signs}
@@ -755,7 +769,7 @@ Possible cases are (see also \fig{fig:vertex_faces} a-e):
 \label{sec:ordering}
 The final stage of the 2d-3d intersection is ordering of ICs. If there are less then 3 ICs in the list $I$ we merge lists $I$ and $J$ remove duplicities
 and get at most 2 distinguish ICs forming a degenerate IP. Otherwise, we start with first IC $p$ in $I$, put it into final list $K$, 
-get its successor \nface $x = F_p(p)$ and its successor IC $q=F_q(x)$. Unless $x$ is vertex of $S_2$, we put $q$ into $K$ and repeat the process until 
+get its successor \nface $x = F_f(p)$ and its successor IC $q=F_q(x)$. Unless $x$ is vertex of $S_2$, we put $q$ into $K$ and repeat the process until 
 we pass all ICs in $I$.
 
   
