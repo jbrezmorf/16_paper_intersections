@@ -425,6 +425,7 @@ We use $i$ with maximal $|u_i|$ for practical computation.
 The calculation of the intersection proceeds as follows:
 \begin{enumerate}
     \item Compute or reuse \plucker coordinates and permuted inner products: $\pi_p$, $\pi_{s_i}$, $\pi_p \odot \pi_{s_i}$, for $i=1,2,3$.
+    \item \label{item:zero_total} If the total $w$ of the products is less then $\epsilon L_1 L_2^2$ jump to the coplanar case in the step \ref{item:coplanar}.
     \item Compute barycentric coordinates $w_i,\ i=1,2,3$ using \eqref{eq:bary_centric}.
     \item If any $w_i$ is less than $-\epsilon$ (see definition bellow), there is no intersection, return empty IP. \fig{fig:1d2d_cases}, (a).          
     \item If all $w_i$ are greater than $\epsilon$, we set $\tau_{S_2} = (2, 0)$ for the IC. \fig{fig:1d2d_cases}, (b).
@@ -442,10 +443,16 @@ The calculation of the intersection proceeds as follows:
     \item If $t\notin (-\epsilon, 1+\epsilon)$, the IC is eliminated.
 \end{enumerate}
 
-The algorithm depends on the parameter $\epsilon$ used as a common tolerance parameter for detection of ICs with special positions. First, it is used 
+In order to make the test in the step \ref{item:zero_total} independent of the  scale of elements, we use characteristic lengths $L_1$ and $L_2$ of $S_1$ and $S_2$ respectively.
+Further, the algorithm depends on the parameter $\epsilon$ used as a common tolerance parameter for detection of ICs with special positions. First, it is used 
 in the sign check for permuted inner products, second, it is used for position check on the line. Only these two kinds of geometric predicates are used 
-through the all intersection algorithms. Currently, we use just fixed value $\epsilon=10^{-9}$. It works on all realistic meshes we deal with, but we are aware 
-of problems with possible inconsistent results of two different, but logically related predicates. Adaptive-precision evaluation of 
+through the all intersection algorithms. Currently, we use just fixed value $\epsilon=10^{-9}$. This value is close to the machine epsilon ($10^{-16}$ 
+of the double precision 
+arithmetic, while far enough to keep precision of the further calculations. Let us note that the algorithm is susceptible to the loss of significance 
+due to cancellation during evaluation of the products. Nevertheless, the algorithm works on all realistic meshes we deal with.
+
+Other problem that would deserve further investigation is possible inconsistent result of two different, but logically related predicates. 
+Adaptive-precision evaluation of 
 the geometric predicates was designed by Schewchuk \cite{shewchuk_adaptive_1997} and used for 2d-2d mesh intersections in \cite{elsheikh_reliable_2012}
 in order to deal with these inconsistencies. It is a topic for future work to understand dependency between our geometric predicates
 and decide if the adaptive-precision is the only way to guarantee the correctness of the algorithm even for various corner cases.
@@ -455,7 +462,7 @@ and decide if the adaptive-precision is the only way to guarantee the correctnes
 %Seems that our problem is more local than the line example that was proven to be NP-hard.}
 
 The algorithms for 1d-3d and 2d-3d intersections use simpler version of the 1d-2d intersection algorithm, in particular the search for ICs in the coplanar case 
-(item \ref{item:coplanar}) is not necessary, and the test in the last point is not performed.
+(step \ref{item:coplanar}) is not necessary, and the test in the last point is not performed.
 %and degenerate cases higher dimensional cases.
 
 %\subsection{Intersection Triangle-Tetrahedron (2d-2d)}
@@ -536,17 +543,17 @@ calculation of edge-triangle ICs (Section~\ref{sec:edges}), ordering of ICs (Sec
 \end{figure}
 
 \subsubsection{Successor tables}
-The intersection corners are appended to the list $I$ as they are computed, however their order on the polygon boundary is 
-given indirectly by the \emph{successor tables} $F_c[:]$ and $F_f[:]$. Every side of the polygon that lies on \nface $x\in M_2\cup M_3$ is followed by an 
-IC given by $F_c[x]$ and every IC $p$ is followed by the side of the intersection polygon that lies on the \nface $F_f[p]\in M_2\cup M_3$ (see \fig{fig:tracing}).
-For every IC $u$, we shall also find two $n$-faces $x$, $y$ incident with the two sides of the resulting IP that are neighbouring with the IC $u$. 
-The order of $n$-faces $x$, $y$ have to match the orientation of the IP which is the same as the orientation of $S_2$ triangle, 
+The intersection corners are appended to the list $I$ as they are computed, however their order on IP is 
+given indirectly by the \emph{successor tables} $F_c[:]$ and $F_f[:]$. Every side of IP that lies on \nface $x\in M_2\cup M_3$ is followed by an 
+IC given by $F_c[x]$ and every IC $p$ is followed by the side of IP that lies on the \nface $y=F_f[p]\in M_2\cup M_3$ (see \fig{fig:tracing}).
+After an IC $p$ is computed, we also obtain two $n$-faces $x$, $y$ incident with the two IP's sides that are neighbouring with the IC. 
+Order of the $n$-faces $x$, $y$ have to match the orientation of the IP which is the same as the orientation of $S_2$ triangle, 
 that is counterclockwise around the interior with normal pointing to us.
 Having $x$, $y$ in right order, we set $F_c[x]=u$, $F_f[u]=y$.
 
 This simple approach works well even for most of the degenerated ICs, however in order to deal with some special cases and 
-with duplicity of ICs in vertices, we further mark by the backlink $F_c[y]=u$ the $n$-faces that success some IC but still do not poses its successors.
-If $y$ already have the backlink we swap $x$ and $y$. The result is the {\emph set links} operation formalized in Algorithm \ref{algo:set_links}.
+with duplicity of ICs in vertices, we further mark by a \emph{backlink} $F_c[y]=u$ the $n$-faces that success some IC but still do not possess its successors.
+If $y$ already have the backlink we swap $x$ and $y$. The result is the \emph{set links} (SL) operation formalized in Algorithm \ref{algo:set_links}.
 \begin{algorithm}
   \caption{2d-3d intersection, set links}
   \label{algo:set_links}
@@ -566,23 +573,19 @@ If $y$ already have the backlink we swap $x$ and $y$. The result is the {\emph s
 
 \subsubsection{Intersections on Sides of Triangle}
 \label{sec:sides}
-\algo{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through every side $s$ of the triangle $S_2$ 
-and computes the line-tetrahedron intersection $L$. In the regular case ($\abs{L}=2$), we process each IC in $L$ (loop on line \ref{line:one side loop}).
+\algo{algo:colect_23_ip_triangle} computes all ICs on the boundary of $S_2$.  It passes through the sides of the triangle $S_2$ 
+computing  the line-tetrahedron intersection $L$ for every side $s$. 
+In the regular case ($\abs{L}=2$), we process each IC in $L$ (line \ref{line:one side loop}).
+The IC $p$ is appended to $I$ and successor tables are set using the SL operation. If $p$ is at the vertex of
+$S_2$ the links connect the vertex with the $S_2$ side. In both cases SL  is called with the side $s$ as the target $n$-face
+since SL correctly swap $n$-faces if the side is already used as the target. The vertex ICs put twice into $I$ and are merged
+in the final step.
 
-The IC $p$ is added to the list $I$, vertices of $S_2$ added twice are merged at final stage. 
-Then (line \ref{line:m4_object}) we identify the \nface $x\in M_3$ 
-the point $p$ lies on and set the tables $F_c$, $F_f$. For the IC at the vertex of $S_2$ we set $x$ to that vertex regardless of its position on $S_3$.
-The backward temporary link on the line \ref{line:back_link43} is used later in \algo{algo:collect_23_ip_edges} to allow proper continuation 
-of the IC if it lies on edge or at vertex of $S_3$. The condition at the same line deals with the case that two sides of $S_3$ intersect 
-the same object $x\in M_3$, in such case the backlink is unnecessary and would overwrite the correct link set by previous IC.
-
-
-If the side is just touching $S_3$, we get $L$ with a single IC. These ICs will be rediscovered again in \algo{algo:collect_23_ip_edges} 
-with better topological information, however this is not the case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
-To this end we save the IC into separate list $J$ and skip filling of the connection tables.
-%\notePE{here it is weird... there is no line appending the IC into resulting list.. Which is the resulting list??
-%I find the reference to 'line:one side loop' also incorrect..}
-
+The case $\abs{L}=1$ can happen only if the boundary of $S_2$ touches the boundary of $S_3$. These ICs will be 
+rediscovered again in \algo{algo:collect_23_ip_edges} with better topological information, however this is not the 
+case if the touched edge $e$ of $S_3$ is coplanar with $S_2$ and the IC is inside of $e$.
+To this end we call SL with $e$ as the target which allows to use backlink and get already computed IC if it is rediscovered later on.
+The ICs at vertices of $S_2$ are treated differently, but follows the same idea. The ICs at vertices of $S_3$ are skipped.
 
 \begin{algorithm}
   \caption{2d-3d intersection, ICs on sides of $S_2$}
@@ -596,16 +599,16 @@ To this end we save the IC into separate list $J$ and skip filling of the connec
   \For{side $s$ of $S_2$}{ 
     $L$ = intersection($s, S_3$)\;
     \For{$p$ in $L$}{ \nllabel{line:one side loop}
-        $p$ lies on $n$-faces $x\in M_2$ and $y\in M_3$\;
+        $p$ lies on $n$-face $x\in M_2$ and $y\in M_3$\;
         \If{$\abs{L} = 1$}{
             deal with special case \tcp*{side $s$ touching $S_3$}
         }
-        append $p$ to $I$
+        append $p$ to $I$\;
         \uIf{$x$ is the vertex of $S_2$}{
             set links($x$, $p$, $s$)
         }
         \Else{
-            set links($y$, $p$, $x$)
+            set links($y$, $p$, $x$) \tcp*{$x$ is $s$}
         }
     }
   }  
@@ -633,52 +636,49 @@ To this end we save the IC into separate list $J$ and skip filling of the connec
     \uIf{ $p$ is inside $e$}{ 
         \nllabel{line:edge_faces}        
         $(f_0,\ f_1)$ = \edgefaces($e$)
-    } 
+    }   
     \Else($p$ at the vertex $v$ of $S_3$){       
             $(f_0,\ f_1)$ = \vertexfaces($v$,$L$)   \tcp*{\algo{algo:vertex_faces}}
             \nllabel{line:mark_edges}
     }    
+    append $p$ to $I$\; 
     \uIf{ $p$ is on the boundary of $S_2$ }{
          $p$ lies on edge or at vertex $x \in M_3$\;
-         $q=F_c[x]$\tcp*{$q$ is already computed $p$}
-         \lIf{$F_f[q]=x$}{$F_f[q]=f_1$} \nllabel{line:successor}
-         \lElse{$F_c[f_0]=q$}  \nllabel{line:predecessor}
-         $F_c[x]=-1$\tcp*{remove the backlink}
+         \uIf{$x$ have backlink}{
+            set links($x$, $p$, $f_1$) 
+         }\nllabel{line:successor}
+         \Else{
+            set links($f_0$, $p$, $x$)
+         }  \nllabel{line:predecessor}
     }
     \Else{
-         append $p$ to $I$\; 
-         $F_c[f_0]=p,\ F_f[p]=f_1$\tcp*{overwrite the backlink} \nllabel{line:insideS2}
+         set links ($f_0$, $p$, $f_1$) \nllabel{line:insideS2}
     }   
   }  
 \end{algorithm}
 
 \begin{figure}%[!htb]
   \begin{center}        
-    \includegraphics[width=0.3\textwidth]{\figpath edge_faces_color.pdf}
+    \includegraphics[width=0.3\textwidth]{\figpath edge_faces.pdf}
   \end{center}
   \caption{Order of faces adjacent to the oriented edge $e$ pointing towards us.}
   \label{fig:edge_faces}
 \end{figure}
 
-\algo{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$ (line \ref{line:12edges}).
-First, the intersection $L[e]$ is evaluated for every edge $e$. The loop produces ICs in the interior of $S_2$ and 
-possibly those ICs with special position at the vertex or on the edge of $S_3$ already computed 
-in \algo{algo:colect_23_ip_triangle}. Then we pass through once again skipping the edges with none or degenerate $L[e]$.
-For every intersection corner $p=L[e]$, we first get its (generalized) faces that would appear before and after the IC on IP, assuming that $p$ is inside $S_2$. 
+\algo{algo:collect_23_ip_edges} uses the line-triangle intersection algorithm for the edges of $S_3$.
+First, the intersection $L[e]$ is evaluated for every edge $e$ (line \ref{line:12edges}).  Then we pass through once 
+again skipping the edges with none or degenerate IC. For every intersection corner $p=L[e]$, we first get $n$-faces 
+that would appear before and after the IC on IP.
 
-The function \emph{edge faces} returns the adjacent faces $f_0$, $f_1$ to the edge $e$, on which the IC lies (see the situation in \fig{fig:edge_faces}). 
+The function \emph{edge faces} (line \ref{line:edge_faces}) returns the adjacent faces $f_0$, $f_1$ to the edge $e$
+on which the IC lies (see the situation in \fig{fig:edge_faces}). 
 The faces are sorted using the sign of the permuted inner product in 1d-2d intersection. The order of faces matches 
 the order of sides of IP if the sign is negative. If the sign is positive the function \emph{edge faces} returns face pair $(f_1, f_0)$.
-If the IC is at the vertex $v$ of $S_3$, the function \emph{vertex faces} described later (\algo{algo:vertex_faces}) is used.
-It returns a pair of generalized faces (face or edge) adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$. 
-If IC $p$ is inside $S_2$, we add it into $I$ and set the connection tables (line \ref{line:insideS2}). 
-However,
-if $p$ is on boundary of $S_2$ it is already in $I$. Denoting $x$ the \nface of $S_3$ the IC lies on, we use the backlink from $x$ to 
-IC $q\in I$ and if $q$ points back to $x$, we set the new successor $f_1$ to it (line \ref{line:successor}). 
-Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}). 
-
-
-
+If the IC is at the vertex $v$ of $S_3$, the function \emph{vertex faces} described later (Alogorithm \algo{algo:vertex_faces}) is used.
+It returns a pair of $n$-faces (face or edge) adjacent to the IC $L[e]$ at the vertex $v$ of $S_3$. 
+Then $p$ is appended to $I$. If IC $p$ is inside $S_2$, the obtained pair of $n$-faces is directly used to set links (line \ref{line:insideS2}).
+However, if $p$ is on the boundary of $S_2$ ($n$-face $x$), just one of the faces is used, complemented with $x$. Presence of the backlink 
+is used to determine the right face. 
 
 \subsubsection{Vertex Faces Algorithm}
 
@@ -693,26 +693,27 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
   \KwOut{pair of \nfaces incident with $v$ that is intersected by the plane of $S_2$}
   $e_0,\ e_1,\ e_2$ edges incident with $v$ oriented out of $v$\;   
   $s[i] = L[e_i]$, for $i=0,1,2$, \;
-  
-  \uIf{$s[:]$ have 1 non-degenerate edge $e$}{ \nllabel{line:two_degenerated}
-    \return pair of degenerate edges sorted according to $\edgefaces($e$)$    
-  }
-  
-  \uElseIf{ $s$ have 1 degenerate edge $e$}{\nllabel{line:one_degenerated}
-    $f$ is face opposite to $e$\;
+
+  \uIf{ $s[:]$ contains 1 degenerate edge $e$}{\nllabel{line:one_degenerated}
+    Let $f$ be the face opposite to $e$.\;
     \uIf{other two edges $e_a$, $e_b$ have different sign}{
         $z=\edgefaces(e_a)$\;
         replace $g\in z$, $g\ne f$ with $e$, \return $z$
     }\lElse{
-        append IC of $v$ to $J$, \return anything
+        \return $(v, e)$
     }
   }  
-  \uElseIf{ $s$ have edge $e$ with sign opposite to other two}{ \nllabel{line:different_sign}
+
+  \uElseIf{$s[:]$ contains 1 non-degenerate edge $e$}{ \nllabel{line:two_degenerated}
+    \return pair of degenerate edges sorted according to $\edgefaces($e$)$    
+  }
+  
+  \uElseIf{ $s[:]$ contains edge $e$ with the sign opposite to the other two}{ \nllabel{line:different_sign}
     \return $\edgefaces(e)$\;
   }
   
-  \Else($s$ have all signs same){ \nllabel{line:same_signs}
-    append IC of $v$ to $J$, \return anything\;
+  \Else($s[:]$ have all signs same){ \nllabel{line:same_signs}
+    \return $(v, v)$\;
   }  
 \end{algorithm}
 
@@ -727,7 +728,7 @@ Otherwise $f_0$ is used as the predecessor of $q$ (line \ref{line:predecessor}).
 The function in \algo{algo:vertex_faces} gets as a parameter IC $p$ at the vertex $v$ of $S_3$ 
 which is a special case of a non-degenerate edge-triangle intersection. There are three
 edges incident with the vertex $v$, results $s[i]$ of their intersections with $S_2$ may be one of: no IC, 
-degenerate IC, positive IC and negative IC. Accordingly we call the edge: without intersection, degenerate, positive, or negative. 
+degenerate IC, positive IC and negative IC. Accordingly we say the edge is: without intersection, degenerate, positive, or negative. 
 We use these edge indicators to return generalized faces of $S_3$ preceding and succeeding $p$ on the polygons boundary assuming $p$ is at interior of $S_2$.
 Possible cases are (see also \fig{fig:vertex_faces} a-e):
 \begin{itemize}
@@ -735,9 +736,11 @@ Possible cases are (see also \fig{fig:vertex_faces} a-e):
  and $f$ the face between the other two edges.
  The other two (non-degenerate) edges may have either the opposite sign (the plane is cutting $S_3$, see \fig{fig:vertex_faces}, (a)) 
  or the same sign (the plane is touching $S_3$ at the edge $e$, see \fig{fig:vertex_faces}, (b)).
- In the first case, the call of edge faces for $e$ returns $(f_x,f)$ or $(f,f_x)$, then the vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
- In the second case, we just return anything since there are at most two ICs in IP so the connection tables are not necessary. However, we add 
- current IC into $J$.
+ In the first case, the call $edge\ faces(e)$ returns $(f_x,f)$ or $(f,f_x)$, then the vertex faces function returns $(e, f)$ or $(f, e)$, respectively.
+ In the second case,  there must be another IC on $e$, either at $S_2$ boundary or at the other end of $e$.
+ In both cases the edge $e$ is the common $n$-face of the two intersection points thus we return 
+ $(v,e)$ taking the edge as the target object.
+
  
  \item {\bf Two degenerate ICs} (line \ref{line:two_degenerated}){\bf .} A face of $S_3$ lies in the plane of $S_2$,
  see \fig{fig:vertex_faces}, (c). 
@@ -752,26 +755,15 @@ Possible cases are (see also \fig{fig:vertex_faces} a-e):
  The order is determined by the function \emph{edge faces} called for the edge $e$.
 
  \item {\bf All ICs have the same sign} (line \ref{line:same_signs}){\bf .} Since $S_2$ is touching $S_3$ 
- at the vertex $v$, the polygon degenerates into a point and thus no connection information is necessary.
- We add IC to $J$ and return any pair of faces, see \fig{fig:vertex_faces}, (e) .
+ at the vertex $v$, \fig{fig:vertex_faces}, (e), the polygon degenerates into a point and thus no connection information is necessary.
+ We just return $(v,v)$.
 \end{itemize}
 
-% Either all signs are equal ($S_2$ touching $S_3$) wee , or
-% a single edge have the sign oposite to other twotwo edges have a sign oposite then the thi. of According to the 
-% 
-% 
-% and need to insert them into $I$ to correct place. To this end we exploit additional information about incidence of points
-% with faces of $S_3$. Every point $p$ from the first part of the algorithm \notePE{I would use proper references instead, I got confused, what 'part of algorithm' is..} that is not a vertex of $S_2$ belongs to a face $f$ of $S_3$; we know from the order of the points
-% whether the face comes before or after the point in the intersection polygon; in the first case we set $F[0,f] =p$, in the second case we set $F[1,f]=p$. 
-% Every point $p$ from the second part of the algorithm lies on an edge $e$ which is between two faces $f_0$, $f_1$. The correct order of the faces on the 
-% intersection polygon is determined by the sign of the edge-triangle intersection. So, having the faces in the correct order we set $F[0,f_0]=p$ and $F[1, f_1]=p$.
 \subsubsection{Ordering of Intersections}
 \label{sec:ordering}
-The final stage of the 2d-3d intersection is ordering of ICs. If there are less then 3 ICs in the list $I$ we merge lists $I$ and $J$ remove duplicities
-and get at most 2 distinguish ICs forming a degenerate IP. Otherwise, we start with first IC $p$ in $I$, put it into final list $K$, 
-get its successor \nface $x = F_f(p)$ and its successor IC $q=F_q(x)$. Unless $x$ is vertex of $S_2$, we put $q$ into $K$ and repeat the process until 
-we pass all ICs in $I$.
-
+The final stage of the 2d-3d intersection is ordering of ICs. We start with the first IC in $I$ and follow the 
+successor tables until we return back. The ICs are copied into the result vector, skipping the duplicities.
+Special treatment must be done for degenerate cases with less then $3$ ICs as they may not form a cycle.
   
 
 \section{Global Mesh Intersection Algorithm}
